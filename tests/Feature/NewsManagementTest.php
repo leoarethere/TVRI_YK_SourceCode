@@ -72,6 +72,20 @@ class NewsManagementTest extends TestCase
         $this->assertDatabaseMissing('news', ['id' => $news->id]);
     }
 
+    public function test_guest_cannot_access_news_management(): void
+    {
+        $response = $this->get(route('dashboard.berita.index'));
+        $response->assertRedirect(route('login'));
+    }
+
+    public function test_non_admin_cannot_access_news_management(): void
+    {
+        $user = User::factory()->create(['role' => 'pegawai']);
+
+        $response = $this->actingAs($user)->get(route('dashboard.berita.index'));
+        $response->assertStatus(403);
+    }
+
     public function test_frontend_news_index_is_public(): void
     {
         News::factory()->count(3)->create(['news_category_id' => $this->category->id]);

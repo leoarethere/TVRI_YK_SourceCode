@@ -29,7 +29,7 @@ class DashboardJadwalAcaraController extends Controller
 
         // Sorting: Berdasarkan Hari (Order) -> Jam Tayang
         // Kita join manual agar bisa sort berdasarkan 'jadwal_categories.order'
-        $jadwalAcaras = $query->select('jadwal_acaras.*')
+        $jadwalAcaras = $query->with('broadcastCategory')->select('jadwal_acaras.*')
                             ->leftJoin('jadwal_categories', 'jadwal_acaras.jadwal_category_id', '=', 'jadwal_categories.id')
                             ->orderBy('jadwal_categories.order', 'asc') // Urutkan Senin, Selasa, dst
                             ->orderBy('jadwal_acaras.start_time', 'asc') // Urutkan Jam

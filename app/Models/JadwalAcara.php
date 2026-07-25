@@ -24,12 +24,9 @@ class JadwalAcara extends Model
 
     protected $casts = [
         'is_active' => 'boolean',
-        'start_time' => 'datetime:H:i',
-        'end_time' => 'datetime:H:i', // ✅ TAMBAHAN: Format otomatis jadi H:i (Jam:Menit)
+        'start_time' => 'datetime',
+        'end_time' => 'datetime',
     ];
-
-    // Eager loading otomatis agar performa query cepat
-    protected $with = ['broadcastCategory'];
 
     public function broadcastCategory(): BelongsTo
     {

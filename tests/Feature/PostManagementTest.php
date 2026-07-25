@@ -144,6 +144,14 @@ class PostManagementTest extends TestCase
         $response->assertRedirect(route('login'));
     }
 
+    public function test_non_admin_cannot_access_post_management(): void
+    {
+        $user = User::factory()->create(['role' => 'pegawai']);
+
+        $response = $this->actingAs($user)->get(route('dashboard.postingan.index'));
+        $response->assertStatus(403);
+    }
+
     public function test_frontend_posts_list_is_public(): void
     {
         Post::factory()->count(5)->create(['category_id' => $this->category->id]);

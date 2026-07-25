@@ -31,4 +31,8 @@ return [
         ],
     ],
 
+    'tvri' => [
+        'stream_url' => env('TVRI_STREAM_URL', 'https://ott-balancer.tvri.go.id/live/eds/Jogjakarta/hls/Jogjakarta.m3u8'),
+    ],
+
 ];

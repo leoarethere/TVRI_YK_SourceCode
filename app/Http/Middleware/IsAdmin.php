@@ -15,7 +15,7 @@ class IsAdmin
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (! auth()->user() || auth()->user()->isPegawai()) {
+        if (! auth()->user() || ! auth()->user()->isDashboardUser()) {
             abort(403, 'Unauthorized access.');
         }
         return $next($request);

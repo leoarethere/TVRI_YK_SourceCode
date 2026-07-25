@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\JadwalAcara;
 use Illuminate\Http\Request;
-use App\Models\JadwalCategory;
 use Illuminate\Routing\Controller;
 
 class JadwalController extends Controller
@@ -33,9 +32,6 @@ class JadwalController extends Controller
                         ->paginate(12)
                         ->withQueryString();
 
-        // Ambil daftar hari, urutkan berdasarkan order juga
-        $days = JadwalCategory::orderBy('order', 'asc')->get();
-
-        return view('frontend.publikasi.jadwal', compact('jadwals', 'days'));
+        return view('frontend.publikasi.jadwal', compact('jadwals'));
     }
 }

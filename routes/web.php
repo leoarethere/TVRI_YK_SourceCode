@@ -47,6 +47,7 @@ use App\Http\Controllers\DashboardJadwalCategoryController;
 use App\Http\Controllers\DashboardBroadcastCategoryController;
 use App\Http\Controllers\DashboardAksesInformasiController;
 use App\Http\Controllers\PegawaiLoginController;
+use App\Http\Controllers\SymlinkController;
 
 /*
 |--------------------------------------------------------------------------
@@ -111,7 +112,7 @@ Route::middleware('guest')->group(function () {
 // ================= PEGAWAI LOGIN =================
 Route::prefix('pegawai')->group(function () {
     Route::get('/login', [PegawaiLoginController::class, 'index'])->name('pegawai.login');
-    Route::post('/login', [PegawaiLoginController::class, 'store']);
+    Route::post('/login', [PegawaiLoginController::class, 'store'])->middleware('throttle:5,1');
 });
 
 Route::middleware('auth')->prefix('pegawai')->group(function () {
@@ -187,18 +188,7 @@ Route::middleware(['auth', 'isAdmin'])->prefix('dashboard')->group(function () {
     Route::put('/akses-informasi/{aksesInformasi}', [DashboardAksesInformasiController::class, 'update'])->name('dashboard.akses-informasi.update');
 
     // Utilitas: Membuat symlink storage (hanya untuk admin utama, sekali saat deploy)
-    Route::get('/symlink', function () {
-        // Hanya admin utama yang boleh menjalankan symlink
-        if (!auth()->user()->isAdmin()) {
-            abort(403, 'Hanya admin utama yang dapat menjalankan perintah ini.');
-        }
-        try {
-            \Illuminate\Support\Facades\Artisan::call('storage:link');
-            return 'Symlink berhasil dibuat! Silakan cek folder public/storage.';
-        } catch (\Exception $e) {
-            return 'Gagal membuat symlink: ' . $e->getMessage();
-        }
-    })->name('dashboard.symlink');
+    Route::get('/symlink', [SymlinkController::class, 'create'])->name('dashboard.symlink');
 });
 
 // ================= UTILITAS =================
