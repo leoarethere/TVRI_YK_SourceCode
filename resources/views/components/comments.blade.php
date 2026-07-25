@@ -34,7 +34,7 @@
     {{-- Form Tambah Komentar --}}
     <div class="bg-gray-50 dark:bg-gray-800/50 p-6 rounded-xl mb-8">
         <h4 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Tinggalkan Komentar</h4>
-        <form action="{{ route('comments.store') }}" method="POST">
+        <form action="{{ route('komentar.store') }}" method="POST">
             @csrf
             <input type="hidden" name="commentable_type" value="{{ strtolower(class_basename($model)) }}">
             <input type="hidden" name="commentable_id" value="{{ $model->id }}">
@@ -105,7 +105,7 @@
                             </div>
                         </div>
                         @if($comment->rating)
-                            <div class="flex text-yellow-400 text-sm" title="Rating: {{ $comment->rating }}/5">
+                            <div class="flex text-yellow-400 text-sm" title="Nilai: {{ $comment->rating }}/5">
                                 @for($i = 1; $i <= 5; $i++)
                                     @if($i <= $comment->rating)
                                         ★

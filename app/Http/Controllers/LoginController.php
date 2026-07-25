@@ -16,7 +16,7 @@ class LoginController extends Controller
     public function index(): View
     {
         return view('auth.login', [
-            'title' => 'Login',
+            'title'  => 'Masuk',
             'active' => 'login'
         ]);
     }
@@ -28,25 +28,33 @@ class LoginController extends Controller
     {
         // 1. Validasi input dari form
         $credentials = $request->validate([
-            'email' => ['required', 'email:dns'],
+            'email'    => ['required', 'email'],
             'password' => ['required', 'min:6'],
         ], [
-            'email.required' => 'Email wajib diisi.',
-            'email.email' => 'Format email tidak valid.',
+            'email.required'    => 'Email wajib diisi.',
+            'email.email'       => 'Format email tidak valid.',
             'password.required' => 'Password wajib diisi.',
-            'password.min' => 'Password minimal 6 karakter.',
+            'password.min'      => 'Password minimal 6 karakter.',
         ]);
 
         // 2. Coba untuk mengautentikasi pengguna dengan remember me
         $remember = $request->has('remember');
 
         if (Auth::attempt($credentials, $remember)) {
-            // Jika berhasil, regenerate session untuk keamanan
-            $request->session()->regenerate();
+            $user = Auth::user();
 
-            // Arahkan ke halaman dashboard dengan notifikasi sukses
+            // Deteksi akun pegawai yang salah portal — kembalikan ke sini + tampilkan link portal pegawai
+            if ($user->isPegawai()) {
+                Auth::logout();
+                return back()
+                    ->withErrors(['email' => 'Akun pegawai tidak dapat login dari halaman ini.'])
+                    ->with('show_pegawai_link', true)
+                    ->onlyInput('email');
+            }
+
+            $request->session()->regenerate();
             return redirect()->intended(route('dashboard'))
-                ->with('success', 'Selamat datang kembali, ' . Auth::user()->name . '!');
+                ->with('success', 'Selamat datang kembali, ' . $user->name . '!');
         }
 
         // 3. Jika autentikasi gagal
@@ -60,15 +68,13 @@ class LoginController extends Controller
      */
     public function logout(Request $request): RedirectResponse
     {
-        // Dapatkan nama user sebelum logout
         $userName = Auth::user()->name;
 
         Auth::logout();
-        
+
         $request->session()->invalidate();
         $request->session()->regenerateToken();
-        
-        // ✅ UBAH DARI route('home') MENJADI route('login')
+
         return redirect()->route('login')
             ->with('success', 'Anda telah berhasil logout. Sampai jumpa, ' . $userName . '!');
     }

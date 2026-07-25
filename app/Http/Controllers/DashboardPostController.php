@@ -157,7 +157,7 @@ class DashboardPostController extends Controller
             ? 'Postingan berhasil dipublikasikan!' 
             : 'Postingan berhasil disimpan sebagai draft!';
 
-        return redirect()->route('dashboard.posts.index')->with('success', $message);
+        return redirect()->route('dashboard.postingan.index')->with('success', $message);
     }
 
     /**
@@ -165,7 +165,7 @@ class DashboardPostController extends Controller
      */
     public function show(Post $post)
     {
-        return redirect()->route('posts.show', $post);
+        return redirect()->route('postingan.show', $post);
     }
 
     /**
@@ -275,7 +275,7 @@ class DashboardPostController extends Controller
             ? 'Postingan berhasil diperbarui!' 
             : 'Perubahan berhasil disimpan sebagai draft!';
 
-        return redirect()->route('dashboard.posts.index')
+        return redirect()->route('dashboard.postingan.index')
             ->with('success', $message);
     }
 
@@ -294,13 +294,13 @@ class DashboardPostController extends Controller
 
             $post->delete();
 
-            return redirect()->route('dashboard.posts.index')
+            return redirect()->route('dashboard.postingan.index')
                 ->with('success', 'Postingan "' . $postTitle . '" berhasil dihapus! 🗑️');
                 
         } catch (\Exception $e) {
             Log::error('Post deletion error: ' . $e->getMessage());
             
-            return redirect()->route('dashboard.posts.index')
+            return redirect()->route('dashboard.postingan.index')
                 ->with('error', 'Gagal menghapus postingan. Terjadi error: ' . $e->getMessage());
         }
     }

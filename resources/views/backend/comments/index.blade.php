@@ -35,25 +35,25 @@
 
             {{-- Status Filter Tabs --}}
             <div class="flex flex-wrap gap-2">
-                <a href="{{ route('dashboard.comments.index') }}" 
+                <a href="{{ route('dashboard.komentar.index') }}" 
                 class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-full transition-colors
                 {{ !request('status') ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300' : 'bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600' }}">
                     Semua
                     <span class="inline-flex items-center justify-center w-5 h-5 text-[10px] font-bold rounded-full bg-white/50 dark:bg-gray-800/50">{{ $counts['all'] }}</span>
                 </a>
-                <a href="{{ route('dashboard.comments.index', ['status' => 'pending']) }}" 
+                <a href="{{ route('dashboard.komentar.index', ['status' => 'pending']) }}" 
                 class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-full transition-colors
                 {{ request('status') == 'pending' ? 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/50 dark:text-yellow-700' : 'bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600' }}">
                     Pending
                     <span class="inline-flex items-center justify-center w-5 h-5 text-[10px] font-bold rounded-full bg-white/50 dark:bg-gray-800/50">{{ $counts['pending'] }}</span>
                 </a>
-                <a href="{{ route('dashboard.comments.index', ['status' => 'approved']) }}" 
+                <a href="{{ route('dashboard.komentar.index', ['status' => 'approved']) }}" 
                 class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-full transition-colors
                 {{ request('status') == 'approved' ? 'bg-green-100 text-green-700 dark:bg-green-900/50 dark:text-green-300' : 'bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600' }}">
                     Disetujui
                     <span class="inline-flex items-center justify-center w-5 h-5 text-[10px] font-bold rounded-full bg-white/50 dark:bg-gray-800/50">{{ $counts['approved'] }}</span>
                 </a>
-                <a href="{{ route('dashboard.comments.index', ['status' => 'rejected']) }}" 
+                <a href="{{ route('dashboard.komentar.index', ['status' => 'rejected']) }}" 
                 class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-full transition-colors
                 {{ request('status') == 'rejected' ? 'bg-red-100 text-red-700 dark:bg-red-900/50 dark:text-red-700' : 'bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600' }}">
                     Ditolak
@@ -63,7 +63,7 @@
             
             {{-- Pencarian --}}
             <div class="flex flex-col sm:flex-row gap-3 w-full items-center">
-                <form action="{{ route('dashboard.comments.index') }}" method="GET" class="flex items-center w-full gap-2">
+                <form action="{{ route('dashboard.komentar.index') }}" method="GET" class="flex items-center w-full gap-2">
                     @if(request('status'))
                         <input type="hidden" name="status" value="{{ request('status') }}">
                     @endif
@@ -86,7 +86,7 @@
                     </button>
                     
                     @if(request('search'))
-                        <a href="{{ route('dashboard.comments.index', request()->only('status')) }}" class="p-2.5 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 focus:ring-4 focus:ring-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-700 dark:hover:bg-gray-700 shadow-sm transition-colors flex-shrink-0" title="Reset Pencarian">
+                        <a href="{{ route('dashboard.komentar.index', request()->only('status')) }}" class="p-2.5 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 focus:ring-4 focus:ring-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-700 dark:hover:bg-gray-700 shadow-sm transition-colors flex-shrink-0" title="Reset Pencarian">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                         </a>
                     @endif
@@ -158,7 +158,7 @@
                                 {{-- Komentar --}}
                                 <td class="px-4 py-4 align-middle">
                                     @if($comment->rating)
-                                        <div class="text-yellow-400 text-xs mb-1.5 flex items-center" title="Rating: {{ $comment->rating }}/5">
+                                        <div class="text-yellow-400 text-xs mb-1.5 flex items-center" title="Nilai: {{ $comment->rating }}/5">
                                             @for($i = 1; $i <= 5; $i++)
                                                 @if($i <= $comment->rating)
                                                     <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
@@ -220,7 +220,7 @@
                                 <td class="px-4 py-4 align-middle text-center">
                                     <div class="flex items-center justify-center gap-1">
                                         @if($comment->status !== 'approved')
-                                            <form action="{{ route('dashboard.comments.approve', $comment) }}" method="POST" class="inline">
+                                            <form action="{{ route('dashboard.komentar.setujui', $comment) }}" method="POST" class="inline">
                                                 @csrf
                                                 @method('PUT')
                                                 <button type="submit" class="p-2 text-green-600 bg-green-50 rounded-lg hover:bg-green-100 dark:text-green-400 dark:bg-green-900/30 dark:hover:bg-green-900/50 transition-colors" title="Setujui Komentar">
@@ -229,7 +229,7 @@
                                             </form>
                                         @endif
                                         @if($comment->status !== 'rejected')
-                                            <form action="{{ route('dashboard.comments.reject', $comment) }}" method="POST" class="inline">
+                                            <form action="{{ route('dashboard.komentar.tolak', $comment) }}" method="POST" class="inline">
                                                 @csrf
                                                 @method('PUT')
                                                 <button type="submit" class="p-2 text-red-600 bg-red-50 rounded-lg hover:bg-red-100 dark:text-red-400 dark:bg-red-900/30 dark:hover:bg-red-900/50 transition-colors" title="Tolak Komentar">
@@ -312,7 +312,7 @@
                         Batal
                     </button>
                     
-                    <form :action="`{{ route('dashboard.comments.destroy', '') }}/${deleteItemId}`" method="POST">
+                    <form :action="`{{ route('dashboard.komentar.destroy', '') }}/${deleteItemId}`" method="POST">
                         @csrf
                         @method('DELETE')
                         <button type="submit" class="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-300 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800 transition-colors">

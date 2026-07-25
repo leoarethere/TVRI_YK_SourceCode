@@ -50,7 +50,7 @@
 
                         {{-- Berita (Index) --}}
                         <li>
-                            <a href="{{ route('news.index') }}" class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Berita</a>
+                            <a href="{{ route('berita.index') }}" class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Berita</a>
                         </li>
 
                         {{-- Separator --}}
@@ -59,7 +59,7 @@
                         {{-- Kategori --}}
                         @if($news->newsCategory)
                             <li>
-                                <a href="{{ route('news.index', ['category' => $news->newsCategory->slug]) }}" class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors font-medium text-blue-600 dark:text-blue-400">
+                                <a href="{{ route('berita.index', ['category' => $news->newsCategory->slug]) }}" class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors font-medium text-blue-600 dark:text-blue-400">
                                     {{ $news->newsCategory->name }}
                                 </a>
                             </li>
@@ -103,6 +103,22 @@
                         </time>
                     </div>
                 </div>
+
+                {{-- Link Sumber Berita --}}
+                @if($news->link_berita)
+                    <div class="mt-4">
+                        <a href="{{ $news->link_berita }}" target="_blank" rel="noopener noreferrer"
+                           class="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-blue-700 bg-blue-50 border border-blue-200 rounded-xl hover:bg-blue-100 hover:border-blue-300 dark:text-blue-400 dark:bg-blue-900/20 dark:border-blue-800 dark:hover:bg-blue-900/40 transition-all">
+                            <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/>
+                            </svg>
+                            Lihat Sumber Berita
+                            <svg class="w-3.5 h-3.5 flex-shrink-0 opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+                            </svg>
+                        </a>
+                    </div>
+                @endif
             </header>
 
             {{-- 3. FEATURED IMAGE --}}
@@ -148,7 +164,7 @@
             <div class="px-5 sm:px-8 lg:px-10 py-6 sm:py-8 bg-gray-50 dark:bg-gray-900/50 border-t border-gray-100 dark:border-gray-700 flex flex-col sm:flex-row justify-between items-center gap-6">
                 
                 {{-- Tombol Kembali --}}
-                <a href="{{ route('news.index') }}" 
+                <a href="{{ route('berita.index') }}" 
                    class="w-full sm:w-auto inline-flex justify-center items-center gap-2 px-5 py-2.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-xl hover:bg-gray-50 hover:text-blue-600 hover:border-blue-300 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-700 transition-all shadow-sm">
                     <svg class="w-4 h-4 transition-transform group-hover:-translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
                     Semua Berita
@@ -161,19 +177,19 @@
                         
                         {{-- Facebook --}}
                         <a href="https://www.facebook.com/sharer/sharer.php?u={{ urlencode(request()->url()) }}" target="_blank" 
-                           class="flex-1 sm:flex-none flex justify-center items-center p-2.5 rounded-lg sm:rounded-full bg-blue-600 text-white hover:bg-blue-700 transition-colors shadow-sm" aria-label="Share on Facebook">
+                           class="flex-1 sm:flex-none flex justify-center items-center p-2.5 rounded-lg sm:rounded-full bg-blue-600 text-white hover:bg-blue-700 transition-colors shadow-sm" aria-label="Bagikan di Facebook">
                             <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"></path></svg>
                         </a>
 
                         {{-- Twitter / X --}}
                         <a href="https://twitter.com/intent/tweet?url={{ urlencode(request()->url()) }}&text={{ urlencode($news->title) }}" target="_blank" 
-                           class="flex-1 sm:flex-none flex justify-center items-center p-2.5 rounded-lg sm:rounded-full bg-black dark:bg-gray-700 text-white hover:bg-gray-800 dark:hover:bg-gray-600 transition-colors shadow-sm" aria-label="Share on X">
+                           class="flex-1 sm:flex-none flex justify-center items-center p-2.5 rounded-lg sm:rounded-full bg-black dark:bg-gray-700 text-white hover:bg-gray-800 dark:hover:bg-gray-600 transition-colors shadow-sm" aria-label="Bagikan di X">
                             <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
                         </a>
 
                         {{-- WhatsApp --}}
                         <a href="https://wa.me/?text={{ urlencode($news->title . ' ' . request()->url()) }}" target="_blank" 
-                           class="flex-1 sm:flex-none flex justify-center items-center p-2.5 rounded-lg sm:rounded-full bg-green-500 text-white hover:bg-green-600 transition-colors shadow-sm" aria-label="Share on WhatsApp">
+                           class="flex-1 sm:flex-none flex justify-center items-center p-2.5 rounded-lg sm:rounded-full bg-green-500 text-white hover:bg-green-600 transition-colors shadow-sm" aria-label="Bagikan di WhatsApp">
                             <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"></path></svg>
                         </a>
                     </div>

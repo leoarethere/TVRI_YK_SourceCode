@@ -30,7 +30,7 @@ class PerformanceTest extends TestCase
     {
         $startTime = microtime(true);
 
-        $response = $this->get('/news');
+        $response = $this->get('/berita');
 
         $endTime = microtime(true);
         $executionTime = ($endTime - $startTime) * 1000;

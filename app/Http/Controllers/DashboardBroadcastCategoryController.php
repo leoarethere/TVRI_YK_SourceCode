@@ -23,7 +23,7 @@ class DashboardBroadcastCategoryController extends Controller
 
         BroadcastCategory::create($validated);
 
-        return redirect()->route('dashboard.broadcasts.index')
+        return redirect()->route('dashboard.penyiaran.index')
                          ->with('category_success', 'Kategori penyiaran baru berhasil ditambahkan!');
     }
 
@@ -40,7 +40,7 @@ class DashboardBroadcastCategoryController extends Controller
 
         $broadcastCategory->update($validated);
 
-        return redirect()->route('dashboard.broadcasts.index')
+        return redirect()->route('dashboard.penyiaran.index')
                          ->with('category_success', 'Kategori penyiaran berhasil diperbarui!');
     }
 
@@ -51,13 +51,13 @@ class DashboardBroadcastCategoryController extends Controller
     {
         // Cek jika kategori masih memiliki broadcast
         if ($broadcastCategory->broadcasts()->count() > 0) {
-            return redirect()->route('dashboard.broadcasts.index')
+            return redirect()->route('dashboard.penyiaran.index')
                              ->with('category_error', 'Gagal! Kategori ini masih memiliki ' . $broadcastCategory->broadcasts()->count() . ' data penyiaran.');
         }
 
         $broadcastCategory->delete();
 
-        return redirect()->route('dashboard.broadcasts.index')
+        return redirect()->route('dashboard.penyiaran.index')
                          ->with('category_success', 'Kategori penyiaran berhasil dihapus!');
     }
 }

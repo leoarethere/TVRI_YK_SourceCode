@@ -19,15 +19,15 @@ class DashboardFeatureTest extends TestCase
     {
         parent::setUp();
 
-        $this->admin = User::factory()->create(['is_admin' => true]);
-        $this->nonAdmin = User::factory()->create(['is_admin' => false]);
+        $this->admin = User::factory()->create(['role' => 'admin']);
+        $this->nonAdmin = User::factory()->create(['role' => 'pegawai']);
     }
 
     /** @test */
     public function non_admin_cannot_access_dashboard()
     {
         // Mencoba mengakses rute dasbor postingan sebagai pengguna biasa
-        $response = $this->actingAs($this->nonAdmin)->get('/dashboard/posts');
+        $response = $this->actingAs($this->nonAdmin)->get('/dashboard/postingan');
 
         // Memastikan dialihkan ke beranda (atau dilarang) dengan Error Rate sangat rendah (bukan 500)
         // Jika ada handler untuk redirect atau abort 403, ini harus disesuaikan. Kita test 302 or 403.
@@ -37,7 +37,7 @@ class DashboardFeatureTest extends TestCase
     /** @test */
     public function admin_can_access_dashboard()
     {
-        $response = $this->actingAs($this->admin)->get('/dashboard/posts');
+        $response = $this->actingAs($this->admin)->get('/dashboard/postingan');
 
         $response->assertStatus(200);
     }
@@ -46,7 +46,7 @@ class DashboardFeatureTest extends TestCase
     public function creating_post_requires_valid_data()
     {
         // Kirim form kosong (tanpa judul, kategori, dll)
-        $response = $this->actingAs($this->admin)->post('/dashboard/posts', []);
+        $response = $this->actingAs($this->admin)->post('/dashboard/postingan', []);
 
         // Memastikan sistem merespon dengan pesan error validasi (Session Errors), bukan Server Error 500.
         $response->assertSessionHasErrors(['title', 'category_id', 'body']);
@@ -57,7 +57,7 @@ class DashboardFeatureTest extends TestCase
     {
         $category = Category::create(['name' => 'Berita', 'slug' => 'berita', 'color' => 'blue']);
 
-        $response = $this->actingAs($this->admin)->post('/dashboard/posts', [
+        $response = $this->actingAs($this->admin)->post('/dashboard/postingan', [
             'title' => 'Berita Baru',
             'slug' => 'berita-baru',
             'category_id' => $category->id,
@@ -67,7 +67,7 @@ class DashboardFeatureTest extends TestCase
         ]);
 
         // Dialihkan ke daftar postingan dengan pesan sukses
-        $response->assertRedirect('/dashboard/posts');
+        $response->assertRedirect('/dashboard/postingan');
         $response->assertSessionHas('success');
 
         // Pastikan masuk ke database

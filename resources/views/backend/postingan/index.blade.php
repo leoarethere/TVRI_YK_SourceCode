@@ -12,8 +12,8 @@
         isCategoryModalOpen: false,
         modalMode: 'create',
         modalTitle: 'Tambah Kategori Baru',
-        modalAction: '{{ route('dashboard.categories.store') }}',
-        updateUrlTemplate: '{{ route('dashboard.categories.update', ':id') }}',
+        modalAction: '{{ route('dashboard.kategori-postingan.store') }}',
+        updateUrlTemplate: '{{ route('dashboard.kategori-postingan.update', ':id') }}',
         
         categoryData: {
             id: null,
@@ -53,7 +53,7 @@
         openCreateModal() {
             this.modalMode = 'create';
             this.modalTitle = 'Tambah Kategori Baru';
-            this.modalAction = '{{ route('dashboard.categories.store') }}';
+            this.modalAction = '{{ route('dashboard.kategori-postingan.store') }}';
             this.categoryData = { id: null, name: '', slug: '', color: 'blue' };
             this.isCategoryModalOpen = true;
             document.body.style.overflow = 'hidden';
@@ -118,7 +118,7 @@
                     Kelola Kategori
                 </button>
 
-                <a href="{{ route('dashboard.posts.create') }}" 
+                <a href="{{ route('dashboard.postingan.create') }}" 
                    class="inline-flex items-center justify-center px-4 py-2.5 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 transition-colors whitespace-nowrap shadow-sm hover:shadow-md">
                     <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd"></path>
@@ -143,7 +143,7 @@
         @endif --}}
 
         {{-- FORM FILTER --}}
-        <form method="GET" action="{{ route('dashboard.posts.index') }}" class="mb-6">
+        <form method="GET" action="{{ route('dashboard.postingan.index') }}" class="mb-6">
             <div class="flex flex-col md:flex-row gap-4">
                 <div class="relative flex-grow">
                     <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
@@ -167,7 +167,7 @@
                 <div class="flex gap-2">
                     <button type="submit" class="w-full md:w-auto px-5 py-3 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 transition-colors">Cari</button>
                     @if(request()->hasAny(['search', 'category', 'sort']))
-                        <a href="{{ route('dashboard.posts.index') }}" class="w-full md:w-auto px-5 py-3 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-600 text-center transition-colors">Reset</a>
+                        <a href="{{ route('dashboard.postingan.index') }}" class="w-full md:w-auto px-5 py-3 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-600 text-center transition-colors">Reset</a>
                     @endif
                 </div>
             </div>
@@ -218,7 +218,7 @@
                                             </span>
                                             @if($post->status === 'draft')
                                                 <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300">
-                                                    Draft
+                                                    Draf
                                                 </span>
                                             @endif
                                         </div>
@@ -243,7 +243,7 @@
                                 {{-- Gambar --}}
                                 <td class="px-4 py-4 align-top text-center">
                                     @if ($post->featured_image)
-                                        <img src="{{ Storage::url($post->featured_image) }}" alt="Thumbnail" class="w-16 h-12 object-cover rounded-lg ring-1 ring-gray-200 dark:ring-gray-700 inline-block">
+                                        <img src="{{ Storage::url($post->featured_image) }}" alt="Gambar" class="w-16 h-12 object-cover rounded-lg ring-1 ring-gray-200 dark:ring-gray-700 inline-block">
                                     @else
                                         <div class="w-16 h-12 inline-flex items-center justify-center bg-gray-100 dark:bg-gray-700 rounded-lg ring-1 ring-gray-200 dark:ring-gray-700">
                                             <svg class="w-6 h-6 text-gray-400 dark:text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -271,13 +271,13 @@
                                 <td class="px-4 py-4 align-top text-center">
                                     <div class="flex items-center justify-center gap-2">
                                         {{-- Lihat --}}
-                                        <a href="{{ route('posts.show', $post->slug) }}" target="_blank" 
+                                        <a href="{{ route('postingan.show', $post->slug) }}" target="_blank" 
                                            class="p-2 text-blue-600 bg-blue-50 rounded-lg hover:bg-blue-100 dark:text-blue-400 dark:bg-blue-900/20 dark:hover:bg-blue-900/50 transition-colors" title="Lihat">
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
                                         </a>
 
                                         {{-- Edit --}}
-                                        <a href="{{ route('dashboard.posts.edit', $post) }}" 
+                                        <a href="{{ route('dashboard.postingan.edit', $post) }}" 
                                            class="p-2 text-yellow-600 bg-yellow-50 rounded-lg hover:bg-yellow-100 dark:text-yellow-400 dark:bg-yellow-900/30 dark:hover:bg-yellow-900/50 transition-colors" title="Edit">
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
                                         </a>
@@ -360,7 +360,7 @@
                         Batal
                     </button>
                     
-                    <form :action="`{{ route('dashboard.posts.destroy', '') }}/${deletePostId}`" method="POST">
+                    <form :action="`{{ route('dashboard.postingan.destroy', '') }}/${deletePostId}`" method="POST">
                         @csrf
                         @method('DELETE')
                         <button type="submit" class="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-300 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800 transition-colors">
@@ -503,7 +503,7 @@
                             </p>
                             <div class="flex justify-center gap-3">
                                 <button @click="closeDeleteCategoryModal()" class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600 transition-colors">Batal</button>
-                                <form :action="`{{ route('dashboard.categories.destroy', '') }}/${deleteCategoryId}`" method="POST">
+                                <form :action="`{{ route('dashboard.kategori-postingan.destroy', '') }}/${deleteCategoryId}`" method="POST">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 focus:ring-4 focus:ring-red-300 transition-colors">Ya, Hapus</button>

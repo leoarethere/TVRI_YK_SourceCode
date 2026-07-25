@@ -24,7 +24,7 @@ class DashboardPostCategoryController extends Controller
         Category::create($validated);
 
         // Redirect kembali ke halaman index Postingan
-        return redirect()->route('dashboard.posts.index')
+        return redirect()->route('dashboard.postingan.index')
                          ->with('category_success', 'Kategori postingan baru berhasil ditambahkan!');
     }
 
@@ -42,7 +42,7 @@ class DashboardPostCategoryController extends Controller
         $category->update($validated);
 
         // Redirect kembali ke halaman index Postingan
-        return redirect()->route('dashboard.posts.index')
+        return redirect()->route('dashboard.postingan.index')
                          ->with('category_success', 'Kategori postingan berhasil diperbarui!');
     }
 
@@ -53,14 +53,14 @@ class DashboardPostCategoryController extends Controller
     {
         // Cek jika kategori masih memiliki postingan
         if ($category->posts()->count() > 0) {
-            return redirect()->route('dashboard.posts.index')
-                             ->with('category_error', 'Gagal! Kategori ini masih memiliki ' . $category->posts()->count() . ' data postingan.');
+return redirect()->route('dashboard.postingan.index')
+                              ->with('category_error', 'Gagal! Kategori ini masih memiliki ' . $category->posts()->count() . ' data postingan.');
         }
 
         $category->delete();
 
         // Redirect kembali ke halaman index Postingan
-        return redirect()->route('dashboard.posts.index')
+        return redirect()->route('dashboard.postingan.index')
                          ->with('category_success', 'Kategori postingan berhasil dihapus!');
     }
 }

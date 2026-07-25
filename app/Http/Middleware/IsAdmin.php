@@ -15,10 +15,9 @@ class IsAdmin
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (! auth()->user() || ! auth()->user()->is_admin) {
+        if (! auth()->user() || auth()->user()->isPegawai()) {
             abort(403, 'Unauthorized access.');
         }
-
         return $next($request);
     }
 }

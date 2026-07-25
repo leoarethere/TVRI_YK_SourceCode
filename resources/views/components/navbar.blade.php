@@ -31,7 +31,7 @@
                     <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                     </svg>
-                    <span>Live Streaming</span>
+                    <span>Siaran Langsung</span>
                 </a>
             </div>
 
@@ -112,12 +112,12 @@
                         {{-- 1. Logo Gelap (Tampil di Light Mode, Hilang di Dark Mode) --}}
                         <img src="{{ asset('img/logolight.png') }}" 
                             class="h-9 md:h-12 w-auto block dark:hidden" 
-                            alt="LiteBeam Logo Dark" />
+                            alt="Logo TVRI Yogyakarta" />
 
                         {{-- 2. Logo Terang (Hilang di Light Mode, Tampil di Dark Mode) --}}
                         <img src="{{ asset('img/logodark.png') }}" 
                             class="h-9 md:h-12 w-auto hidden dark:block" 
-                            alt="LiteBeam Logo Light" />
+                            alt="Logo TVRI Yogyakarta" />
 
                         <span class="text-gray-900 dark:text-white font-bold text-xl sm:text-2xl whitespace-nowrap">
                             Yogyakarta
@@ -135,7 +135,7 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
                                 <polyline points="9 22 9 12 15 12 15 22"></polyline>
                             </svg>
-                            <span>Home</span>
+                            <span>Beranda</span>
                         </a>
 
                         {{-- Dropdown Publikasi --}}
@@ -161,7 +161,7 @@
                                  x-transition:leave-end="opacity-0 translate-y-1"
                                  class="absolute mt-2 w-56 bg-white dark:bg-gray-800 rounded-lg shadow-lg ring-1 ring-black ring-opacity-5 z-20 py-1" style="display: none;">
                                 
-                                <a href="{{ route('broadcasts.index') }}" class="flex items-center gap-3 px-4 py-2 text-sm transition-colors duration-200 {{ request()->is('penyiaran*') ? 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white' : 'text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700' }}">
+                                <a href="{{ route('penyiaran.index') }}" class="flex items-center gap-3 px-4 py-2 text-sm transition-colors duration-200 {{ request()->is('penyiaran*') ? 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white' : 'text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700' }}">
                                     <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                                     </svg>
@@ -199,7 +199,7 @@
                                  x-transition:leave-end="opacity-0 translate-y-1"
                                  class="absolute mt-2 w-56 bg-white dark:bg-gray-800 rounded-lg shadow-lg ring-1 ring-black ring-opacity-5 z-20 py-1" style="display: none;">
                                 
-                                <a href="{{ route('ppid.index') }}" class="flex items-center gap-3 px-4 py-2 text-sm transition-colors duration-200 {{ request()->is('ppid*') ? 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white' : 'text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700' }}">
+                                <a href="{{ route('ppid.index') }}" class="flex items-center gap-3 px-4 py-2 text-sm transition-colors duration-200 {{ request()->is('info-ppid*') ? 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white' : 'text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700' }}">
                                     <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
                                     </svg>
@@ -227,14 +227,14 @@
                             </div>
                         </div>
 
-                        <a href="{{ route('news.index') }}" class="group flex items-center gap-2 rounded-lg px-4 py-3 text-base font-medium transition-all duration-200 {{ request()->is('news*') ? 'bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white shadow-lg' : 'text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white' }}">
+                        <a href="{{ route('berita.index') }}" class="group flex items-center gap-2 rounded-lg px-4 py-3 text-base font-medium transition-all duration-200 {{ request()->is('berita*') ? 'bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white shadow-lg' : 'text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white' }}">
                             <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
                             </svg>
                             <span>Berita</span>
                         </a>
 
-                        <a href="{{ route('posts.index') }}" class="group flex items-center gap-2 rounded-lg px-4 py-3 text-base font-medium transition-all duration-200 {{ request()->is('posts*') ? 'bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white shadow-lg' : 'text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white' }}">
+                        <a href="{{ route('postingan.index') }}" class="group flex items-center gap-2 rounded-lg px-4 py-3 text-base font-medium transition-all duration-200 {{ request()->is('postingan*') ? 'bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white shadow-lg' : 'text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white' }}">
                             <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                             </svg>
@@ -301,7 +301,46 @@
                     </div>
 
                     {{-- Theme Toggle untuk Desktop --}}
-                    <div class="ml-2 border-l border-gray-200 dark:border-gray-700 pl-2">
+                    <div class="ml-2 border-l border-gray-200 dark:border-gray-700 pl-2 flex items-center gap-2">
+                        @auth
+                            @if(auth()->user()->isDashboardUser())
+                                {{-- Admin/Secondary: Tombol ke Dashboard --}}
+                                <a href="{{ route('dashboard') }}" data-turbo="false"
+                                   class="group flex items-center gap-2 rounded-lg px-4 py-3 text-base font-medium transition-all duration-200 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white">
+                                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                                    </svg>
+                                    <span>Dashboard</span>
+                                </a>
+                                <form action="{{ route('logout') }}" method="POST" data-turbo="false" class="inline">
+                                    @csrf
+                                    <button type="submit" class="group flex items-center gap-2 rounded-lg px-4 py-3 text-base font-medium transition-all duration-200 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white">
+                                        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                                        </svg>
+                                    <span>Keluar</span>
+                                </button>
+                            </form>
+                        @else
+                            {{-- Pegawai: Tombol Logout ke portal pegawai --}}
+                            <a href="{{ route('pegawai.logout.get') }}" data-turbo="false"
+                               class="group flex items-center gap-2 rounded-lg px-4 py-3 text-base font-medium transition-all duration-200 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white">
+                                <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                                </svg>
+                                <span>Keluar</span>
+                                </a>
+                            @endif
+                        @else
+                            <a href="{{ route('login') }}" data-turbo="false"
+                               class="group flex items-center gap-2 rounded-lg px-4 py-3 text-base font-medium transition-all duration-200 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white">
+                                <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                </svg>
+                                <span>Kelola</span>
+                            </a>
+                        @endauth
                         <x-theme-toggle />
                     </div>
                 </div>
@@ -322,7 +361,7 @@
                                     border border-gray-300 dark:border-gray-600 shadow-sm 
                                     transition-colors duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500">
                             
-                            <span class="sr-only">Toggle menu</span>
+                            <span class="sr-only">Buka/tutup menu</span>
                             
                             {{-- Icon Menu (Hamburger) --}}
                             <svg class="h-6 w-6" :class="{ 'hidden': isMobileMenuOpen, 'block': !isMobileMenuOpen }" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
@@ -379,7 +418,7 @@
                          x-transition:enter-start="opacity-0 -translate-y-2"
                          x-transition:enter-end="opacity-100 translate-y-0"
                          class="pl-4 pr-2 pt-2 space-y-1">
-                        <a href="{{ route('broadcasts.index') }}" class="flex items-center gap-3 rounded-lg px-4 py-2.5 text-sm font-medium transition-colors duration-200 {{ request()->is('penyiaran*') ? 'text-blue-600 dark:text-blue-400 bg-blue-50/50 dark:bg-blue-900/20' : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-800' }}">
+                        <a href="{{ route('penyiaran.index') }}" class="flex items-center gap-3 rounded-lg px-4 py-2.5 text-sm font-medium transition-colors duration-200 {{ request()->is('penyiaran*') ? 'text-blue-600 dark:text-blue-400 bg-blue-50/50 dark:bg-blue-900/20' : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-800' }}">
                             <span class="w-1.5 h-1.5 rounded-full {{ request()->is('penyiaran*') ? 'bg-blue-600 dark:bg-blue-400' : 'bg-gray-400' }}"></span>
                             <span>Penyiaran</span>
                         </a>
@@ -410,7 +449,7 @@
                          x-transition:enter-start="opacity-0 -translate-y-2"
                          x-transition:enter-end="opacity-100 translate-y-0"
                          class="pl-4 pr-2 pt-2 space-y-1">
-                        <a href="{{ route('ppid.index') }}" class="flex items-center gap-3 rounded-lg px-4 py-2.5 text-sm font-medium transition-colors duration-200 {{ request()->is('ppid*') ? 'text-blue-600 dark:text-blue-400 bg-blue-50/50 dark:bg-blue-900/20' : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-800' }}">
+                        <a href="{{ route('ppid.index') }}" class="flex items-center gap-3 rounded-lg px-4 py-2.5 text-sm font-medium transition-colors duration-200 {{ request()->is('info-ppid*') ? 'text-blue-600 dark:text-blue-400 bg-blue-50/50 dark:bg-blue-900/20' : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-800' }}">
                             <span class="w-1.5 h-1.5 rounded-full {{ request()->is('ppid*') ? 'bg-blue-600 dark:bg-blue-400' : 'bg-gray-400' }}"></span>
                             <span>Informasi PPID</span>
                         </a>
@@ -429,14 +468,14 @@
                     </div>
                 </div>
 
-                <a href="{{ route('news.index') }}" class="flex items-center gap-3 rounded-lg px-4 py-3 text-base font-medium transition-all duration-200 {{ request()->is('news*') ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800' }}">
+                <a href="{{ route('berita.index') }}" class="flex items-center gap-3 rounded-lg px-4 py-3 text-base font-medium transition-all duration-200 {{ request()->is('berita*') ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800' }}">
                     <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
                     </svg>
                     <span>Berita</span>
                 </a>
 
-                <a href="{{ route('posts.index') }}" class="flex items-center gap-3 rounded-lg px-4 py-3 text-base font-medium transition-all duration-200 {{ request()->is('posts*') ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800' }}">
+                <a href="{{ route('postingan.index') }}" class="flex items-center gap-3 rounded-lg px-4 py-3 text-base font-medium transition-all duration-200 {{ request()->is('postingan*') ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800' }}">
                     <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                     </svg>
@@ -485,6 +524,51 @@
                         </a>
                     </div>
                 </div>
+
+                @auth
+                    <div class="border-t border-gray-200 dark:border-gray-700 pt-4 mt-4">
+                        @if(auth()->user()->isDashboardUser())
+                            {{-- Admin/Secondary: Link ke Dashboard --}}
+                            <a href="{{ route('dashboard') }}" data-turbo="false"
+                               class="flex items-center gap-3 rounded-lg px-4 py-3 text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-200">
+                                <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                                </svg>
+                                <span>Dashboard</span>
+                            </a>
+                            <form action="{{ route('logout') }}" method="POST" data-turbo="false">
+                                @csrf
+                                <button type="submit" class="w-full flex items-center gap-3 rounded-lg px-4 py-3 text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-200">
+                                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                                    </svg>
+                        <span>Logout</span>
+                                </button>
+                            </form>
+                        @else
+                            {{-- Pegawai: Tombol Keluar ke portal pegawai --}}
+                            <a href="{{ route('pegawai.logout.get') }}" data-turbo="false"
+                               class="block rounded-lg px-4 py-2.5 text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800">
+                                <span class="flex items-center gap-3">
+                                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                                    </svg>
+                                    <span>Keluar</span>
+                            </a>
+                        @endif
+                    </div>
+                @else
+                    <div class="border-t border-gray-200 dark:border-gray-700 pt-4 mt-4">
+                        <a href="{{ route('login') }}" data-turbo="false"
+                           class="flex items-center gap-3 rounded-lg px-4 py-3 text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-200">
+                            <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                            </svg>
+                            <span>Kelola</span>
+                        </a>
+                    </div>
+                @endauth
             </div>
         </div>
     </nav>

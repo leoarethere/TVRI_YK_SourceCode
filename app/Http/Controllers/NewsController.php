@@ -79,12 +79,12 @@ class NewsController extends Controller
     // Redirect helper untuk kategori
     public function category(NewsCategory $category)
     {
-        return redirect()->route('news.index', ['category' => $category->slug]);
+        return redirect()->route('berita.index', ['category' => $category->slug]);
     }
 
     // Redirect helper untuk author
     public function author(User $user)
     {
-        return redirect()->route('news.index', ['author' => $user->username]);
+        return redirect()->route('berita.index', ['author' => $user->username]);
     }
 }

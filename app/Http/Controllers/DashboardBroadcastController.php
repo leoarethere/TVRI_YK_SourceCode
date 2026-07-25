@@ -119,12 +119,12 @@ class DashboardBroadcastController extends Controller
             ? 'Penyiaran berhasil dipublikasikan!' 
             : 'Penyiaran disimpan sebagai draft!';
 
-        return redirect()->route('dashboard.broadcasts.index')
+        return redirect()->route('dashboard.penyiaran.index')
                         ->with('success', $message);
     }
     public function show(Broadcast $broadcast): RedirectResponse
     {
-        return redirect()->route('dashboard.broadcasts.edit', $broadcast);
+        return redirect()->route('dashboard.penyiaran.edit', $broadcast);
     }
 
     public function edit(Broadcast $broadcast): View
@@ -196,7 +196,7 @@ class DashboardBroadcastController extends Controller
             ? 'Penyiaran berhasil diperbarui!' 
             : 'Perubahan berhasil disimpan sebagai draft!';
 
-        return redirect()->route('dashboard.broadcasts.index')
+        return redirect()->route('dashboard.penyiaran.index')
                         ->with('success', $message);
     }
 
@@ -211,11 +211,11 @@ class DashboardBroadcastController extends Controller
             
             $broadcast->delete();
 
-            return redirect()->route('dashboard.broadcasts.index')
+            return redirect()->route('dashboard.penyiaran.index')
                              ->with('success', 'Penyiaran "' . $broadcastTitle . '" berhasil dihapus! 🗑️');
 
         } catch (\Exception $e) {
-            return redirect()->route('dashboard.broadcasts.index')
+            return redirect()->route('dashboard.penyiaran.index')
                              ->with('error', 'Gagal menghapus penyiaran: ' . $e->getMessage());
         }
     }

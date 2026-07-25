@@ -11,8 +11,8 @@
         initDropdowns() {
             // Set dropdown terbuka jika route aktif saat sidebar terbuka
             if (this.isSidebarOpen) {
-                this.dropdowns.publikasi = {{ request()->is('dashboard/broadcasts*', 'dashboard/jadwal-acara*') ? 'true' : 'false' }};
-                this.dropdowns.layanan = {{ request()->is('dashboard/ppid*', 'dashboard/info-rb*', 'dashboard/info-magang*', 'dashboard/info-magang-faq*', 'dashboard/info-kunjungan*', 'dashboard/info-kunjungan-faq*') ? 'true' : 'false' }};
+                this.dropdowns.publikasi = {{ request()->is('dashboard/penyiaran*', 'dashboard/jadwal-acara*') ? 'true' : 'false' }};
+                this.dropdowns.layanan = {{ request()->is('dashboard/ppid*', 'dashboard/info-rb*', 'dashboard/info-magang*', 'dashboard/info-magang-faq*', 'dashboard/info-kunjungan*', 'dashboard/info-kunjungan-faq*', 'dashboard/akses-informasi*') ? 'true' : 'false' }};
                 this.dropdowns.tentang = {{ request()->is('dashboard/sejarah*', 'dashboard/visi-misi*', 'dashboard/prestasi*', 'dashboard/tugas-fungsi*', 'dashboard/himne-tvri*') ? 'true' : 'false' }};
             }
         },
@@ -87,8 +87,8 @@
 
                 {{-- Dropdown Publikasi --}}
                 @php 
-                    $isPublikasiActive = request()->is('dashboard/broadcasts*', 'dashboard/jadwal-acara*');
-                    $isBroadcastsActive = request()->is('dashboard/broadcasts*');
+                    $isPublikasiActive = request()->is('dashboard/penyiaran*', 'dashboard/jadwal-acara*');
+                    $isBroadcastsActive = request()->is('dashboard/penyiaran*');
                     $isJadwalActive = request()->is('dashboard/jadwal-acara*');
                 @endphp
                 
@@ -147,7 +147,7 @@
                         x-cloak>
                         
                         <li>
-                            <a href="{{ route('dashboard.broadcasts.index') }}" 
+                            <a href="{{ route('dashboard.penyiaran.index') }}" 
                             class="flex items-center gap-3 py-2 px-3 text-sm rounded-md transition-colors duration-200 group"
                             :class="{
                                 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white font-medium': {{ $isBroadcastsActive ? 'true' : 'false' }},
@@ -178,7 +178,7 @@
                 {{-- Dropdown Layanan --}}
                 @php 
                     // [UPDATE] Tambahkan 'dashboard/info-kunjungan-faq*' agar sidebar tetap terbuka
-                    $isLayananActive = request()->is('dashboard/ppid*', 'dashboard/info-rb*', 'dashboard/info-magang*', 'dashboard/info-magang-faq*', 'dashboard/info-kunjungan*', 'dashboard/info-kunjungan-faq*');
+                    $isLayananActive = request()->is('dashboard/ppid*', 'dashboard/info-rb*', 'dashboard/info-magang*', 'dashboard/info-magang-faq*', 'dashboard/info-kunjungan*', 'dashboard/info-kunjungan-faq*', 'dashboard/akses-informasi*');
                 @endphp
                 <li class="relative">
                     
@@ -313,11 +313,12 @@
                                 FAQ Kunjungan
                             </a>
                         </li>
+                        
                     </ul>
                 </li>
 
                 {{-- Berita --}}
-                <x-sidebar-item href="{{ route('dashboard.news.index') }}" :active="request()->routeIs('dashboard.news*')">
+                <x-sidebar-item href="{{ route('dashboard.berita.index') }}" :active="request()->routeIs('dashboard.berita*')">
                     <x-slot:icon>
                         <svg class="w-6 h-6 flex-shrink-0 transition-transform duration-300 group-hover:scale-110" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
@@ -327,7 +328,7 @@
                 </x-sidebar-item>
 
                 {{-- Postingan --}}
-                <x-sidebar-item href="{{ url('/dashboard/posts') }}" :active="request()->is('dashboard/posts*')">
+                <x-sidebar-item href="{{ route('dashboard.postingan.index') }}" :active="request()->is('dashboard/postingan*')">
                     <x-slot:icon>
                         <svg class="w-6 h-6 flex-shrink-0 transition-transform duration-300 group-hover:scale-110" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
@@ -489,7 +490,7 @@
                 </x-sidebar-item>
 
                 {{-- MANAJEMEN KOMENTAR --}}
-                <x-sidebar-item href="{{ route('dashboard.comments.index') }}" :active="request()->is('dashboard/comments*')">
+                <x-sidebar-item href="{{ route('dashboard.komentar.index') }}" :active="request()->is('dashboard/komentar*')">
                     <x-slot:icon>
                         <svg class="w-6 h-6 flex-shrink-0 transition-transform duration-300 group-hover:scale-110" 
                              fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -513,13 +514,25 @@
                     </x-slot:icon>
                     Sosial Media
                 </x-sidebar-item>
+
+                {{-- HUBUNGI KAMI --}}
                 <x-sidebar-item href="{{ route('dashboard.contact-info.index') }}" :active="request()->routeIs('dashboard.contact-info*')">
                     <x-slot:icon>
-                        <svg class="w-5 h-5 transition duration-75" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="w-6 h-6 flex-shrink-0 transition-transform duration-300 group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
                         </svg>
                     </x-slot:icon>
                     Hubungi Kami
+                </x-sidebar-item>
+
+                {{-- AKSES INFORMASI --}}
+                <x-sidebar-item href="{{ route('dashboard.akses-informasi.index') }}" :active="request()->routeIs('dashboard.akses-informasi*')">
+                    <x-slot:icon>
+                        <svg class="w-6 h-6 flex-shrink-0 transition-transform duration-300 group-hover:scale-110" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/>
+                        </svg>
+                    </x-slot:icon>
+                    Akses Informasi
                 </x-sidebar-item>
             </ul>
         </div>
@@ -545,7 +558,7 @@
                       x-transition:leave="transition ease-in duration-800"
                       x-transition:leave-start="opacity-100 translate-x-0"
                       x-transition:leave-end="opacity-0 -translate-x-2">
-                    Collapse
+                    Ciutkan
                 </span>
             </button>
         </div>

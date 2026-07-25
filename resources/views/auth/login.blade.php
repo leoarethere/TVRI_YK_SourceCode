@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ $title ?? 'Login' }} - TVRI D.I. Yogyakarta</title>
+    <title>{{ $title ?? 'Masuk' }} - TVRI D.I. Yogyakarta</title>
     
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     
@@ -185,7 +185,7 @@
         {{-- BAGIAN 1: Banner Image (Tampil Full di Desktop, Sembunyi di Mobile) --}}
         <div class="login-banner relative h-full w-full bg-gray-100 dark:bg-gray-800">
             <img src="{{ asset('img/loginbanner.jpeg') }}" 
-                 alt="TVRI D.I. Yogyakarta Login Banner" 
+                 alt="Banner Login TVRI D.I. Yogyakarta" 
                  class="absolute inset-0 h-full w-full object-cover"
                  loading="lazy" />
             
@@ -327,6 +327,41 @@
                         </button>
                     </div>
 
+                    {{-- Divider & Tombol Portal Pegawai --}}
+                    {{-- Selalu tampil sebagai link kecil, lebih menonjol jika ada flag show_pegawai_link --}}
+                    <div class="relative my-2">
+                        <div class="absolute inset-0 flex items-center">
+                            <div class="w-full border-t border-gray-200 dark:border-gray-700"></div>
+                        </div>
+                        <div class="relative flex justify-center text-xs">
+                            <span class="bg-white dark:bg-gray-900 px-3 text-gray-400 dark:text-gray-500">atau</span>
+                        </div>
+                    </div>
+
+                    @if(session('show_pegawai_link'))
+                    {{-- Versi menonjol: muncul saat pegawai salah portal --}}
+                    <div class="flex justify-center mb-2">
+                        <a href="{{ route('pegawai.login') }}"
+                           class="w-full max-w-md flex items-center justify-center gap-2 px-8 py-2 text-sm font-medium text-blue-700 bg-blue-50 border border-blue-200 rounded-lg hover:bg-blue-100 dark:bg-blue-900/20 dark:text-blue-400 dark:border-blue-800 dark:hover:bg-blue-900/40 transition-colors duration-300">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/>
+                            </svg>
+                            Masuk sebagai Pegawai
+                        </a>
+                    </div>
+                    @else
+                    {{-- Versi button: selalu tampil sebagai tombol sekunder --}}
+                    <div class="flex justify-center mb-2">
+                        <a href="{{ route('pegawai.login') }}"
+                           class="w-full max-w-md flex items-center justify-center gap-2 px-8 py-2 text-sm font-medium text-gray-700 bg-gray-100 border border-gray-200 rounded-lg hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-600 transition-colors duration-300">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/>
+                            </svg>
+                            Masuk ke Portal Pegawai
+                        </a>
+                    </div>
+                    @endif
+
                     {{-- Link Kembali ke Homepage --}}
                     <div class="flex justify-start">
                         <a href="{{ route('home') }}" 
@@ -339,7 +374,7 @@
                 {{-- Footer --}}
                 <div class="mt-6 text-center text-xs text-gray-400 dark:text-gray-500">
                     <p>Copyright {{ date('Y') }} Lembaga Penyiaran Publik TVRI D.I. Yogyakarta</p>
-                    <p class="mt-1">All rights reserved.</p>
+                    <p class="mt-1">Hak cipta dilindungi undang-undang.</p>
                 </div>
             </div>
         </div>

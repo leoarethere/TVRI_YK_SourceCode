@@ -23,7 +23,7 @@
 
         {{-- BAGIAN FILTER & SORTING (Template dari PPID) --}}
         <div class="mb-6">
-            <form method="GET" action="{{ route('news.index') }}" class="mx-auto">
+            <form method="GET" action="{{ route('berita.index') }}" class="mx-auto">
                 <div class="flex flex-col md:flex-row justify-between items-center gap-4 p-4 bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700">
                     
                     {{-- Judul Seksi --}}
@@ -105,7 +105,7 @@
                         @endif
                     </div>
                     
-                    <a href="{{ route('news.index') }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-red-700 bg-red-100 rounded-full hover:bg-red-200 dark:bg-red-900/30 dark:text-red-300 dark:hover:bg-red-900/50 transition-colors">
+                    <a href="{{ route('berita.index') }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-red-700 bg-red-100 rounded-full hover:bg-red-200 dark:bg-red-900/30 dark:text-red-300 dark:hover:bg-red-900/50 transition-colors">
                         <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                         </svg>
@@ -126,7 +126,7 @@
                         <div class="group relative flex flex-col bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
                             
                             {{-- THUMBNAIL IMAGE --}}
-                            <a href="{{ route('news.show', $item->slug) }}" class="relative w-full aspect-video overflow-hidden block bg-gray-100 dark:bg-gray-900">
+                            <a href="{{ route('berita.show', $item->slug) }}" class="relative w-full aspect-video overflow-hidden block bg-gray-100 dark:bg-gray-900">
                                 @if($item->featured_image && Storage::exists($item->featured_image))
                                     <img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" 
                                          src="{{ Storage::url($item->featured_image) }}" 
@@ -149,10 +149,10 @@
                                     </div>
                                 @endif
                                 
-                                {{-- Badge Kategori --}}
+                                 {{-- Badge Kategori --}}
                                 @if($item->newsCategory)
                                     <div class="absolute top-3 left-3 z-10">
-                                        <span class="inline-flex items-center px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-blue-600 text-white shadow-md backdrop-blur-md bg-opacity-95">
+                                        <span class="inline-flex items-center px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider text-white shadow-md backdrop-blur-md bg-opacity-95 {{ $item->newsCategory->colorSolidClasses }}">
                                             {{ $item->newsCategory->name }}
                                         </span>
                                     </div>
@@ -185,7 +185,7 @@
 
                                     {{-- Judul --}}
                                     <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-2 leading-tight group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors line-clamp-2">
-                                        <a href="{{ route('news.show', $item->slug) }}">
+                                        <a href="{{ route('berita.show', $item->slug) }}">
                                             {{ $item->title }}
                                         </a>
                                     </h3>
@@ -198,7 +198,7 @@
 
                                 {{-- Action Buttons --}}
                                 <div class="pt-4 border-t border-gray-100 dark:border-gray-700">
-                                    <a href="{{ route('news.show', $item->slug) }}" class="inline-flex items-center text-sm font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 transition-colors underline group/link">
+                                    <a href="{{ route('berita.show', $item->slug) }}" class="inline-flex items-center text-sm font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 transition-colors underline group/link">
                                         Lihat Selengkapnya
                                     </a>
                                 </div>
@@ -223,7 +223,7 @@
                         @endif
                     </p>
                     @if(request()->hasAny(['search', 'category', 'sort']))
-                        <a href="{{ route('news.index') }}" class="inline-flex items-center px-6 py-2.5 text-sm font-medium text-white bg-blue-600 rounded-xl hover:bg-blue-700 transition-colors shadow-sm">
+                        <a href="{{ route('berita.index') }}" class="inline-flex items-center px-6 py-2.5 text-sm font-medium text-white bg-blue-600 rounded-xl hover:bg-blue-700 transition-colors shadow-sm">
                             Reset Pencarian
                         </a>
                     @endif

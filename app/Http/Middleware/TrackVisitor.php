@@ -28,8 +28,12 @@ class TrackVisitor
                 $ip = $request->ip();
                 $date = now()->toDateString();
 
+                // Anonimisasi IP menggunakan Hashing (SHA-256) + Salt dari App Key
+                // Ini memastikan IP asli tidak bisa dibaca balik (irreversible) demi kepatuhan Privasi Data
+                $anonymizedIp = hash('sha256', $ip . config('app.key'));
+
                 $visitor = Visitor::firstOrCreate(
-                    ['ip_address' => $ip, 'date' => $date],
+                    ['ip_address' => $anonymizedIp, 'date' => $date],
                     ['hits' => 0] // Default 0 sebelum ditambah
                 );
 

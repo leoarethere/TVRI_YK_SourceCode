@@ -18,7 +18,7 @@ class DashboardAccessTest extends TestCase
 
     public function test_non_admin_user_gets_403(): void
     {
-        $user = User::factory()->create(['is_admin' => false]);
+        $user = User::factory()->create(['role' => 'pegawai']);
         $response = $this->actingAs($user)->get(route('dashboard'));
         $response->assertStatus(403);
     }
@@ -32,12 +32,12 @@ class DashboardAccessTest extends TestCase
 
     public function test_non_admin_cannot_access_admin_routes(): void
     {
-        $user = User::factory()->create(['is_admin' => false]);
+        $user = User::factory()->create(['role' => 'pegawai']);
 
         $routes = [
-            route('dashboard.posts.index'),
-            route('dashboard.news.index'),
-            route('dashboard.broadcasts.index'),
+            route('dashboard.postingan.index'),
+            route('dashboard.berita.index'),
+            route('dashboard.penyiaran.index'),
             route('dashboard.users.index'),
             route('dashboard.visi-misi.index'),
             route('dashboard.sejarah.index'),
@@ -54,8 +54,8 @@ class DashboardAccessTest extends TestCase
         $admin = User::factory()->admin()->create();
 
         $routes = [
-            route('dashboard.posts.index'),
-            route('dashboard.news.index'),
+            route('dashboard.postingan.index'),
+            route('dashboard.berita.index'),
             route('dashboard.users.index'),
         ];
 

@@ -132,7 +132,7 @@ class DashboardNewsController extends Controller
         $message = $validated['status'] === 'published' ? 'Berita dipublikasikan!' : 'Berita disimpan sebagai draft!';
         
         // Sesuaikan route redirect ini nanti
-        return redirect()->route('dashboard.news.index')->with('success', $message);
+        return redirect()->route('dashboard.berita.index')->with('success', $message);
     }
 
     /**
@@ -149,7 +149,7 @@ class DashboardNewsController extends Controller
      */
     public function show(News $news)
     {
-        return redirect()->route('news.show', $news);
+        return redirect()->route('berita.show', $news);
     }
 
     /**
@@ -225,7 +225,7 @@ class DashboardNewsController extends Controller
                 ->withInput();
         }
 
-        return redirect()->route('dashboard.news.index')->with('success', 'Berita berhasil diperbarui!');
+        return redirect()->route('dashboard.berita.index')->with('success', 'Berita berhasil diperbarui!');
     }
 
     /**
@@ -238,9 +238,9 @@ class DashboardNewsController extends Controller
                 Storage::disk('public')->delete($news->featured_image);
             }
             $news->delete();
-            return redirect()->route('dashboard.news.index')->with('success', 'Berita berhasil dihapus!');
+            return redirect()->route('dashboard.berita.index')->with('success', 'Berita berhasil dihapus!');
         } catch (\Exception $e) {
-            return redirect()->route('dashboard.news.index')->with('error', 'Gagal menghapus berita.');
+            return redirect()->route('dashboard.berita.index')->with('error', 'Gagal menghapus berita.');
         }
     }
 }

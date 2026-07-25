@@ -43,13 +43,13 @@ class FrontendTest extends TestCase
 
     public function test_posts_page_loads(): void
     {
-        $response = $this->get(route('posts.index'));
+        $response = $this->get(route('postingan.index'));
         $response->assertStatus(200);
     }
 
     public function test_posts_page_shows_posts(): void
     {
-        $response = $this->get(route('posts.index'));
+        $response = $this->get(route('postingan.index'));
         $response->assertViewHas('posts');
         $this->assertGreaterThan(0, $response->viewData('posts')->total());
     }
@@ -57,7 +57,7 @@ class FrontendTest extends TestCase
     public function test_post_detail_page_loads(): void
     {
         $post = Post::first();
-        $response = $this->get(route('posts.show', $post));
+        $response = $this->get(route('postingan.show', $post));
         $response->assertStatus(200);
         $response->assertSee($post->title);
     }
@@ -65,19 +65,19 @@ class FrontendTest extends TestCase
     public function test_post_detail_has_seo_meta(): void
     {
         $post = Post::first();
-        $response = $this->get(route('posts.show', $post));
+        $response = $this->get(route('postingan.show', $post));
         $response->assertSee('<title>', false);
     }
 
     public function test_news_page_loads(): void
     {
-        $response = $this->get(route('news.index'));
+        $response = $this->get(route('berita.index'));
         $response->assertStatus(200);
     }
 
     public function test_news_page_shows_news(): void
     {
-        $response = $this->get(route('news.index'));
+        $response = $this->get(route('berita.index'));
         $response->assertViewHas('news');
         $this->assertGreaterThan(0, $response->viewData('news')->total());
     }
@@ -85,7 +85,7 @@ class FrontendTest extends TestCase
     public function test_news_detail_page_loads(): void
     {
         $news = News::first();
-        $response = $this->get(route('news.show', $news));
+        $response = $this->get(route('berita.show', $news));
         $response->assertStatus(200);
         $response->assertSee($news->title);
     }
@@ -93,19 +93,19 @@ class FrontendTest extends TestCase
     public function test_news_detail_has_structured_data(): void
     {
         $news = News::first();
-        $response = $this->get(route('news.show', $news));
+        $response = $this->get(route('berita.show', $news));
         $response->assertSee('NewsArticle');
     }
 
     public function test_broadcasts_page_loads(): void
     {
-        $response = $this->get(route('broadcasts.index'));
+        $response = $this->get(route('penyiaran.index'));
         $response->assertStatus(200);
     }
 
     public function test_broadcasts_page_shows_broadcasts(): void
     {
-        $response = $this->get(route('broadcasts.index'));
+        $response = $this->get(route('penyiaran.index'));
         $response->assertViewHas('broadcasts');
         $this->assertGreaterThan(0, $response->viewData('broadcasts')->total());
     }
@@ -162,9 +162,9 @@ class FrontendTest extends TestCase
     {
         $routes = [
             '/',
-            route('posts.index'),
-            route('news.index'),
-            route('broadcasts.index'),
+            route('postingan.index'),
+            route('berita.index'),
+            route('penyiaran.index'),
             route('visi-misi'),
             route('sejarah'),
             route('ppid.index'),

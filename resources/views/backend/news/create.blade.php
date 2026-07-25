@@ -27,7 +27,7 @@
         </div>
 
         <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 overflow-hidden">
-            <form action="{{ route('dashboard.news.store') }}" method="POST" enctype="multipart/form-data">
+            <form action="{{ route('dashboard.berita.store') }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 <div class="p-6 space-y-6">
                     {{-- Judul --}}

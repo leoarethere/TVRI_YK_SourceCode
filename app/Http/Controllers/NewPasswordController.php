@@ -11,18 +11,18 @@ use Illuminate\Support\Str;
 class NewPasswordController extends Controller
 {
     /**
-     * Display the password reset view.
+     * Menampilkan tampilan reset kata sandi.
      */
     public function create(Request $request)
     {
         return view('auth.reset-password', [
             'request' => $request,
-            'title' => 'Reset Password'
+            'title' => 'Reset Kata Sandi'
         ]);
     }
 
     /**
-     * Handle an incoming new password request.
+     * Menangani permintaan kata sandi baru yang masuk.
      */
     public function store(Request $request)
     {

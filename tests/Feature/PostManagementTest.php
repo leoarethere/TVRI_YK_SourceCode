@@ -27,21 +27,21 @@ class PostManagementTest extends TestCase
     {
         Post::factory()->count(3)->create(['category_id' => $this->category->id]);
 
-        $response = $this->actingAs($this->admin)->get(route('dashboard.posts.index'));
+        $response = $this->actingAs($this->admin)->get(route('dashboard.postingan.index'));
         $response->assertStatus(200);
         $response->assertViewHas('posts');
     }
 
     public function test_admin_can_view_create_post_form(): void
     {
-        $response = $this->actingAs($this->admin)->get(route('dashboard.posts.create'));
+        $response = $this->actingAs($this->admin)->get(route('dashboard.postingan.create'));
         $response->assertStatus(200);
         $response->assertViewHas('categories');
     }
 
     public function test_admin_can_create_a_published_post(): void
     {
-        $response = $this->actingAs($this->admin)->post(route('dashboard.posts.store'), [
+        $response = $this->actingAs($this->admin)->post(route('dashboard.postingan.store'), [
             'title' => 'Test Post Title',
             'slug' => 'test-post-title',
             'category_id' => $this->category->id,
@@ -49,7 +49,7 @@ class PostManagementTest extends TestCase
             'action' => 'publish',
         ]);
 
-        $response->assertRedirect(route('dashboard.posts.index'));
+        $response->assertRedirect(route('dashboard.postingan.index'));
         $response->assertSessionHas('success');
 
         $this->assertDatabaseHas('posts', [
@@ -62,7 +62,7 @@ class PostManagementTest extends TestCase
 
     public function test_admin_can_create_a_draft_post(): void
     {
-        $response = $this->actingAs($this->admin)->post(route('dashboard.posts.store'), [
+        $response = $this->actingAs($this->admin)->post(route('dashboard.postingan.store'), [
             'title' => 'Draft Post',
             'slug' => 'draft-post',
             'category_id' => $this->category->id,
@@ -70,7 +70,7 @@ class PostManagementTest extends TestCase
             'action' => 'draft',
         ]);
 
-        $response->assertRedirect(route('dashboard.posts.index'));
+        $response->assertRedirect(route('dashboard.postingan.index'));
         $this->assertDatabaseHas('posts', [
             'title' => 'Draft Post',
             'status' => 'draft',
@@ -79,7 +79,7 @@ class PostManagementTest extends TestCase
 
     public function test_store_validates_required_fields(): void
     {
-        $response = $this->actingAs($this->admin)->post(route('dashboard.posts.store'), []);
+        $response = $this->actingAs($this->admin)->post(route('dashboard.postingan.store'), []);
         $response->assertSessionHasErrors(['title', 'slug', 'category_id', 'body', 'action']);
     }
 
@@ -87,7 +87,7 @@ class PostManagementTest extends TestCase
     {
         $post = Post::factory()->create(['category_id' => $this->category->id]);
 
-        $response = $this->actingAs($this->admin)->get(route('dashboard.posts.edit', $post));
+        $response = $this->actingAs($this->admin)->get(route('dashboard.postingan.edit', $post));
         $response->assertStatus(200);
         $response->assertViewHas('post');
         $response->assertViewHas('categories');
@@ -97,7 +97,7 @@ class PostManagementTest extends TestCase
     {
         $post = Post::factory()->create(['category_id' => $this->category->id]);
 
-        $response = $this->actingAs($this->admin)->put(route('dashboard.posts.update', $post), [
+        $response = $this->actingAs($this->admin)->put(route('dashboard.postingan.update', $post), [
             'title' => 'Updated Title',
             'slug' => 'updated-title',
             'category_id' => $this->category->id,
@@ -105,7 +105,7 @@ class PostManagementTest extends TestCase
             'action' => 'publish',
         ]);
 
-        $response->assertRedirect(route('dashboard.posts.index'));
+        $response->assertRedirect(route('dashboard.postingan.index'));
         $this->assertDatabaseHas('posts', [
             'id' => $post->id,
             'title' => 'Updated Title',
@@ -117,7 +117,7 @@ class PostManagementTest extends TestCase
         $post1 = Post::factory()->create(['category_id' => $this->category->id]);
         $post2 = Post::factory()->create(['category_id' => $this->category->id]);
 
-        $response = $this->actingAs($this->admin)->put(route('dashboard.posts.update', $post2), [
+        $response = $this->actingAs($this->admin)->put(route('dashboard.postingan.update', $post2), [
             'title' => $post2->title,
             'slug' => $post1->slug,
             'category_id' => $this->category->id,
@@ -132,15 +132,15 @@ class PostManagementTest extends TestCase
     {
         $post = Post::factory()->create(['category_id' => $this->category->id]);
 
-        $response = $this->actingAs($this->admin)->delete(route('dashboard.posts.destroy', $post));
+        $response = $this->actingAs($this->admin)->delete(route('dashboard.postingan.destroy', $post));
 
-        $response->assertRedirect(route('dashboard.posts.index'));
-        $this->assertDatabaseHas('posts', ['id' => $post->id, 'deleted_at' => $post->fresh()->deleted_at]);
+        $response->assertRedirect(route('dashboard.postingan.index'));
+        $this->assertDatabaseMissing('posts', ['id' => $post->id]);
     }
 
     public function test_guest_cannot_access_post_management(): void
     {
-        $response = $this->get(route('dashboard.posts.index'));
+        $response = $this->get(route('dashboard.postingan.index'));
         $response->assertRedirect(route('login'));
     }
 
@@ -148,7 +148,7 @@ class PostManagementTest extends TestCase
     {
         Post::factory()->count(5)->create(['category_id' => $this->category->id]);
 
-        $response = $this->get(route('posts.index'));
+        $response = $this->get(route('postingan.index'));
         $response->assertStatus(200);
         $response->assertViewHas('posts');
     }
@@ -158,7 +158,7 @@ class PostManagementTest extends TestCase
         Post::factory()->create(['category_id' => $this->category->id, 'status' => 'published']);
         Post::factory()->draft()->create(['category_id' => $this->category->id]);
 
-        $response = $this->get(route('posts.index'));
+        $response = $this->get(route('postingan.index'));
         $response->assertStatus(200);
 
         $posts = $response->viewData('posts');
@@ -169,7 +169,7 @@ class PostManagementTest extends TestCase
     {
         $post = Post::factory()->create(['category_id' => $this->category->id, 'views' => 0]);
 
-        $this->get(route('posts.show', $post));
+        $this->get(route('postingan.show', $post));
 
         $this->assertDatabaseHas('posts', [
             'id' => $post->id,

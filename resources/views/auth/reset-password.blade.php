@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ $title ?? 'Reset Password' }} - TVRI D.I. Yogyakarta</title>
+    <title>{{ $title ?? 'Reset Kata Sandi' }} - TVRI D.I. Yogyakarta</title>
     
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     
@@ -136,7 +136,7 @@
         {{-- BAGIAN 1: Banner Image --}}
         <div class="login-banner relative h-full w-full bg-gray-100 dark:bg-gray-800">
             <img src="{{ asset('img/loginbanner.jpeg') }}" 
-                 alt="TVRI D.I. Yogyakarta Login Banner" 
+                 alt="Banner Login TVRI D.I. Yogyakarta" 
                  class="absolute inset-0 h-full w-full object-cover" />
             
             {{-- Overlay Gradient --}}
@@ -250,7 +250,7 @@
                 {{-- Footer --}}
                 <div class="mt-6 text-center text-xs text-gray-400 dark:text-gray-500">
                     <p>Copyright {{ date('Y') }} Lembaga Penyiaran Publik TVRI D.I. Yogyakarta</p>
-                    <p class="mt-1">All rights reserved.</p>
+                    <p class="mt-1">Hak cipta dilindungi undang-undang.</p>
                 </div>
             </div>
         </div>

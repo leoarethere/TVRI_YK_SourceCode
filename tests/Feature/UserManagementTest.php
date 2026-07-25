@@ -34,7 +34,7 @@ class UserManagementTest extends TestCase
             'email' => 'newuser@example.com',
             'password' => 'password123',
             'password_confirmation' => 'password123',
-            'is_admin' => true,
+            'role' => 'secondary',
         ]);
 
         $response->assertRedirect(route('dashboard.users.index'));
@@ -68,7 +68,7 @@ class UserManagementTest extends TestCase
             'name' => 'Updated Name',
             'username' => $user->username,
             'email' => $user->email,
-            'is_admin' => $user->is_admin,
+            'role' => $user->role,
         ]);
 
         $response->assertRedirect(route('dashboard.users.index'));
@@ -80,7 +80,7 @@ class UserManagementTest extends TestCase
 
     public function test_admin_can_delete_user(): void
     {
-        $user = User::factory()->create(['is_admin' => false]);
+        $user = User::factory()->create(['role' => 'secondary']);
 
         $response = $this->actingAs($this->admin)->delete(route('dashboard.users.destroy', $user));
         $response->assertRedirect(route('dashboard.users.index'));
@@ -102,7 +102,7 @@ class UserManagementTest extends TestCase
 
     public function test_user_with_content_cannot_be_deleted(): void
     {
-        $author = User::factory()->create(['is_admin' => false]);
+        $author = User::factory()->create(['role' => 'secondary']);
         \App\Models\Post::factory()->create([
             'user_id' => $author->id,
             'category_id' => \App\Models\Category::factory()->create()->id,
@@ -119,12 +119,12 @@ class UserManagementTest extends TestCase
             'name' => $this->admin->name,
             'username' => $this->admin->username,
             'email' => $this->admin->email,
-            'is_admin' => false,
+            'role' => 'secondary',
         ]);
 
         $this->assertDatabaseHas('users', [
             'id' => $this->admin->id,
-            'is_admin' => true,
+            'role' => 'admin',
         ]);
     }
 }

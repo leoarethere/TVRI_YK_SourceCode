@@ -26,7 +26,7 @@ class UserSeeder extends Seeder
                 'email' => 'leonardounofficialz@gmail.com',
                 'email_verified_at' => now(),
                 'password' => Hash::make('12345678'),
-                'is_admin' => 1, // Leo sebagai Akun Utama
+                'role' => 'admin', // Leo sebagai Akun Utama
             ]
         );
         

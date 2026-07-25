@@ -30,7 +30,7 @@
         </div>
 
         <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 overflow-hidden">
-            <form action="{{ route('dashboard.broadcasts.store') }}" method="POST" enctype="multipart/form-data">
+            <form action="{{ route('dashboard.penyiaran.store') }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 
                 <div class="p-6 space-y-6">
@@ -184,7 +184,7 @@
                 
                 {{-- Action Buttons --}}
                 <div class="flex items-center justify-between p-6 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700/50 rounded-b-lg">
-                    <a href="{{ route('dashboard.broadcasts.index') }}" class="px-5 py-2.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-600 transition-colors">
+                    <a href="{{ route('dashboard.penyiaran.index') }}" class="px-5 py-2.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-600 transition-colors">
                         Batal
                     </a>
                     <div class="flex gap-3">

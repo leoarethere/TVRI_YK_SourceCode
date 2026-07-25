@@ -39,7 +39,7 @@
         <div class="mb-8 space-y-6">
             
             {{-- Form Pencarian Standard --}}
-            <form method="GET" action="{{ route('broadcasts.index') }}" class="mx-auto">
+            <form method="GET" action="{{ route('penyiaran.index') }}" class="mx-auto">
                 {{-- Preserve Category if exists --}}
                 @if(request('category'))
                     <input type="hidden" name="category" value="{{ request('category') }}">
@@ -73,7 +73,7 @@
                 <div class="absolute -left-4 top-0 bottom-0 w-12 bg-gradient-to-r from-gray-50 dark:from-gray-900 to-transparent z-10 pointer-events-none md:hidden"></div>
                 <div class="overflow-x-auto scrollbar-hide -mx-4 px-4 lg:mx-0 lg:px-0">
                     <nav class="flex gap-2 lg:gap-3 pb-2" style="min-width: min-content;">
-                        <a href="{{ route('broadcasts.index') }}"
+                        <a href="{{ route('penyiaran.index') }}"
                            class="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-full transition-all duration-200 whitespace-nowrap border shadow-sm
                            {{ !request('category') 
                                ? 'bg-blue-600 border-blue-600 text-white hover:bg-blue-700' 
@@ -82,7 +82,7 @@
                             Semua Kategori
                         </a>
                         @foreach ($categories as $category)
-                        <a href="{{ route('broadcasts.index', ['category' => $category->slug]) }}"
+                        <a href="{{ route('penyiaran.index', ['category' => $category->slug]) }}"
                            class="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-full transition-all duration-200 whitespace-nowrap border shadow-sm
                            {{ request('category') == $category->slug 
                                ? 'bg-blue-600 border-blue-600 text-white hover:bg-blue-700' 
@@ -102,7 +102,7 @@
             @if($broadcasts->count() > 0)
                 <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 lg:gap-6">
                     @foreach ($broadcasts as $broadcast)
-                        <a href="{{ route('broadcasts.show', $broadcast) }}" 
+                        <a href="{{ route('penyiaran.show', $broadcast) }}" 
                            class="group block bg-white dark:bg-gray-800 rounded-2xl overflow-hidden transition-all duration-300 hover:-translate-y-1.5 border border-gray-200 dark:border-gray-700 hover:shadow-lg hover:border-blue-400 dark:hover:border-blue-600">
                             
                             {{-- Poster --}}
@@ -180,7 +180,7 @@
                         @endif
                     </p>
                     @if(request('category') || request('search'))
-                        <a href="{{ route('broadcasts.index') }}" class="inline-flex items-center px-6 py-2.5 text-sm font-medium text-white bg-blue-600 rounded-xl hover:bg-blue-700 transition-colors shadow-sm">
+                        <a href="{{ route('penyiaran.index') }}" class="inline-flex items-center px-6 py-2.5 text-sm font-medium text-white bg-blue-600 rounded-xl hover:bg-blue-700 transition-colors shadow-sm">
                             Tampilkan Semua Program
                         </a>
                     @endif

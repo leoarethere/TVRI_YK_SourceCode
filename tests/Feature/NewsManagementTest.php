@@ -26,13 +26,13 @@ class NewsManagementTest extends TestCase
     public function test_admin_can_view_news_list(): void
     {
         News::factory()->count(3)->create(['news_category_id' => $this->category->id]);
-        $response = $this->actingAs($this->admin)->get(route('dashboard.news.index'));
+        $response = $this->actingAs($this->admin)->get(route('dashboard.berita.index'));
         $response->assertStatus(200);
     }
 
     public function test_admin_can_create_news(): void
     {
-        $response = $this->actingAs($this->admin)->post(route('dashboard.news.store'), [
+        $response = $this->actingAs($this->admin)->post(route('dashboard.berita.store'), [
             'title' => 'Breaking News',
             'slug' => 'breaking-news',
             'news_category_id' => $this->category->id,
@@ -40,7 +40,7 @@ class NewsManagementTest extends TestCase
             'action' => 'publish',
         ]);
 
-        $response->assertRedirect(route('dashboard.news.index'));
+        $response->assertRedirect(route('dashboard.berita.index'));
         $this->assertDatabaseHas('news', [
             'title' => 'Breaking News',
             'status' => 'published',
@@ -51,7 +51,7 @@ class NewsManagementTest extends TestCase
     {
         $news = News::factory()->create(['news_category_id' => $this->category->id]);
 
-        $response = $this->actingAs($this->admin)->put(route('dashboard.news.update', $news), [
+        $response = $this->actingAs($this->admin)->put(route('dashboard.berita.update', $news), [
             'title' => 'Updated News',
             'slug' => 'updated-news',
             'news_category_id' => $this->category->id,
@@ -59,7 +59,7 @@ class NewsManagementTest extends TestCase
             'action' => 'publish',
         ]);
 
-        $response->assertRedirect(route('dashboard.news.index'));
+        $response->assertRedirect(route('dashboard.berita.index'));
         $this->assertDatabaseHas('news', ['id' => $news->id, 'title' => 'Updated News']);
     }
 
@@ -67,16 +67,16 @@ class NewsManagementTest extends TestCase
     {
         $news = News::factory()->create(['news_category_id' => $this->category->id]);
 
-        $response = $this->actingAs($this->admin)->delete(route('dashboard.news.destroy', $news));
-        $response->assertRedirect(route('dashboard.news.index'));
-        $this->assertDatabaseHas('news', ['id' => $news->id, 'deleted_at' => $news->fresh()->deleted_at]);
+        $response = $this->actingAs($this->admin)->delete(route('dashboard.berita.destroy', $news));
+        $response->assertRedirect(route('dashboard.berita.index'));
+        $this->assertDatabaseMissing('news', ['id' => $news->id]);
     }
 
     public function test_frontend_news_index_is_public(): void
     {
         News::factory()->count(3)->create(['news_category_id' => $this->category->id]);
 
-        $response = $this->get(route('news.index'));
+        $response = $this->get(route('berita.index'));
         $response->assertStatus(200);
         $response->assertViewHas('news');
     }
@@ -86,7 +86,7 @@ class NewsManagementTest extends TestCase
         News::factory()->create(['news_category_id' => $this->category->id, 'status' => 'published']);
         News::factory()->draft()->create(['news_category_id' => $this->category->id]);
 
-        $response = $this->get(route('news.index'));
+        $response = $this->get(route('berita.index'));
         $newsItems = $response->viewData('news');
         $this->assertEquals(1, $newsItems->total());
     }
@@ -95,7 +95,7 @@ class NewsManagementTest extends TestCase
     {
         $news = News::factory()->create(['news_category_id' => $this->category->id, 'views' => 0]);
 
-        $this->get(route('news.show', $news));
+        $this->get(route('berita.show', $news));
 
         $this->assertDatabaseHas('news', [
             'id' => $news->id,

@@ -65,7 +65,7 @@
             </div>
             
             {{-- Search Form --}}
-            <form action="{{ route('posts.index') }}" method="GET" class="w-full max-w-2xl mx-auto">
+            <form action="{{ route('postingan.index') }}" method="GET" class="w-full max-w-2xl mx-auto">
                 @foreach(['category', 'author', 'sort'] as $param)
                     @if(request($param))
                         <input type="hidden" name="{{ $param }}" value="{{ request($param) }}">

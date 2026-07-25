@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Post;
 use App\Models\User;
+use App\Models\Comment;
 use App\Models\Visitor;
 use Illuminate\Http\Request;
 use App\Models\Banner;
@@ -28,10 +29,13 @@ class DashboardController extends Controller
             'totalBanners'    => Banner::count(),
             'totalUsers'      => User::count(),
             'totalVisitors'   => Visitor::sum('hits'),
-            
+            'totalComments'   => Comment::count(),
+            'pendingComments' => Comment::where('status', 'pending')->count(),
+
             // Statistik Tambahan
             'todayPosts'      => Post::withoutEagerLoads()->whereDate('created_at', today())->count(),
             'todayVisitors'   => Visitor::whereDate('date', today())->sum('hits'),
+            'todayComments'   => Comment::whereDate('created_at', today())->count(),
         ];
 
         // 2. Mengambil Aktivitas Terbaru (5 User Terakhir)

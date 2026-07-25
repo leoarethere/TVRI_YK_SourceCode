@@ -9,17 +9,17 @@ use Illuminate\Support\Facades\Password;
 class PasswordResetLinkController extends Controller
 {
     /**
-     * Display the password reset link request view.
+     * Menampilkan tampilan permintaan tautan reset kata sandi.
      */
     public function create()
     {
         return view('auth.forgot-password', [
-            'title' => 'Lupa Password'
+            'title' => 'Lupa Kata Sandi'
         ]);
     }
 
     /**
-     * Handle an incoming password reset link request.
+     * Menangani permintaan tautan reset kata sandi yang masuk.
      */
     public function store(Request $request)
     {

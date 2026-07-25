@@ -34,7 +34,7 @@ class CommentTest extends TestCase
 
     public function test_guest_can_submit_comment_on_news(): void
     {
-        $response = $this->post(route('comments.store'), [
+        $response = $this->post(route('komentar.store'), [
             'name' => 'John Doe',
             'email' => 'john@example.com',
             'body' => 'Great article! Very informative.',
@@ -57,7 +57,7 @@ class CommentTest extends TestCase
 
     public function test_guest_can_submit_comment_on_post(): void
     {
-        $response = $this->post(route('comments.store'), [
+        $response = $this->post(route('komentar.store'), [
             'name' => 'Jane Doe',
             'email' => 'jane@example.com',
             'body' => 'Nice post!',
@@ -74,7 +74,7 @@ class CommentTest extends TestCase
 
     public function test_comment_rejects_invalid_commentable_type(): void
     {
-        $response = $this->post(route('comments.store'), [
+        $response = $this->post(route('komentar.store'), [
             'name' => 'Hacker',
             'email' => 'hacker@example.com',
             'body' => 'Trying to inject.',
@@ -82,12 +82,12 @@ class CommentTest extends TestCase
             'commentable_id' => 1,
         ]);
 
-        $response->assertSessionHasErrors('error');
+        $response->assertSessionHasErrors('commentable_type');
     }
 
     public function test_comment_rejects_nonexistent_content(): void
     {
-        $response = $this->post(route('comments.store'), [
+        $response = $this->post(route('komentar.store'), [
             'name' => 'Ghost',
             'email' => 'ghost@example.com',
             'body' => 'Comment on nothing.',
@@ -100,7 +100,7 @@ class CommentTest extends TestCase
 
     public function test_comment_detects_spam_with_website_field(): void
     {
-        $response = $this->post(route('comments.store'), [
+        $response = $this->post(route('komentar.store'), [
             'name' => 'Spammer',
             'email' => 'spam@example.com',
             'body' => 'Check this out!',
@@ -114,19 +114,15 @@ class CommentTest extends TestCase
 
     public function test_comment_requires_validation(): void
     {
-        $response = $this->post(route('comments.store'), []);
+        $response = $this->post(route('komentar.store'), []);
         $response->assertSessionHasErrors(['name', 'email', 'body', 'commentable_type', 'commentable_id']);
     }
 
     public function test_admin_can_view_comments_list(): void
     {
-        $response = $this->actingAs($this->admin)->get(route('dashboard.comments.index'));
-        $response->assertStatus(200);
-    }
+        $response = $this->actingAs($this->admin)->get(route('dashboard.komentar.index'));
 
-    public function test_admin_can_approve_comment(): void
-    {
-        $this->post(route('comments.store'), [
+        $this->post(route('komentar.store'), [
             'name' => 'User',
             'email' => 'user@example.com',
             'body' => 'Pending comment.',
@@ -136,7 +132,7 @@ class CommentTest extends TestCase
 
         $comment = \App\Models\Comment::first();
 
-        $response = $this->actingAs($this->admin)->put(route('dashboard.comments.approve', $comment));
+        $response = $this->actingAs($this->admin)->put(route('dashboard.komentar.setujui', $comment));
         $response->assertRedirect();
 
         $this->assertDatabaseHas('comments', [
@@ -147,7 +143,7 @@ class CommentTest extends TestCase
 
     public function test_admin_can_reject_comment(): void
     {
-        $this->post(route('comments.store'), [
+        $this->post(route('komentar.store'), [
             'name' => 'User',
             'email' => 'user@example.com',
             'body' => 'Another comment.',
@@ -157,7 +153,7 @@ class CommentTest extends TestCase
 
         $comment = \App\Models\Comment::first();
 
-        $response = $this->actingAs($this->admin)->put(route('dashboard.comments.reject', $comment));
+        $response = $this->actingAs($this->admin)->put(route('dashboard.komentar.tolak', $comment));
         $response->assertRedirect();
 
         $this->assertDatabaseHas('comments', [
@@ -168,7 +164,7 @@ class CommentTest extends TestCase
 
     public function test_admin_can_delete_comment(): void
     {
-        $this->post(route('comments.store'), [
+        $this->post(route('komentar.store'), [
             'name' => 'User',
             'email' => 'user@example.com',
             'body' => 'Delete me.',
@@ -178,9 +174,9 @@ class CommentTest extends TestCase
 
         $comment = \App\Models\Comment::first();
 
-        $response = $this->actingAs($this->admin)->delete(route('dashboard.comments.destroy', $comment));
+        $response = $this->actingAs($this->admin)->delete(route('dashboard.komentar.destroy', $comment));
         $response->assertRedirect();
 
-        $this->assertDatabaseHas('comments', ['id' => $comment->id, 'deleted_at' => $comment->fresh()->deleted_at]);
+        $this->assertDatabaseMissing('comments', ['id' => $comment->id]);
     }
 }

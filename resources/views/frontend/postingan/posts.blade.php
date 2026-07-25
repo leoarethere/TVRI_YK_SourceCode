@@ -9,7 +9,7 @@
         
         {{-- BAGIAN FILTER & SORTING --}}
         <div class="mb-6">
-            <form method="GET" action="{{ route('posts.index') }}" class="mx-auto">
+            <form method="GET" action="{{ route('postingan.index') }}" class="mx-auto">
                 @if(request('search'))
                     <input type="hidden" name="search" value="{{ request('search') }}">
                 @endif
@@ -75,7 +75,7 @@
                         @endif
                     </div>
                     
-                    <a href="{{ route('posts.index') }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-red-700 bg-red-100 rounded-full hover:bg-red-200 dark:bg-red-900/30 dark:text-red-300 dark:hover:bg-red-900/50 transition-colors">
+                    <a href="{{ route('postingan.index') }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-red-700 bg-red-100 rounded-full hover:bg-red-200 dark:bg-red-900/30 dark:text-red-300 dark:hover:bg-red-900/50 transition-colors">
                         <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                         Reset Filter
                     </a>
@@ -91,7 +91,7 @@
                         <article class="flex flex-col h-full bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden hover:shadow-xl transition-all duration-300 group hover:-translate-y-1">
                             
                             {{-- Image Thumbnail --}}
-                            <a href="{{ route('posts.show', $post->slug) }}" class="relative w-full aspect-video overflow-hidden block bg-gray-100 dark:bg-gray-900">
+                            <a href="{{ route('postingan.show', $post->slug) }}" class="relative w-full aspect-video overflow-hidden block bg-gray-100 dark:bg-gray-900">
                                 @if ($post->featured_image && Storage::exists($post->featured_image))
                                     <img src="{{ Storage::url($post->featured_image) }}" 
                                          alt="{{ $post->title }}" 
@@ -134,7 +134,7 @@
 
                                 {{-- Title --}}
                                 <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-2 line-clamp-2 leading-tight group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
-                                    <a href="{{ route('posts.show', $post->slug) }}">
+                                    <a href="{{ route('postingan.show', $post->slug) }}">
                                         {{ $post->title }}
                                     </a>
                                 </h3>
@@ -146,7 +146,7 @@
 
                                 {{-- Read More --}}
                                 <div class="pt-4 mt-auto border-t border-gray-100 dark:border-gray-700">
-                                    <a href="{{ route('posts.show', $post->slug) }}" class="inline-flex items-center text-sm font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 transition-colors underline group/link">
+                                    <a href="{{ route('postingan.show', $post->slug) }}" class="inline-flex items-center text-sm font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 transition-colors underline group/link">
                                         Lihat Selengkapnya
                                     </a>
                                 </div>
@@ -172,7 +172,7 @@
                             Belum ada berita atau artikel yang dipublikasikan.
                         @endif
                     </p>
-                    <a href="{{ route('posts.index') }}" class="inline-flex items-center px-6 py-2.5 text-sm font-medium text-white bg-blue-600 rounded-xl hover:bg-blue-700 transition-colors shadow-sm">
+                    <a href="{{ route('postingan.index') }}" class="inline-flex items-center px-6 py-2.5 text-sm font-medium text-white bg-blue-600 rounded-xl hover:bg-blue-700 transition-colors shadow-sm">
                         Muat Ulang
                     </a>
                 </div>

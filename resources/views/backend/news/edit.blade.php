@@ -28,7 +28,7 @@
 
         <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 overflow-hidden">
             {{-- Perhatikan parameter route menggunakan $news --}}
-            <form action="{{ route('dashboard.news.update', $news) }}" method="POST" enctype="multipart/form-data">
+            <form action="{{ route('dashboard.berita.update', $news) }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 @method('PUT')
                 

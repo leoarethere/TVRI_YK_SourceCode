@@ -24,7 +24,7 @@ class User extends Authenticatable
         'username',
         'email',
         'password',
-        'is_admin',
+        'role',
     ];
 
     /**
@@ -59,5 +59,25 @@ class User extends Authenticatable
     public function news(): HasMany
     {
         return $this->hasMany(News::class);
+    }
+
+    public function isAdmin(): bool
+    {
+        return $this->role === 'admin';
+    }
+
+    public function isPegawai(): bool
+    {
+        return $this->role === 'pegawai';
+    }
+
+    public function isSecondary(): bool
+    {
+        return $this->role === 'secondary';
+    }
+
+    public function isDashboardUser(): bool
+    {
+        return in_array($this->role, ['admin', 'secondary']);
     }
 }

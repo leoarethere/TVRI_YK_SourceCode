@@ -78,11 +78,11 @@ class PostController extends Controller
     
     public function category(Category $category)
     {
-        return redirect()->route('posts.index', ['category' => $category->slug]);
+        return redirect()->route('postingan.index', ['category' => $category->slug]);
     }
 
     public function author(User $user)
     {
-        return redirect()->route('posts.index', ['author' => $user->username]);
+        return redirect()->route('postingan.index', ['author' => $user->username]);
     }
 }

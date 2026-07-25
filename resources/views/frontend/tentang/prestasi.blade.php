@@ -1,6 +1,6 @@
 <x-layout>
     {{-- Menggunakan default value jika $title tidak dikirim dari controller --}}
-    <x-slot:title>{{ $title ?? 'Prestasi & Penghargaan' }}</x-slot:title>
+    <x-slot:title>{{ $title ?? 'Prestasi dan Penghargaan' }}</x-slot:title>
 
     {{-- CSS Khusus untuk Efek 3D Responsif --}}
     @push('styles')
@@ -38,7 +38,7 @@
         <div class="text-center max-w-3xl mx-auto mb-8 sm:mb-12">
             {{-- PERBAIKAN DI SINI: Tambahkan fallback "?? 'Judul Default'" --}}
             <h1 class="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white tracking-tight">
-                {{ $title ?? 'Prestasi & Penghargaan' }}
+                {{ $title ?? 'Prestasi dan Penghargaan' }}
             </h1>
             <p class="mt-4 text-base sm:text-lg text-gray-500 dark:text-gray-400 leading-relaxed">
                 Jejak langkah dan pencapaian TVRI Stasiun D.I. Yogyakarta dalam memberikan layanan penyiaran terbaik.

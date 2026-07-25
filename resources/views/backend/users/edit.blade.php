@@ -6,7 +6,7 @@
         <div class="flex flex-col md:flex-row md:justify-between md:items-start gap-4 mb-8 pt-2">
             <div>
                 <h1 class="text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white">
-                    Edit Akun Admin
+                    Edit Akun Pengguna
                 </h1>
                 <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
                     Perbarui informasi akun pengguna.
@@ -44,21 +44,21 @@
                             @error('email') <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p> @enderror
                         </div>
 
-                        {{-- Role (Hanya untuk Super Admin) --}}
-                        @if(auth()->user()->is_admin)
+                        {{-- Role (Hanya untuk Admin) --}}
+                        @if(auth()->user()->isAdmin())
                         <div class="col-span-2 md:col-span-1">
                             <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                                 Peran (Role) <span class="text-red-500">*</span>
                             </label>
-                            <select name="is_admin" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" required>
-                                <option value="0" {{ old('is_admin', $user->is_admin) == '0' ? 'selected' : '' }}>Akun Secondary (Admin Biasa)</option>
-                                <option value="1" {{ old('is_admin', $user->is_admin) == '1' ? 'selected' : '' }}>Akun Utama (Super Admin)</option>
+                            <select name="role" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" required>
+                                <option value="pegawai" {{ old('role', $user->role) == 'pegawai' ? 'selected' : '' }}>Pegawai (Hanya akses portal internal)</option>
+                                <option value="secondary" {{ old('role', $user->role) == 'secondary' ? 'selected' : '' }}>Admin Biasa (Akses dashboard terbatas)</option>
+                                <option value="admin" {{ old('role', $user->role) == 'admin' ? 'selected' : '' }}>Super Admin (Akses penuh)</option>
                             </select>
-                            @error('is_admin') <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p> @enderror
+                            @error('role') <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p> @enderror
                         </div>
                         @else
-                            {{-- Jika Secondary Admin, kirim is_admin as-is agar tidak berubah --}}
-                            <input type="hidden" name="is_admin" value="{{ $user->is_admin }}">
+                            <input type="hidden" name="role" value="{{ $user->role }}">
                         @endif
 
                         {{-- Divider untuk Password --}}

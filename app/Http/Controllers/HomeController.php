@@ -9,6 +9,7 @@ use App\Models\Category;
 use App\Models\Broadcast;
 use App\Models\ContactInfo;
 use App\Models\JadwalAcara;
+use App\Models\AksesInformasi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Routing\Controller;
@@ -115,9 +116,15 @@ class HomeController extends Controller
         });
         
         // Menggabungkan semua data untuk dikirim ke View
+        // AksesInformasi TIDAK di-cache agar perubahan langsung terlihat
+        $aksesInternal = AksesInformasi::internal();
+        $aksesPublik   = AksesInformasi::publik();
+
         return view('frontend.beranda.index', array_merge([
-            'title'      => 'Beranda - TVRI D.I. Yogyakarta',
-            'heroSlides' => $heroSlides,
+            'title'          => 'Beranda - TVRI D.I. Yogyakarta',
+            'heroSlides'     => $heroSlides,
+            'aksesInternal'  => $aksesInternal,
+            'aksesPublik'    => $aksesPublik,
         ], $data));
     }
 }

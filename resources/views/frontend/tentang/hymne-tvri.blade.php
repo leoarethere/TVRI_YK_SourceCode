@@ -1,5 +1,5 @@
 <x-layout>
-    <x-slot:title>{{ $title ?? 'Himne & Mars TVRI' }}</x-slot:title>
+    <x-slot:title>{{ $title ?? 'Himne dan Mars TVRI' }}</x-slot:title>
 
     {{-- 1. Load CSS Video.js & Custom 3D Style --}}
     @push('styles')
@@ -50,7 +50,7 @@
         {{-- HEADER HALAMAN --}}
         <div class="text-center max-w-3xl mx-auto mb-8 sm:mb-12">
             <h1 class="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white tracking-tight">
-                {{ $title ?? 'Himne & Mars TVRI' }}
+                {{ $title ?? 'Himne dan Mars TVRI' }}
             </h1>
             <p class="mt-4 text-base sm:text-lg text-gray-500 dark:text-gray-400 leading-relaxed">
                 Kumpulan lagu identitas, mars, dan himne yang menjadi semangat Lembaga Penyiaran Publik TVRI.
@@ -177,7 +177,7 @@
                         </svg>
                     </div>
                     <h3 class="text-lg font-medium text-gray-900 dark:text-white">Belum ada data</h3>
-                    <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">Data Himne & Mars belum ditambahkan.</p>
+                    <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">Data Himne dan Mars belum ditambahkan.</p>
                 </div>
             @endforelse
         </div>

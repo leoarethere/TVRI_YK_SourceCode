@@ -66,7 +66,7 @@
                         </h3>
                         <ul role="list" class="mt-4 space-y-3 sm:space-y-4">
                             <li>
-                                <a href="{{ route('broadcasts.index') }}" class="text-sm md:text-base text-gray-500 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400 transition-colors">
+                                <a href="{{ route('penyiaran.index') }}" class="text-sm md:text-base text-gray-500 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400 transition-colors">
                                     Program Penyiaran
                                 </a>
                             </li>
@@ -76,7 +76,7 @@
                                 </a>
                             </li>
                             <li>
-                                <a href="{{ route('posts.index') }}" class="text-sm md:text-base text-gray-500 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400 transition-colors">
+                                <a href="{{ route('postingan.index') }}" class="text-sm md:text-base text-gray-500 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400 transition-colors">
                                     Berita Terkini
                                 </a>
                             </li>
@@ -116,7 +116,7 @@
         <div class="mt-12 border-t border-gray-200 dark:border-gray-800 pt-8">
             <div class="flex flex-col space-y-3"> {{-- Flex col untuk memisahkan Copyright dan Credits --}}
                 <p class="text-sm md:text-base text-gray-400 dark:text-gray-500 text-center">
-                    Copyright &copy; {{ date('Y') }} TVRI Stasiun D.I. Yogyakarta | All rights reserved.
+                    Copyright &copy; {{ date('Y') }} TVRI Stasiun D.I. Yogyakarta | Hak cipta dilindungi undang-undang.
                 </p>
                 <p class="text-sm md:text-base text-gray-400 dark:text-gray-500 text-center leading-relaxed">
                     <span class="font-mono text-blue-500 font-bold mr-1">&lt;/&gt;</span>

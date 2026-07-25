@@ -30,7 +30,7 @@
                     Manajemen Pengguna
                 </h1>
                 <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                    Kelola akun admin yang memiliki akses ke dashboard sistem.
+                    Kelola akun admin dan pegawai yang terdaftar di sistem.
                 </p>
             </div>
             
@@ -105,13 +105,17 @@
                                                         Anda
                                                     </span>
                                                 @endif
-                                                @if($user->is_admin)
+                                                @if($user->role === 'admin')
                                                     <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-300 w-fit">
-                                                        Utama
+                                                        Super Admin
+                                                    </span>
+                                                @elseif($user->role === 'pegawai')
+                                                    <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide bg-purple-100 text-purple-800 dark:bg-purple-900/50 dark:text-purple-300 w-fit">
+                                                        Pegawai
                                                     </span>
                                                 @else
                                                     <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300 w-fit">
-                                                        Secondary
+                                                        Admin
                                                     </span>
                                                 @endif
                                             </div>
@@ -134,8 +138,8 @@
                                 {{-- Aksi --}}
                                 <td class="px-4 py-4 align-middle text-center">
                                     <div class="flex items-center justify-center gap-2">
-                                        {{-- Proteksi UI: Admin Secondary tidak melihat tombol Edit/Delete Akun Utama --}}
-                                        @if(!auth()->user()->is_admin && $user->is_admin)
+                                        {{-- Proteksi UI: Admin Biasa tidak melihat tombol Edit/Delete Super Admin --}}
+                                        @if(!auth()->user()->isAdmin() && $user->isAdmin())
                                             <span class="text-xs text-gray-400 italic">Terproteksi</span>
                                         @else
                                             {{-- Tombol Edit --}}

@@ -25,13 +25,12 @@ class UserFactory extends Factory
     {
         return [
             'name' => fake()->name(),
-            'username' => fake()->unique()->username(),
+            'username' => str_replace('.', '_', fake()->unique()->userName()),
             'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => now(),
             'password' => static::$password ?? Hash::make('password'),
             'remember_token' => Str::random(10),
-            // Default user bukan admin
-            // 'is_admin' => false, 
+            'role' => 'secondary',
         ];
     }
 
@@ -54,9 +53,7 @@ class UserFactory extends Factory
             'name' => 'Administrator',
             'username' => 'admin',
             'email' => 'admin@example.com',
-            // Pastikan kolom 'is_admin' atau 'role' sudah ada di tabel users Anda
-            // Jika belum ada, uncomment baris di bawah setelah migrasi ditambahkan
-             'is_admin' => true, 
+            'role' => 'admin',
         ]);
     }
 }

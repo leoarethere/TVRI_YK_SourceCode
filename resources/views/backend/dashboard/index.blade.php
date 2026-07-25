@@ -149,6 +149,35 @@
             </div>
         </div>
 
+        {{-- 9. Komentar --}}
+        <a href="{{ route('dashboard.komentar.index') }}"
+           class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-5 flex items-center justify-between transition-all hover:shadow-md border-l-4 border-l-orange-500 group">
+            <div class="flex-1 min-w-0">
+                <div class="flex items-center gap-2">
+                    <p class="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">Komentar</p>
+                    @if($pendingComments > 0)
+                        <span class="inline-flex items-center justify-center px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-orange-500 text-white leading-none">
+                            {{ $pendingComments }}
+                        </span>
+                    @endif
+                </div>
+                <p class="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mt-1">{{ number_format($totalComments, 0, ',', '.') }}</p>
+                <p class="text-xs mt-1 font-medium
+                    {{ $pendingComments > 0
+                        ? 'text-orange-500 dark:text-orange-400'
+                        : 'text-gray-400 dark:text-gray-500' }}">
+                    {{ $pendingComments > 0
+                        ? $pendingComments . ' menunggu moderasi'
+                        : ($todayComments > 0 ? '+' . $todayComments . ' hari ini' : 'Semua termoderasi') }}
+                </p>
+            </div>
+            <div class="flex-shrink-0 p-3 bg-orange-50 text-orange-600 dark:bg-orange-900/20 dark:text-orange-400 rounded-lg group-hover:scale-110 transition-transform">
+                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+                </svg>
+            </div>
+        </a>
+
     </div>
 
     {{-- AKTIVITAS TERBARU --}}

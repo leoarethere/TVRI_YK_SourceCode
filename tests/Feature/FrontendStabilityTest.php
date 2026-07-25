@@ -27,20 +27,20 @@ class FrontendStabilityTest extends TestCase
     {
         return [
             ['/'],
-            ['/posts'],
+            ['/postingan'],
             ['/penyiaran'],
             ['/visi-misi'],
             ['/tugas-fungsi'],
             ['/sejarah'],
             ['/prestasi'],
             ['/jadwal-acara'],
-            ['/ppid'],
+            ['/info-ppid'],
             ['/himne-tvri'],
             ['/info-rb'],
             ['/info-magang'],
             ['/info-kunjungan'],
             ['/streaming'],
-            ['/news'],
+            ['/berita'],
         ];
     }
 }

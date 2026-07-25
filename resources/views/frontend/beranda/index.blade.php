@@ -13,7 +13,65 @@
     @endif
 
     {{-- ========================================== --}}
-    {{-- 2. PROGRAM ACARA (SLIDER)                  --}}
+    {{-- 2. HERO SECTION — LAYANAN SATU DATA        --}}
+    {{-- ========================================== --}}
+    <section class="py-6 px-4 sm:px-6 lg:px-8">
+        <div class="mx-auto">
+            <div class="relative rounded-3xl overflow-hidden bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800 dark:from-blue-900 dark:via-blue-950 dark:to-indigo-950 shadow-xl">
+                {{-- Background pattern --}}
+                <div class="absolute inset-0 bg-grid-white/[0.05] bg-[size:24px_24px]"></div>
+                <div class="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent"></div>
+
+                <div class="relative z-10 px-6 py-12 lg:px-16 lg:py-16">
+                    <div class="max-w-4xl mx-auto text-center">
+
+                        {{-- Judul --}}
+                        <h2 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-white mb-4 drop-shadow-sm leading-tight">
+                            Layanan Satu Data TVRI
+                        </h2>
+
+                        {{-- Deskripsi --}}
+                        <p class="text-blue-100 text-sm sm:text-base max-w-2xl mx-auto leading-relaxed mb-8 opacity-90">
+                            Layanan Satu Data TVRI adalah sistem keterbukaan informasi publik yang dikelola oleh PPID TVRI untuk menyediakan akses transparan, terintegrasi, dan mudah terhadap dokumen serta data publik TVRI, termasuk di tingkat stasiun daerah seperti TVRI D.I. Yogyakarta.
+                        </p>
+
+                        {{-- Tombol Aksi --}}
+                        <div class="flex flex-wrap justify-center gap-4">
+
+                            {{-- Tombol Internal — mengarah ke portal login pegawai --}}
+                            @if($aksesInternal->is_active)
+                            <a href="{{ route('pegawai.login') }}"
+                               class="group inline-flex items-center gap-2 px-6 py-3 text-sm font-bold text-blue-900 bg-white rounded-xl hover:bg-blue-50 transition-colors shadow-lg">
+                                <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/>
+                                </svg>
+                                {{ $aksesInternal->label ?: 'Akses Informasi Internal' }}
+                                <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                            </a>
+                            @endif
+
+                            {{-- Tombol Publik (Outline Putih — konsisten dengan section Visi & Misi) --}}
+                            @if($aksesPublik->is_active)
+                            <a href="{{ $aksesPublik->url ?: route('ppid.index') }}"
+                               {{ $aksesPublik->url ? 'target="_blank" rel="noopener noreferrer"' : '' }}
+                               class="group inline-flex items-center gap-2 px-6 py-3 text-sm font-bold text-white bg-transparent border-2 border-white/30 rounded-xl hover:bg-white/10 transition-colors">
+                                <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 004 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                                {{ $aksesPublik->label ?: 'Akses Informasi Publik' }}
+                                <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                            </a>
+                            @endif
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    {{-- ========================================== --}}
+    {{-- 3. PROGRAM ACARA (SLIDER)                  --}}
     {{-- ========================================== --}}
     @if(isset($featuredBroadcasts) && $featuredBroadcasts->isNotEmpty())
     <section class="py-8 bg-white dark:bg-gray-900 border-b border-gray-100 dark:border-gray-800">
@@ -22,10 +80,10 @@
             {{-- Header Section --}}
             <div class="flex items-end justify-between mb-8">
                 <div>
-                    <span class="text-blue-600 dark:text-blue-400 font-bold tracking-wider uppercase text-sm">Hiburan & Edukasi</span>
+                    <span class="text-blue-600 dark:text-blue-400 font-bold tracking-wider uppercase text-sm">Hiburan dan Edukasi</span>
                     <h2 class="text-2xl md:text-3xl font-extrabold text-gray-900 dark:text-white mt-1">Program Unggulan</h2>
                 </div>
-                <a href="{{ route('broadcasts.index') }}" class="group flex items-center text-sm font-semibold text-blue-600 hover:text-blue-700 dark:text-blue-400 transition-colors">
+                <a href="{{ route('penyiaran.index') }}" class="group flex items-center text-sm font-semibold text-blue-600 hover:text-blue-700 dark:text-blue-400 transition-colors">
                     Lihat Semua
                     <svg class="w-4 h-4 ml-1 transition-transform group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
                 </a>
@@ -36,7 +94,7 @@
                 {{-- Scroll Container --}}
                 <div class="flex overflow-x-auto gap-4 sm:gap-6 pb-8 snap-x snap-mandatory scrollbar-hide -mx-4 px-4 sm:mx-0 sm:px-0">
                     @foreach($featuredBroadcasts as $program)
-                        <a href="{{ route('broadcasts.show', $program) }}" 
+                        <a href="{{ route('penyiaran.show', $program) }}" 
                            class="snap-center shrink-0 w-[180px] sm:w-[220px] group/card block bg-white dark:bg-gray-800 rounded-2xl overflow-hidden border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-xl transition-all duration-300 hover:border-blue-300 dark:hover:border-blue-700 hover:ring-2 hover:ring-blue-500/20">
                             
                             {{-- Poster Container dengan Aspect Ratio 3:4 --}}
@@ -96,7 +154,6 @@
                 
                 {{-- Kolom Kiri: Judul & CTA --}}
                 <div class="lg:w-1/3">
-                    <span class="text-blue-600 dark:text-blue-400 font-bold tracking-wider uppercase text-xs md:text-sm mb-2 block">Jadwal Acara</span>
                     <h2 class="text-2xl md:text-3xl font-extrabold text-gray-900 dark:text-white mb-4">Jangan Lewatkan<br>Acara Favoritmu</h2>
                     <p class="text-gray-600 dark:text-gray-300 mb-6 leading-relaxed text-sm md:text-base">
                         Simak jadwal acara TVRI D.I. Yogyakarta hari ini, <strong>{{ \Carbon\Carbon::now()->locale('id')->isoFormat('dddd, D MMMM Y') }}</strong>.
@@ -112,12 +169,12 @@
                                   <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
                                   <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-red-500"></span>
                                 </span>
-                                <span class="text-xs font-bold tracking-wider uppercase text-red-100">Live Streaming</span>
+                                <span class="text-xs font-bold tracking-wider uppercase text-red-100">Siaran Langsung</span>
                             </div>
                             <h3 class="text-lg md:text-xl font-bold mb-4 leading-tight">Nonton TVRI Jogja Sekarang</h3>
                             <a href="{{ route('streaming') }}" class="inline-flex w-full justify-center items-center gap-2 px-4 py-3 bg-white text-blue-800 font-bold rounded-xl hover:bg-blue-50 transition-colors shadow-sm text-sm">
                                 <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" /><path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                                Tonton Streaming
+                                Tonton Siaran Langsung
                             </a>
                         </div>
                     </div>
@@ -225,7 +282,7 @@
     <section class="py-8 bg-white dark:bg-gray-900 border-b border-gray-100 dark:border-gray-800">
         <div class="mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-10">
-                <h2 class="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">Layanan & Informasi Publik</h2>
+                <h2 class="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">Layanan dan Informasi Publik</h2>
                 <p class="mt-2 text-sm md:text-base text-gray-600 dark:text-gray-400">Transparansi dan akuntabilitas untuk pelayanan yang lebih baik.</p>
             </div>
 
@@ -283,13 +340,13 @@
         <div class="mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between mb-8">
                 <h2 class="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">Postingan Terbaru</h2>
-                <a href="{{ route('posts.index') }}" class="text-sm font-semibold text-blue-600 hover:text-blue-700 dark:text-blue-400 transition-colors">Lihat Semua</a>
+                <a href="{{ route('postingan.index') }}" class="text-sm font-semibold text-blue-600 hover:text-blue-700 dark:text-blue-400 transition-colors">Lihat Semua</a>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
                 @foreach($latestPosts as $post)
                 <article class="flex flex-col h-full group bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 border border-gray-100 dark:border-gray-700 hover:-translate-y-1">
-                    <a href="{{ route('posts.show', $post->slug) }}" class="block overflow-hidden relative aspect-video">
+                    <a href="{{ route('postingan.show', $post->slug) }}" class="block overflow-hidden relative aspect-video">
                         @if($post->featured_image)
                             <img src="{{ Storage::url($post->featured_image) }}" alt="{{ $post->title }}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" loading="lazy">
                         @else
@@ -311,12 +368,12 @@
                             <time>{{ $post->created_at->format('d M Y') }}</time>
                         </div>
                         <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-2 leading-snug group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors line-clamp-2">
-                            <a href="{{ route('posts.show', $post->slug) }}">{{ $post->title }}</a>
+                            <a href="{{ route('postingan.show', $post->slug) }}">{{ $post->title }}</a>
                         </h3>
                         <p class="text-sm text-gray-600 dark:text-gray-300 line-clamp-2 mb-4 flex-grow">
                             {{ Str::limit(strip_tags($post->body), 90) }}
                         </p>
-                        <a href="{{ route('posts.show', $post->slug) }}" class="text-sm font-semibold text-blue-600 dark:text-blue-400 hover:underline inline-flex items-center gap-1">
+                        <a href="{{ route('postingan.show', $post->slug) }}" class="text-sm font-semibold text-blue-600 dark:text-blue-400 hover:underline inline-flex items-center gap-1">
                             Selengkapnya 
                             <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
                         </a>

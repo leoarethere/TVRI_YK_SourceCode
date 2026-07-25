@@ -45,26 +45,34 @@ class DashboardUserController extends Controller
             'username' => ['required', 'string', 'max:255', 'unique:users', 'alpha_dash'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'confirmed', 'min:8'],
-            'is_admin' => ['nullable', 'boolean'],
+            'role' => ['required', 'in:admin,secondary,pegawai'],
         ]);
+
+        $role = $request->role;
+
+        // Hanya admin yang bisa membuat akun admin/pegawai
+        if (!Auth::user()->isAdmin()) {
+            $role = 'secondary';
+        }
 
         User::create([
             'name' => $request->name,
             'username' => $request->username,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'is_admin' => Auth::user()->is_admin ? ($request->is_admin ?? false) : false,
+            'role' => $role,
         ]);
 
+        $label = $role === 'pegawai' ? 'Pegawai' : 'Admin';
         return redirect()->route('dashboard.users.index')
-            ->with('success', 'User admin baru berhasil ditambahkan!');
+            ->with('success', "Akun {$label} baru berhasil ditambahkan!");
     }
 
     // Menampilkan form edit user
     public function edit(User $user)
     {
-        // Proteksi: Admin Secondary (is_admin = 0) tidak bisa mengedit Akun Utama (is_admin = 1)
-        if (!Auth::user()->is_admin && $user->is_admin) {
+        // Proteksi: Admin Secondary tidak bisa mengedit Akun Utama
+        if (!Auth::user()->isAdmin() && $user->isAdmin()) {
             abort(403, 'Anda tidak memiliki hak akses untuk mengubah Akun Utama.');
         }
 
@@ -74,8 +82,8 @@ class DashboardUserController extends Controller
     // ✅ PERBAIKAN: Mengupdate data user
     public function update(Request $request, User $user)
     {
-        // Proteksi: Admin Secondary (is_admin = 0) tidak bisa mengedit Akun Utama (is_admin = 1)
-        if (!Auth::user()->is_admin && $user->is_admin) {
+        // Proteksi: Admin Secondary tidak bisa mengedit Akun Utama
+        if (!Auth::user()->isAdmin() && $user->isAdmin()) {
             abort(403, 'Anda tidak memiliki hak akses untuk mengubah Akun Utama.');
         }
 
@@ -84,32 +92,34 @@ class DashboardUserController extends Controller
             'username' => ['required', 'string', 'max:255', 'alpha_dash', Rule::unique('users')->ignore($user->id)],
             'email' => ['required', 'email', 'max:255', Rule::unique('users')->ignore($user->id)],
             'password' => ['nullable', 'confirmed', 'min:8'],
-            'is_admin' => ['nullable', 'boolean'],
+            'role' => ['nullable', 'in:admin,secondary,pegawai'],
         ]);
 
-        // Proteksi: Cegah penurunan jabatan jika ini adalah Akun Utama terakhir
-        $newIsAdmin = Auth::user()->is_admin ? ($request->has('is_admin') ? $request->is_admin : $user->is_admin) : $user->is_admin;
-        if ($user->is_admin && !$newIsAdmin) {
-            $totalPrimaryAdmins = User::where('is_admin', true)->count();
-            if ($totalPrimaryAdmins <= 1) {
-                return back()->withErrors(['error' => 'Tidak dapat mengubah role. Harus ada setidaknya satu Akun Utama di dalam sistem.']);
-            }
-        }
-
-        // ✅ PERBAIKAN: Gunakan array untuk update mass assignment
         $dataToUpdate = [
             'name' => $request->name,
             'username' => $request->username,
             'email' => $request->email,
-            'is_admin' => $newIsAdmin,
         ];
 
-        // ✅ PERBAIKAN: Hanya update password jika diisi
+        // Role hanya bisa diubah oleh admin
+        if (Auth::user()->isAdmin() && $request->has('role')) {
+            $newRole = $request->role;
+
+            // Proteksi: Cegah penurunan jabatan jika ini adalah Akun Utama terakhir
+            if ($user->isAdmin() && $newRole !== 'admin') {
+                $totalPrimaryAdmins = User::where('role', 'admin')->count();
+                if ($totalPrimaryAdmins <= 1) {
+                    return back()->withErrors(['error' => 'Tidak dapat mengubah role. Harus ada setidaknya satu Super Admin di dalam sistem.']);
+                }
+            }
+
+            $dataToUpdate['role'] = $newRole;
+        }
+
         if ($request->filled('password')) {
             $dataToUpdate['password'] = Hash::make($request->password);
         }
 
-        // ✅ PERBAIKAN: Update menggunakan method update() dengan array
         $user->update($dataToUpdate);
 
         return redirect()->route('dashboard.users.index')
@@ -119,8 +129,8 @@ class DashboardUserController extends Controller
     // Menghapus user
     public function destroy(User $user)
     {
-        // Proteksi: Admin Secondary (is_admin = 0) tidak bisa menghapus Akun Utama (is_admin = 1)
-        if (!Auth::user()->is_admin && $user->is_admin) {
+        // Proteksi: Admin Secondary tidak bisa menghapus Akun Utama
+        if (!Auth::user()->isAdmin() && $user->isAdmin()) {
             abort(403, 'Anda tidak memiliki hak akses untuk menghapus Akun Utama.');
         }
 
@@ -129,11 +139,11 @@ class DashboardUserController extends Controller
             return back()->withErrors(['error' => 'Anda tidak dapat menghapus akun sendiri yang sedang login.']);
         }
 
-        // Proteksi: Cegah penghapusan jika ini adalah Akun Utama terakhir
-        if ($user->is_admin) {
-            $totalPrimaryAdmins = User::where('is_admin', true)->count();
+        // Proteksi: Cegah penghapusan jika ini adalah Admin terakhir
+        if ($user->isAdmin()) {
+            $totalPrimaryAdmins = User::where('role', 'admin')->count();
             if ($totalPrimaryAdmins <= 1) {
-                return back()->withErrors(['error' => 'Tidak dapat menghapus user ini. Harus ada setidaknya satu Akun Utama di dalam sistem.']);
+                return back()->withErrors(['error' => 'Tidak dapat menghapus user ini. Harus ada setidaknya satu Super Admin di dalam sistem.']);
             }
         }
 
