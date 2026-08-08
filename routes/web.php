@@ -1,53 +1,50 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Artisan;
-use App\Http\Controllers\HomeController;
-use App\Http\Controllers\NewsController;
-use App\Http\Controllers\PostController;
-use App\Http\Controllers\PpidController;
-use App\Http\Controllers\LoginController;
-use App\Http\Controllers\ThemeController;
-use App\Http\Controllers\PasswordResetLinkController;
-use App\Http\Controllers\NewPasswordController;
-use App\Http\Controllers\CommentController;
-use App\Http\Controllers\DashboardCommentController;
 use App\Http\Controllers\BannerController;
-use App\Http\Controllers\JadwalController;
-use App\Http\Controllers\HistoryController;
-use App\Http\Controllers\PrestasiController;
-use App\Http\Controllers\VisiMisiController;
 use App\Http\Controllers\BroadcastController;
+use App\Http\Controllers\CommentController;
+use App\Http\Controllers\DashboardAksesInformasiController;
+use App\Http\Controllers\DashboardBroadcastCategoryController;
+use App\Http\Controllers\DashboardBroadcastController;
+use App\Http\Controllers\DashboardCommentController;
+use App\Http\Controllers\DashboardContactInfoController;
 use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\HymneTvriController;
-use App\Http\Controllers\StreamingController;
-use App\Http\Controllers\InfoMagangController;
-use App\Http\Controllers\ReformasiRbController;
-use App\Http\Controllers\TugasFungsiController;
+use App\Http\Controllers\DashboardHistoryController;
+use App\Http\Controllers\DashboardHymneTvriController;
+use App\Http\Controllers\DashboardInfoKunjunganController;
+use App\Http\Controllers\DashboardInfoMagangController;
+use App\Http\Controllers\DashboardJadwalAcaraController;
+use App\Http\Controllers\DashboardNewsCategoryController;
 use App\Http\Controllers\DashboardNewsController;
+use App\Http\Controllers\DashboardPostCategoryController;
 use App\Http\Controllers\DashboardPostController;
 use App\Http\Controllers\DashboardPpidController;
-use App\Http\Controllers\DashboardUserController;
-use App\Http\Controllers\InfoKunjunganController;
-use App\Http\Controllers\DashboardHistoryController;
 use App\Http\Controllers\DashboardPrestasiController;
-use App\Http\Controllers\DashboardVisiMisiController;
-use App\Http\Controllers\DashboardBroadcastController;
-use App\Http\Controllers\DashboardHymneTvriController;
-use App\Http\Controllers\DashboardInfoMagangController;
-use App\Http\Controllers\DashboardContactInfoController;
-use App\Http\Controllers\DashboardJadwalAcaraController;
 use App\Http\Controllers\DashboardReformasiRbController;
 use App\Http\Controllers\DashboardSocialMediaController;
 use App\Http\Controllers\DashboardTugasFungsiController;
-use App\Http\Controllers\DashboardNewsCategoryController;
-use App\Http\Controllers\DashboardPostCategoryController;
-use App\Http\Controllers\DashboardInfoKunjunganController;
-use App\Http\Controllers\DashboardJadwalCategoryController;
-use App\Http\Controllers\DashboardBroadcastCategoryController;
-use App\Http\Controllers\DashboardAksesInformasiController;
+use App\Http\Controllers\DashboardUserController;
+use App\Http\Controllers\DashboardVisiMisiController;
+use App\Http\Controllers\HistoryController;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\HymneTvriController;
+use App\Http\Controllers\InfoKunjunganController;
+use App\Http\Controllers\InfoMagangController;
+use App\Http\Controllers\JadwalController;
+use App\Http\Controllers\LoginController;
+use App\Http\Controllers\NewPasswordController;
+use App\Http\Controllers\NewsController;
+use App\Http\Controllers\PasswordResetLinkController;
 use App\Http\Controllers\PegawaiLoginController;
-use App\Http\Controllers\SymlinkController;
+use App\Http\Controllers\PostController;
+use App\Http\Controllers\PpidController;
+use App\Http\Controllers\PrestasiController;
+use App\Http\Controllers\ReformasiRbController;
+use App\Http\Controllers\StreamingController;
+use App\Http\Controllers\ThemeController;
+use App\Http\Controllers\TugasFungsiController;
+use App\Http\Controllers\VisiMisiController;
+use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
@@ -101,7 +98,7 @@ Route::get('/berita/penulis/{user:username}', [NewsController::class, 'author'])
 Route::middleware('guest')->group(function () {
     Route::get('/login', [LoginController::class, 'index'])->name('login');
     Route::post('/login', [LoginController::class, 'store'])->middleware('throttle:5,1');
-    
+
     // Lupa Password Routes
     Route::get('/forgot-password', [PasswordResetLinkController::class, 'create'])->name('password.request');
     Route::post('/forgot-password', [PasswordResetLinkController::class, 'store'])->name('password.email');
@@ -110,18 +107,17 @@ Route::middleware('guest')->group(function () {
 });
 
 // ================= PEGAWAI LOGIN =================
-Route::prefix('pegawai')->group(function () {
+Route::middleware('guest')->prefix('pegawai')->group(function () {
     Route::get('/login', [PegawaiLoginController::class, 'index'])->name('pegawai.login');
     Route::post('/login', [PegawaiLoginController::class, 'store'])->middleware('throttle:5,1');
 });
 
 Route::middleware('auth')->prefix('pegawai')->group(function () {
     Route::post('/logout', [PegawaiLoginController::class, 'logout'])->name('pegawai.logout');
-    Route::get('/logout', [PegawaiLoginController::class, 'logout'])->name('pegawai.logout.get');
 });
 
 // ================= DASHBOARD =================
-Route::middleware(['auth', 'isAdmin'])->prefix('dashboard')->group(function () {
+Route::middleware(['auth', 'dashboardUser'])->prefix('dashboard')->group(function () {
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/visitor-chart', [DashboardController::class, 'visitorChartData'])->name('dashboard.visitor-chart');
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
@@ -150,18 +146,10 @@ Route::middleware(['auth', 'isAdmin'])->prefix('dashboard')->group(function () {
     Route::resource('/info-rb', DashboardReformasiRbController::class)->names('dashboard.reformasi-rb')->parameters(['info-rb' => 'reformasiRb']);
     Route::resource('/info-magang', DashboardInfoMagangController::class)->names('dashboard.info-magang')->parameters(['info-magang' => 'infoMagang']);
     Route::resource('/info-kunjungan', DashboardInfoKunjunganController::class)->names('dashboard.info-kunjungan')->parameters(['info-kunjungan' => 'infoKunjungan']);
-    Route::resource('/users', DashboardUserController::class)->names('dashboard.users')->parameters(['users' => 'user']);
-
-    // Social Media
-    Route::resource('social-media', DashboardSocialMediaController::class)->names('dashboard.social-media')->parameters(['social-media' => 'id'])->only(['index', 'edit', 'update']);
-
     // Kategori Jadwal
     Route::post('/jadwal-categories', [\App\Http\Controllers\DashboardJadwalCategoryController::class, 'store'])->name('dashboard.jadwal-categories.store');
     Route::put('/jadwal-categories/{jadwalCategory}', [\App\Http\Controllers\DashboardJadwalCategoryController::class, 'update'])->name('dashboard.jadwal-categories.update');
     Route::delete('/jadwal-categories/{jadwalCategory}', [\App\Http\Controllers\DashboardJadwalCategoryController::class, 'destroy'])->name('dashboard.jadwal-categories.destroy');
-
-    // Informasi Kontak
-    Route::resource('contact-info', DashboardContactInfoController::class)->names('dashboard.contact-info')->parameters(['contact-info' => 'id'])->only(['index', 'edit', 'update']);
 
     // FAQ Info Magang
     Route::resource('/info-magang-faq', \App\Http\Controllers\DashboardInfoMagangFaqController::class)->names('dashboard.info-magang-faq')->parameters(['info-magang-faq' => 'id']);
@@ -183,12 +171,15 @@ Route::middleware(['auth', 'isAdmin'])->prefix('dashboard')->group(function () {
     Route::put('/komentar/{comment}/tolak', [DashboardCommentController::class, 'reject'])->name('dashboard.komentar.tolak');
     Route::delete('/komentar/{comment}', [DashboardCommentController::class, 'destroy'])->name('dashboard.komentar.destroy');
 
-    // Akses Informasi (Link dinamis di beranda)
-    Route::get('/akses-informasi', [DashboardAksesInformasiController::class, 'index'])->name('dashboard.akses-informasi.index');
-    Route::put('/akses-informasi/{aksesInformasi}', [DashboardAksesInformasiController::class, 'update'])->name('dashboard.akses-informasi.update');
+    Route::middleware('isAdmin')->group(function () {
+        Route::resource('/users', DashboardUserController::class)->names('dashboard.users')->parameters(['users' => 'user']);
 
-    // Utilitas: Membuat symlink storage (hanya untuk admin utama, sekali saat deploy)
-    Route::get('/symlink', [SymlinkController::class, 'create'])->name('dashboard.symlink');
+        Route::resource('social-media', DashboardSocialMediaController::class)->names('dashboard.social-media')->parameters(['social-media' => 'id'])->only(['index', 'edit', 'update']);
+        Route::resource('contact-info', DashboardContactInfoController::class)->names('dashboard.contact-info')->parameters(['contact-info' => 'id'])->only(['index', 'edit', 'update']);
+
+        Route::get('/akses-informasi', [DashboardAksesInformasiController::class, 'index'])->name('dashboard.akses-informasi.index');
+        Route::put('/akses-informasi/{aksesInformasi}', [DashboardAksesInformasiController::class, 'update'])->name('dashboard.akses-informasi.update');
+    });
 });
 
 // ================= UTILITAS =================

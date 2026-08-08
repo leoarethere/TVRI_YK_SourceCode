@@ -3,14 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\VisiMisi;
-use Illuminate\View\View;
-use Illuminate\Support\Str;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
-use Intervention\Image\ImageManager;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
+use Illuminate\View\View;
 use Intervention\Image\Drivers\Gd\Driver;
+use Intervention\Image\ImageManager;
 
 class DashboardVisiMisiController extends Controller
 {
@@ -18,8 +18,8 @@ class DashboardVisiMisiController extends Controller
     {
         // [PERBAIKAN] Tambah pengecekan jika data kosong
         $visiMisis = VisiMisi::orderBy('type', 'desc')
-                             ->orderBy('order', 'asc')
-                             ->paginate(10);
+            ->orderBy('order', 'asc')
+            ->paginate(10);
 
         // [PERBAIKAN] Pastikan data dikirim dengan penanda khusus jika kosong
         $isEmpty = $visiMisis->isEmpty();
@@ -46,10 +46,10 @@ class DashboardVisiMisiController extends Controller
         if ($request->hasFile('image')) {
             try {
                 $file = $request->file('image');
-                $filename = Str::random(40) . '.jpg';
-                $path = 'visi-misi-images/' . $filename;
+                $filename = Str::random(40).'.jpg';
+                $path = 'visi-misi-images/'.$filename;
 
-                $manager = new ImageManager(new Driver());
+                $manager = new ImageManager(new Driver);
                 $image = $manager->read($file);
                 $image->scale(width: 800);
                 $encodedImage = $image->toJpeg(quality: 70);
@@ -58,8 +58,10 @@ class DashboardVisiMisiController extends Controller
                 $validated['image'] = $path;
 
             } catch (\Exception $e) {
+                report($e);
+
                 return back()->withErrors([
-                    'image' => 'Gagal memproses gambar: ' . $e->getMessage()
+                    'image' => 'Gagal memproses gambar. Silakan coba lagi.',
                 ])->withInput();
             }
         }
@@ -67,7 +69,7 @@ class DashboardVisiMisiController extends Controller
         VisiMisi::create($validated);
 
         return redirect()->route('dashboard.visi-misi.index')
-                         ->with('success', 'Data Visi/Misi berhasil ditambahkan!');
+            ->with('success', 'Data Visi/Misi berhasil ditambahkan!');
     }
 
     public function edit(VisiMisi $visiMisi): View
@@ -85,51 +87,54 @@ class DashboardVisiMisiController extends Controller
             'is_active' => 'required|in:0,1',
         ]);
 
+        $oldImagePath = $visiMisi->image;
+
         // Logika Update Gambar (Safe Order: simpan baru → hapus lama)
         if ($request->hasFile('image')) {
             try {
                 $file = $request->file('image');
-                $filename = Str::random(40) . '.jpg';
-                $path = 'visi-misi-images/' . $filename;
+                $filename = Str::random(40).'.jpg';
+                $path = 'visi-misi-images/'.$filename;
 
-                $manager = new ImageManager(new Driver());
+                $manager = new ImageManager(new Driver);
                 $image = $manager->read($file);
                 $image->scale(width: 800);
                 $encodedImage = $image->toJpeg(quality: 70);
-                
+
                 // 1. Simpan gambar baru terlebih dahulu
                 Storage::disk('public')->put($path, (string) $encodedImage);
-
-                // 2. Jika sukses, baru hapus gambar lama
-                if ($visiMisi->image && Storage::disk('public')->exists($visiMisi->image)) {
-                    Storage::disk('public')->delete($visiMisi->image);
-                }
 
                 $validated['image'] = $path;
 
             } catch (\Exception $e) {
+                report($e);
+
                 return back()->withErrors([
-                    'image' => 'Gagal memproses gambar: ' . $e->getMessage()
+                    'image' => 'Gagal memproses gambar. Silakan coba lagi.',
                 ])->withInput();
             }
         }
 
         $visiMisi->update($validated);
 
+        if (isset($validated['image']) && $oldImagePath) {
+            Storage::disk('public')->delete($oldImagePath);
+        }
+
         return redirect()->route('dashboard.visi-misi.index')
-                         ->with('success', 'Data berhasil diperbarui!');
+            ->with('success', 'Data berhasil diperbarui!');
     }
 
     public function destroy(VisiMisi $visiMisi): RedirectResponse
     {
-        // Hapus file fisik gambar saat data dihapus
-        if ($visiMisi->image && Storage::disk('public')->exists($visiMisi->image)) {
-            Storage::disk('public')->delete($visiMisi->image);
-        }
-
+        $imagePath = $visiMisi->image;
         $visiMisi->delete();
 
+        if ($imagePath) {
+            Storage::disk('public')->delete($imagePath);
+        }
+
         return redirect()->route('dashboard.visi-misi.index')
-                         ->with('success', 'Data berhasil dihapus!');
+            ->with('success', 'Data berhasil dihapus!');
     }
 }

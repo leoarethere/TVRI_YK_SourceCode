@@ -3,15 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Models\History;
-use Illuminate\View\View;
-use Illuminate\Support\Str;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
-use Intervention\Image\ImageManager;
-use Illuminate\Http\RedirectResponse;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
+use Illuminate\View\View;
 use Intervention\Image\Drivers\Gd\Driver;
+use Intervention\Image\ImageManager;
 
 class DashboardHistoryController extends Controller
 {
@@ -21,7 +21,7 @@ class DashboardHistoryController extends Controller
     public function index(): View
     {
         $histories = History::latest()->paginate(10);
-        
+
         return view('backend.sejarah.index', [
             'histories' => $histories,
         ]);
@@ -56,22 +56,22 @@ class DashboardHistoryController extends Controller
         if ($request->hasFile('image')) {
             try {
                 $file = $request->file('image');
-                $filename = Str::random(40) . '.jpg';
-                $path = 'history-images/' . $filename;
+                $filename = Str::random(40).'.jpg';
+                $path = 'history-images/'.$filename;
 
-                $manager = new ImageManager(new Driver());
+                $manager = new ImageManager(new Driver);
                 $image = $manager->read($file);
                 $image->scale(width: 1200);
                 $encodedImage = $image->toJpeg(quality: 75);
                 Storage::disk('public')->put($path, (string) $encodedImage);
 
                 $validated['image'] = $path;
-                
+
             } catch (\Exception $e) {
-                Log::error('History image processing error: ' . $e->getMessage());
-                
+                Log::error('History image processing error: '.$e->getMessage());
+
                 return back()
-                    ->withErrors(['image' => 'Gagal memproses gambar: ' . $e->getMessage()])
+                    ->withErrors(['image' => 'Gagal memproses gambar. Silakan coba lagi.'])
                     ->withInput();
             }
         }
@@ -89,15 +89,19 @@ class DashboardHistoryController extends Controller
         try {
             History::create($validated);
         } catch (\Exception $e) {
-            Log::error('History creation error: ' . $e->getMessage());
-            
+            Log::error('History creation error: '.$e->getMessage());
+
+            if (isset($validated['image'])) {
+                Storage::disk('public')->delete($validated['image']);
+            }
+
             return back()
-                ->withErrors(['error' => 'Gagal menyimpan data sejarah: ' . $e->getMessage()])
+                ->withErrors(['error' => 'Gagal menyimpan data sejarah. Silakan coba lagi.'])
                 ->withInput();
         }
 
-        $message = $validated['status'] === 'published' 
-            ? 'Data sejarah berhasil dipublikasikan!' 
+        $message = $validated['status'] === 'published'
+            ? 'Data sejarah berhasil dipublikasikan!'
             : 'Data sejarah berhasil disimpan sebagai draft!';
 
         return redirect()->route('dashboard.sejarah.index')
@@ -129,31 +133,28 @@ class DashboardHistoryController extends Controller
             return back()->withErrors($e->validator)->withInput();
         }
 
+        $oldImagePath = $history->image;
+
         // Process & Compress New Image
         if ($request->hasFile('image')) {
             try {
-                // Delete old image
-                if ($history->image && Storage::disk('public')->exists($history->image)) {
-                    Storage::disk('public')->delete($history->image);
-                }
-
                 $file = $request->file('image');
-                $filename = Str::random(40) . '.jpg';
-                $path = 'history-images/' . $filename;
+                $filename = Str::random(40).'.jpg';
+                $path = 'history-images/'.$filename;
 
-                $manager = new ImageManager(new Driver());
+                $manager = new ImageManager(new Driver);
                 $image = $manager->read($file);
                 $image->scale(width: 1200);
                 $encodedImage = $image->toJpeg(quality: 75);
                 Storage::disk('public')->put($path, (string) $encodedImage);
 
                 $validated['image'] = $path;
-                
+
             } catch (\Exception $e) {
-                Log::error('History image processing error: ' . $e->getMessage());
-                
+                Log::error('History image processing error: '.$e->getMessage());
+
                 return back()
-                    ->withErrors(['image' => 'Gagal memproses gambar: ' . $e->getMessage()])
+                    ->withErrors(['image' => 'Gagal memproses gambar. Silakan coba lagi.'])
                     ->withInput();
             }
         }
@@ -171,15 +172,23 @@ class DashboardHistoryController extends Controller
         try {
             $history->update($validated);
         } catch (\Exception $e) {
-            Log::error('History update error: ' . $e->getMessage());
-            
+            Log::error('History update error: '.$e->getMessage());
+
+            if (isset($validated['image'])) {
+                Storage::disk('public')->delete($validated['image']);
+            }
+
             return back()
-                ->withErrors(['error' => 'Gagal memperbarui data sejarah: ' . $e->getMessage()])
+                ->withErrors(['error' => 'Gagal memperbarui data sejarah. Silakan coba lagi.'])
                 ->withInput();
         }
 
-        $message = $validated['status'] === 'published' 
-            ? 'Data sejarah berhasil diperbarui!' 
+        if (isset($validated['image']) && $oldImagePath) {
+            Storage::disk('public')->delete($oldImagePath);
+        }
+
+        $message = $validated['status'] === 'published'
+            ? 'Data sejarah berhasil diperbarui!'
             : 'Perubahan berhasil disimpan sebagai draft!';
 
         return redirect()->route('dashboard.sejarah.index')
@@ -192,21 +201,21 @@ class DashboardHistoryController extends Controller
     public function destroy(History $history): RedirectResponse
     {
         try {
-            // Delete image if exists
-            if ($history->image && Storage::disk('public')->exists($history->image)) {
-                Storage::disk('public')->delete($history->image);
-            }
-
+            $imagePath = $history->image;
             $history->delete();
+
+            if ($imagePath) {
+                Storage::disk('public')->delete($imagePath);
+            }
 
             return redirect()->route('dashboard.sejarah.index')
                 ->with('success', 'Data sejarah berhasil dihapus!');
-                
+
         } catch (\Exception $e) {
-            Log::error('History deletion error: ' . $e->getMessage());
-            
+            Log::error('History deletion error: '.$e->getMessage());
+
             return redirect()->route('dashboard.sejarah.index')
-                ->with('error', 'Gagal menghapus data sejarah: ' . $e->getMessage());
+                ->with('error', 'Gagal menghapus data sejarah. Silakan coba lagi.');
         }
     }
 }

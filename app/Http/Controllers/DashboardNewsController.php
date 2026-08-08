@@ -3,21 +3,21 @@
 namespace App\Http\Controllers;
 
 use App\Models\News;
-use Illuminate\View\View;
-use Illuminate\Support\Str;
 use App\Models\NewsCategory;
+use App\Services\ImageService;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Auth;
-use Intervention\Image\ImageManager;
-use Illuminate\Http\RedirectResponse;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
-use Intervention\Image\Drivers\Gd\Driver;
+use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
+use Illuminate\View\View;
 
 class DashboardNewsController extends Controller
 {
+    public function __construct(private readonly ImageService $images) {}
+
     /**
      * Menampilkan daftar berita.
      */
@@ -29,7 +29,7 @@ class DashboardNewsController extends Controller
         // Filter pencarian
         $query->when($request->filled('search'), function ($q) use ($request) {
             $search = str_replace(['%', '_'], ['\%', '\_'], $request->search);
-            $q->where('title', 'like', '%' . $search . '%');
+            $q->where('title', 'like', '%'.$search.'%');
         });
 
         // Filter kategori berita
@@ -43,7 +43,7 @@ class DashboardNewsController extends Controller
         if ($request->input('sort') === 'oldest') {
             $query->orderBy('created_at', 'asc');
         } else {
-            $query->latest(); 
+            $query->latest();
         }
 
         $news = $query->paginate(10)->withQueryString();
@@ -62,6 +62,7 @@ class DashboardNewsController extends Controller
     public function create(): View
     {
         $categories = NewsCategory::orderBy('name')->get();
+
         return view('backend.news.create', compact('categories'));
     }
 
@@ -90,23 +91,17 @@ class DashboardNewsController extends Controller
 
         $validated['user_id'] = Auth::id();
 
-        // Process Image
+        $newImagePath = null;
         if ($request->hasFile('featured_image')) {
             try {
-                $file = $request->file('featured_image');
-                $filename = Str::random(40) . '.jpg';
-                $path = 'news-images/' . $filename; // Folder khusus berita
-
-                $manager = new ImageManager(new Driver());
-                $image = $manager->read($file);
-                $image->scale(width: 1200);
-                $encodedImage = $image->toJpeg(quality: 70);
-
-                Storage::disk('public')->put($path, (string) $encodedImage);
-                $validated['featured_image'] = $path;
-                
+                $newImagePath = $this->images->processAndStore(
+                    $request->file('featured_image'),
+                    'news-images'
+                );
+                $validated['featured_image'] = $newImagePath;
             } catch (\Exception $e) {
-                Log::error('News image error: ' . $e->getMessage());
+                Log::error('News image error: '.$e->getMessage());
+
                 return back()->withErrors(['featured_image' => 'Gagal memproses gambar.'])->withInput();
             }
         }
@@ -122,15 +117,18 @@ class DashboardNewsController extends Controller
             $validated['status'] = 'draft';
             $validated['published_at'] = null;
         }
-        
+
         try {
             News::create($validated);
         } catch (\Exception $e) {
-            return back()->withErrors(['error' => 'Gagal menyimpan berita: ' . $e->getMessage()])->withInput();
+            $this->images->deleteImageQuietly($newImagePath);
+            Log::error('News creation error: '.$e->getMessage());
+
+            return back()->withErrors(['error' => 'Gagal menyimpan berita. Silakan coba lagi.'])->withInput();
         }
 
         $message = $validated['status'] === 'published' ? 'Berita dipublikasikan!' : 'Berita disimpan sebagai draft!';
-        
+
         // Sesuaikan route redirect ini nanti
         return redirect()->route('dashboard.berita.index')->with('success', $message);
     }
@@ -141,6 +139,7 @@ class DashboardNewsController extends Controller
     public function edit(News $news) // Route Model Binding ke 'News'
     {
         $categories = NewsCategory::orderBy('name')->get();
+
         return view('backend.news.edit', compact('news', 'categories'));
     }
 
@@ -161,8 +160,8 @@ class DashboardNewsController extends Controller
             $validated = $request->validate([
                 'title' => 'required|string|max:255',
                 'slug' => [
-                    'required', 'string', 'max:255', 
-                    Rule::unique('news')->ignore($news->id) // Ignore ID berita ini saat cek unique
+                    'required', 'string', 'max:255',
+                    Rule::unique('news')->ignore($news->id), // Ignore ID berita ini saat cek unique
                 ],
                 'news_category_id' => 'required|exists:news_categories,id',
                 'body' => 'required|string',
@@ -178,24 +177,18 @@ class DashboardNewsController extends Controller
             return back()->withErrors($e->validator)->withInput();
         }
 
+        $oldImagePath = $news->featured_image;
+        $newImagePath = null;
         if ($request->hasFile('featured_image')) {
             try {
-                if ($news->featured_image && Storage::disk('public')->exists($news->featured_image)) {
-                    Storage::disk('public')->delete($news->featured_image);
-                }
-
-                $file = $request->file('featured_image');
-                $filename = Str::random(40) . '.jpg';
-                $path = 'news-images/' . $filename;
-
-                $manager = new ImageManager(new Driver());
-                $image = $manager->read($file);
-                $image->scale(width: 1200);
-                $encodedImage = $image->toJpeg(quality: 70);
-
-                Storage::disk('public')->put($path, (string) $encodedImage);
-                $validated['featured_image'] = $path;
+                $newImagePath = $this->images->processAndStore(
+                    $request->file('featured_image'),
+                    'news-images'
+                );
+                $validated['featured_image'] = $newImagePath;
             } catch (\Exception $e) {
+                Log::error('News image update error: '.$e->getMessage());
+
                 return back()->withErrors(['featured_image' => 'Gagal update gambar.'])->withInput();
             }
         }
@@ -206,8 +199,8 @@ class DashboardNewsController extends Controller
 
         if ($request->input('action') === 'publish') {
             $validated['status'] = 'published';
-            $validated['published_at'] = $request->filled('published_at') 
-                ? $request->published_at 
+            $validated['published_at'] = $request->filled('published_at')
+                ? $request->published_at
                 : ($news->published_at ?? now());
         } else {
             $validated['status'] = 'draft';
@@ -218,11 +211,16 @@ class DashboardNewsController extends Controller
         try {
             $news->update($validated);
         } catch (\Exception $e) {
-            \Illuminate\Support\Facades\Log::error('News update error: ' . $e->getMessage());
-            
+            $this->images->deleteImageQuietly($newImagePath);
+            Log::error('News update error: '.$e->getMessage());
+
             return back()
-                ->withErrors(['error' => 'Gagal memperbarui berita: ' . $e->getMessage()])
+                ->withErrors(['error' => 'Gagal memperbarui berita. Silakan coba lagi.'])
                 ->withInput();
+        }
+
+        if ($newImagePath) {
+            $this->images->deleteImageQuietly($oldImagePath);
         }
 
         return redirect()->route('dashboard.berita.index')->with('success', 'Berita berhasil diperbarui!');
@@ -234,12 +232,14 @@ class DashboardNewsController extends Controller
     public function destroy(News $news): RedirectResponse
     {
         try {
-            if ($news->featured_image && Storage::disk('public')->exists($news->featured_image)) {
-                Storage::disk('public')->delete($news->featured_image);
-            }
+            $imagePath = $news->featured_image;
             $news->delete();
+            $this->images->deleteImageQuietly($imagePath);
+
             return redirect()->route('dashboard.berita.index')->with('success', 'Berita berhasil dihapus!');
         } catch (\Exception $e) {
+            Log::error('News deletion error: '.$e->getMessage());
+
             return redirect()->route('dashboard.berita.index')->with('error', 'Gagal menghapus berita.');
         }
     }

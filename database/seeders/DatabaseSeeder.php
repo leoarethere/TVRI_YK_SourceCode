@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Database\Seeders\UserSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -12,7 +11,12 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // Hanya memanggil UserSeeder
+        if (! app()->environment(['local', 'testing'])) {
+            $this->command?->warn('Demo seeders are disabled outside local/testing environments.');
+
+            return;
+        }
+
         $this->call([
             UserSeeder::class,
             DummyDataSeeder::class,

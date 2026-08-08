@@ -1,4 +1,8 @@
 {
+  "_apexcharts.esm-Bw6UNgWf.js": {
+    "file": "assets/apexcharts.esm-Bw6UNgWf.js",
+    "name": "apexcharts.esm"
+  },
   "node_modules/owl.carousel/dist/assets/owl.video.play.png": {
     "file": "assets/owl.video.play-BJo37keB.png",
     "src": "node_modules/owl.carousel/dist/assets/owl.video.play.png"
@@ -10,7 +14,7 @@
     "isDynamicEntry": true
   },
   "resources/css/app.css": {
-    "file": "assets/app--NonrBQf.css",
+    "file": "assets/app-l8L3adp4.css",
     "src": "resources/css/app.css",
     "isEntry": true,
     "name": "app",
@@ -19,10 +23,13 @@
     ]
   },
   "resources/js/app.js": {
-    "file": "assets/app-BMWkwQrm.js",
+    "file": "assets/app-DHEoJp-1.js",
     "name": "app",
     "src": "resources/js/app.js",
     "isEntry": true,
+    "imports": [
+      "_apexcharts.esm-Bw6UNgWf.js"
+    ],
     "dynamicImports": [
       "node_modules/owl.carousel/dist/owl.carousel.js"
     ],
@@ -34,9 +41,12 @@
     ]
   },
   "resources/js/dashboard.js": {
-    "file": "assets/dashboard-DKsE3wsq.js",
+    "file": "assets/dashboard-CapAahVW.js",
     "name": "dashboard",
     "src": "resources/js/dashboard.js",
-    "isEntry": true
+    "isEntry": true,
+    "imports": [
+      "_apexcharts.esm-Bw6UNgWf.js"
+    ]
   }
 }

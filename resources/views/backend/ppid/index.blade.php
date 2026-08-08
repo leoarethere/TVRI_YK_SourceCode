@@ -144,7 +144,7 @@
                                 {{-- Keterangan --}}
                                 <td class="px-4 py-4 align-top">
                                     <div class="text-sm text-gray-600 dark:text-gray-300 line-clamp-2">
-                                        {!! Str::limit(strip_tags($item->description), 100) !!}
+                                        {{ Str::limit(strip_tags($item->description), 100) }}
                                     </div>
                                 </td>
 

@@ -16,7 +16,6 @@ class CommentController extends Controller
             'rating' => 'nullable|integer|min:1|max:5',
             'commentable_type' => 'required|string|in:news,post,broadcast',
             'commentable_id' => 'required|integer',
-            'website' => 'nullable|string|max:255',
         ]);
 
         // Honeypot anti-spam check

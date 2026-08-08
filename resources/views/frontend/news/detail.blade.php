@@ -11,20 +11,23 @@
 
     {{-- SEO Structured Data --}}
     @if($news)
-    <script type="application/ld+json">
-    {
-        "@context": "https://schema.org",
-        "@type": "NewsArticle",
-        "headline": "{{ addslashes($news->title) }}",
-        "description": "{{ addslashes(Str::limit(strip_tags($news->body), 160)) }}",
-        "datePublished": "{{ $news->published_at?->toIso8601String() ?? $news->created_at->toIso8601String() }}",
-        "author": {
-            "@type": "Person",
-            "name": "{{ $news->user->name ?? 'Admin' }}"
-        },
-        "image": "{{ $news->featured_image ? Storage::url($news->featured_image) : '' }}"
-    }
-    </script>
+    @php
+        $newsSchema = [
+            '@context' => 'https://schema.org',
+            '@type' => 'NewsArticle',
+            'headline' => $news->title,
+            'description' => Str::limit(strip_tags($news->body), 160),
+            'datePublished' => ($news->published_at ?? $news->created_at)->toIso8601String(),
+            'author' => [
+                '@type' => 'Person',
+                'name' => $news->user->name ?? 'Admin',
+            ],
+            'image' => $news->featured_image ? Storage::url($news->featured_image) : '',
+        ];
+        $jsonLdOptions = JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE
+            | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT;
+    @endphp
+    <script type="application/ld+json">{!! json_encode($newsSchema, $jsonLdOptions) !!}</script>
     @endif
 
     {{-- WRAPPER UTAMA --}}

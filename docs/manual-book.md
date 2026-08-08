@@ -1,7 +1,7 @@
 # 📖 Manual Book — Website TVRI Stasiun D.I. Yogyakarta
 
-**Versi Dokumen:** 1.0  
-**Tanggal:** 18 Mei 2026  
+**Versi Dokumen:** 1.1
+**Tanggal:** 8 Agustus 2026
 **Framework:** Laravel 11 · PHP 8.2 · MySQL · TailwindCSS
 
 ---
@@ -82,18 +82,18 @@ Aplikasi menggunakan pola **MVC (Model-View-Controller)** bawaan Laravel:
 ```
 Yogyakarta/
 ├── app/
-│   ├── Http/Controllers/     # 46 Controller (Frontend + Dashboard)
-│   ├── Models/               # 24 Model Eloquent
+│   ├── Http/Controllers/     # 48 Controller (Frontend + Dashboard)
+│   ├── Models/               # 26 Model Eloquent
 │   └── Providers/            # Service Provider
 ├── database/
-│   ├── migrations/           # 36 File Migrasi
+│   ├── migrations/           # 45 File Migrasi
 │   └── seeders/              # Seeder (termasuk DummyDataSeeder)
 ├── resources/views/
 │   ├── frontend/             # 10 Modul Halaman Publik
 │   ├── backend/              # 21 Modul Dashboard Admin
 │   └── components/           # Komponen Blade (Layout, Komentar, dll)
 ├── routes/
-│   └── web.php               # 177 Route Terdaftar
+│   └── web.php               # 182 Route Terdaftar
 └── public/
     ├── img/                  # Asset gambar statis
     └── storage/              # Symlink ke storage/app/public
@@ -135,24 +135,30 @@ php artisan key:generate
 # DB_USERNAME=root
 # DB_PASSWORD=
 
-# 7. Jalankan migrasi & seeder
+# 7. Tentukan akun administrator awal di .env
+# SEED_ADMIN_NAME="Administrator"
+# SEED_ADMIN_USERNAME=admin
+# SEED_ADMIN_EMAIL=admin@example.com
+# SEED_ADMIN_PASSWORD="gunakan-password-kuat-minimal-12-karakter"
+
+# 8. Jalankan migrasi & seeder
 php artisan migrate --seed
 
-# 8. Buat symbolic link storage
+# 9. Buat symbolic link storage
 php artisan storage:link
 
-# 9. Build asset frontend
+# 10. Build asset frontend
 npm run build
 
-# 10. Jalankan development server
+# 11. Jalankan development server
 php artisan serve
 ```
 
-### 3.3 Akun Default
+### 3.3 Akun Administrator Awal
 
-| Role | Username | Email | Password |
-|------|----------|-------|----------|
-| Admin | admin | admin@tvri.co.id | (sesuai seeder) |
+Seeder tidak menyimpan kredensial bawaan di source code. Nilai `SEED_ADMIN_USERNAME`,
+`SEED_ADMIN_EMAIL`, dan `SEED_ADMIN_PASSWORD` wajib diisi sebelum menjalankan
+`php artisan db:seed`; password harus terdiri dari sedikitnya 12 karakter.
 
 ---
 
@@ -305,8 +311,8 @@ Sistem komentar menggunakan **Polymorphic Relationship** sehingga satu tabel `co
 
 1. Pengunjung mengisi **Nama**, **Email**, **Rating** (1-5 bintang), dan **Komentar**
 2. Form dilindungi oleh **CSRF Token** dan **Rate Limiter** (maks 10 komentar/menit per IP)
-3. Komentar langsung tampil tanpa moderasi admin (direct publish)
-4. Admin dapat **menghapus** komentar melalui menu **Manajemen Komentar** di dashboard
+3. Komentar masuk dengan status **pending** dan belum tampil ke publik
+4. Admin/editor dapat menyetujui, menolak, atau menghapus komentar melalui menu **Manajemen Komentar**
 
 ### 7.3 Keamanan Komentar
 
@@ -321,10 +327,11 @@ Sistem komentar menggunakan **Polymorphic Relationship** sehingga satu tabel `co
 
 ### 8.1 Role Pengguna
 
-| Role | `is_admin` | Hak Akses |
-|------|------------|-----------|
-| Administrator | `true` | Akses penuh ke semua modul dashboard |
-| Editor | `false` | Akses dashboard terbatas (kelola konten sendiri) |
+| Role | Nilai `role` | Hak Akses |
+|------|--------------|-----------|
+| Administrator | `admin` | Akses penuh, termasuk pengguna dan pengaturan sensitif |
+| Editor | `secondary` | Akses dashboard untuk pengelolaan konten |
+| Pegawai | `pegawai` | Akses portal pegawai; tidak dapat membuka dashboard |
 
 ### 8.2 Proteksi Akun
 
@@ -360,7 +367,7 @@ Sistem komentar menggunakan **Polymorphic Relationship** sehingga satu tabel `co
 | CSRF | Token `@csrf` di semua form |
 | XSS | Output escaped `{{ }}`, HTML dibersihkan dengan `clean()` (HTMLPurifier) |
 | Password | Bcrypt 12 rounds |
-| Route Protection | Middleware `auth` untuk seluruh route `/dashboard/*` |
+| Route Protection | Middleware `auth` + `dashboardUser`; pengaturan sensitif juga memakai `isAdmin` |
 | Rate Limiting | `throttle:10,1` pada endpoint komentar |
 | File Upload | Validasi tipe & ukuran, konversi otomatis via Intervention Image |
 | Foreign Key | `onDelete('restrict')` pada kategori, `onDelete('cascade')` pada user |

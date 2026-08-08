@@ -115,7 +115,7 @@
                                 {{-- Isi Konten --}}
                                 <td class="px-4 py-4">
                                     <div class="line-clamp-2 text-sm text-gray-600 dark:text-gray-300">
-                                        {!! strip_tags($item->content) !!}
+                                        {{ strip_tags($item->content) }}
                                     </div>
                                 </td>
 

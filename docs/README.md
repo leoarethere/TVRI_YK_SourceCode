@@ -1,6 +1,6 @@
 # 📚 Dokumentasi Website TVRI Stasiun D.I. Yogyakarta
 
-**Versi:** 1.0 | **Tanggal:** 18 Mei 2026 | **Laravel 11 · PHP 8.2 · MySQL**
+**Versi:** 1.1 | **Tanggal:** 8 Agustus 2026 | **Laravel 11 · PHP 8.2 · MySQL**
 
 ---
 
@@ -23,16 +23,16 @@
 - **Security:** HTMLPurifier (mews/purifier), Bcrypt 12 rounds
 
 ### Statistik Proyek
-- 📊 **25 Tabel** database
-- 🎮 **46 Controller** (Frontend + Dashboard)
-- 🧩 **24 Model** Eloquent
-- 🛤️ **177 Route** terdaftar
+- 📊 **26 Tabel** database
+- 🎮 **48 Controller** (Frontend + Dashboard)
+- 🧩 **26 Model** Eloquent
+- 🛤️ **182 Route** terdaftar
 - 📄 **31 Modul** view (10 frontend + 21 backend)
 
 ### Akses Sistem
 - **URL Publik:** `/`
 - **URL Admin:** `/login` → `/dashboard`
-- **Proteksi:** Middleware `auth` untuk seluruh area dashboard
+- **Proteksi:** Middleware `auth` + `dashboardUser`; konfigurasi sensitif dibatasi ke `admin`
 
 ### Fitur Unggulan
 - ✅ Sistem komentar & rating polimorfik (Berita, Postingan, Program Siaran)
@@ -56,7 +56,7 @@ Browser
   │                                 (+ 10 halaman statis instansi)
   │
   └── [Auth]  Dashboard Routes ──► DashboardController (+ 20 sub-controller)
-                                    └── Middleware: auth
+                                    └── Middleware: auth + dashboardUser (+ isAdmin)
 ```
 
 ---

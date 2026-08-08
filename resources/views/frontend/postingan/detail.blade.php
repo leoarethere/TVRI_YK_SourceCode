@@ -11,20 +11,23 @@
 
     {{-- SEO Structured Data --}}
     @if($post)
-    <script type="application/ld+json">
-    {
-        "@context": "https://schema.org",
-        "@type": "BlogPosting",
-        "headline": "{{ addslashes($post->title) }}",
-        "description": "{{ addslashes(Str::limit(strip_tags($post->body), 160)) }}",
-        "datePublished": "{{ $post->published_at?->toIso8601String() ?? $post->created_at->toIso8601String() }}",
-        "author": {
-            "@type": "Person",
-            "name": "{{ $post->user->name ?? 'Admin' }}"
-        },
-        "image": "{{ $post->featured_image ? Storage::url($post->featured_image) : '' }}"
-    }
-    </script>
+    @php
+        $postSchema = [
+            '@context' => 'https://schema.org',
+            '@type' => 'BlogPosting',
+            'headline' => $post->title,
+            'description' => Str::limit(strip_tags($post->body), 160),
+            'datePublished' => ($post->published_at ?? $post->created_at)->toIso8601String(),
+            'author' => [
+                '@type' => 'Person',
+                'name' => $post->user->name ?? 'Admin',
+            ],
+            'image' => $post->featured_image ? Storage::url($post->featured_image) : '',
+        ];
+        $jsonLdOptions = JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE
+            | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT;
+    @endphp
+    <script type="application/ld+json">{!! json_encode($postSchema, $jsonLdOptions) !!}</script>
     @endif
 
     {{-- WRAPPER UTAMA --}}

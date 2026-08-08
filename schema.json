@@ -1,0 +1,1140 @@
+{
+    "akses_informasi": {
+        "columns": [
+            {
+                "name": "id",
+                "type": "bigint"
+            },
+            {
+                "name": "type",
+                "type": "enum"
+            },
+            {
+                "name": "label",
+                "type": "varchar"
+            },
+            {
+                "name": "url",
+                "type": "varchar"
+            },
+            {
+                "name": "is_active",
+                "type": "tinyint"
+            },
+            {
+                "name": "created_at",
+                "type": "timestamp"
+            },
+            {
+                "name": "updated_at",
+                "type": "timestamp"
+            }
+        ],
+        "foreign_keys": []
+    },
+    "banners": {
+        "columns": [
+            {
+                "name": "id",
+                "type": "bigint"
+            },
+            {
+                "name": "title",
+                "type": "varchar"
+            },
+            {
+                "name": "subtitle",
+                "type": "text"
+            },
+            {
+                "name": "image_path",
+                "type": "varchar"
+            },
+            {
+                "name": "link",
+                "type": "varchar"
+            },
+            {
+                "name": "button_text",
+                "type": "varchar"
+            },
+            {
+                "name": "order",
+                "type": "int"
+            },
+            {
+                "name": "is_active",
+                "type": "tinyint"
+            },
+            {
+                "name": "created_at",
+                "type": "timestamp"
+            },
+            {
+                "name": "updated_at",
+                "type": "timestamp"
+            }
+        ],
+        "foreign_keys": []
+    },
+    "broadcast_categories": {
+        "columns": [
+            {
+                "name": "id",
+                "type": "bigint"
+            },
+            {
+                "name": "name",
+                "type": "varchar"
+            },
+            {
+                "name": "slug",
+                "type": "varchar"
+            },
+            {
+                "name": "color",
+                "type": "varchar"
+            },
+            {
+                "name": "created_at",
+                "type": "timestamp"
+            },
+            {
+                "name": "updated_at",
+                "type": "timestamp"
+            }
+        ],
+        "foreign_keys": []
+    },
+    "broadcasts": {
+        "columns": [
+            {
+                "name": "id",
+                "type": "bigint"
+            },
+            {
+                "name": "user_id",
+                "type": "bigint"
+            },
+            {
+                "name": "broadcast_category_id",
+                "type": "bigint"
+            },
+            {
+                "name": "title",
+                "type": "varchar"
+            },
+            {
+                "name": "slug",
+                "type": "varchar"
+            },
+            {
+                "name": "synopsis",
+                "type": "text"
+            },
+            {
+                "name": "poster",
+                "type": "varchar"
+            },
+            {
+                "name": "youtube_link",
+                "type": "varchar"
+            },
+            {
+                "name": "status",
+                "type": "enum"
+            },
+            {
+                "name": "is_active",
+                "type": "tinyint"
+            },
+            {
+                "name": "published_at",
+                "type": "timestamp"
+            },
+            {
+                "name": "created_at",
+                "type": "timestamp"
+            },
+            {
+                "name": "updated_at",
+                "type": "timestamp"
+            },
+            {
+                "name": "deleted_at",
+                "type": "timestamp"
+            }
+        ],
+        "foreign_keys": [
+            {
+                "local": "broadcast_category_id",
+                "foreign_table": "broadcast_categories",
+                "foreign_col": "id"
+            },
+            {
+                "local": "user_id",
+                "foreign_table": "users",
+                "foreign_col": "id"
+            }
+        ]
+    },
+    "categories": {
+        "columns": [
+            {
+                "name": "id",
+                "type": "bigint"
+            },
+            {
+                "name": "name",
+                "type": "varchar"
+            },
+            {
+                "name": "slug",
+                "type": "varchar"
+            },
+            {
+                "name": "color",
+                "type": "varchar"
+            },
+            {
+                "name": "created_at",
+                "type": "timestamp"
+            },
+            {
+                "name": "updated_at",
+                "type": "timestamp"
+            },
+            {
+                "name": "deleted_at",
+                "type": "timestamp"
+            }
+        ],
+        "foreign_keys": []
+    },
+    "comments": {
+        "columns": [
+            {
+                "name": "id",
+                "type": "bigint"
+            },
+            {
+                "name": "commentable_type",
+                "type": "varchar"
+            },
+            {
+                "name": "commentable_id",
+                "type": "bigint"
+            },
+            {
+                "name": "name",
+                "type": "varchar"
+            },
+            {
+                "name": "email",
+                "type": "varchar"
+            },
+            {
+                "name": "body",
+                "type": "text"
+            },
+            {
+                "name": "rating",
+                "type": "tinyint"
+            },
+            {
+                "name": "status",
+                "type": "enum"
+            },
+            {
+                "name": "created_at",
+                "type": "timestamp"
+            },
+            {
+                "name": "updated_at",
+                "type": "timestamp"
+            },
+            {
+                "name": "deleted_at",
+                "type": "timestamp"
+            }
+        ],
+        "foreign_keys": []
+    },
+    "contact_infos": {
+        "columns": [
+            {
+                "name": "id",
+                "type": "bigint"
+            },
+            {
+                "name": "admin_phone",
+                "type": "varchar"
+            },
+            {
+                "name": "partnership_phone",
+                "type": "varchar"
+            },
+            {
+                "name": "hotline_phone",
+                "type": "varchar"
+            },
+            {
+                "name": "address",
+                "type": "text"
+            },
+            {
+                "name": "google_maps_embed",
+                "type": "text"
+            },
+            {
+                "name": "email",
+                "type": "varchar"
+            },
+            {
+                "name": "is_active",
+                "type": "tinyint"
+            },
+            {
+                "name": "created_at",
+                "type": "timestamp"
+            },
+            {
+                "name": "updated_at",
+                "type": "timestamp"
+            }
+        ],
+        "foreign_keys": []
+    },
+    "histories": {
+        "columns": [
+            {
+                "name": "id",
+                "type": "bigint"
+            },
+            {
+                "name": "title",
+                "type": "varchar"
+            },
+            {
+                "name": "content",
+                "type": "text"
+            },
+            {
+                "name": "image",
+                "type": "varchar"
+            },
+            {
+                "name": "status",
+                "type": "enum"
+            },
+            {
+                "name": "published_at",
+                "type": "timestamp"
+            },
+            {
+                "name": "created_at",
+                "type": "timestamp"
+            },
+            {
+                "name": "updated_at",
+                "type": "timestamp"
+            }
+        ],
+        "foreign_keys": []
+    },
+    "hymne_tvris": {
+        "columns": [
+            {
+                "name": "id",
+                "type": "bigint"
+            },
+            {
+                "name": "title",
+                "type": "varchar"
+            },
+            {
+                "name": "info",
+                "type": "varchar"
+            },
+            {
+                "name": "poster",
+                "type": "varchar"
+            },
+            {
+                "name": "synopsis",
+                "type": "text"
+            },
+            {
+                "name": "link",
+                "type": "varchar"
+            },
+            {
+                "name": "is_active",
+                "type": "tinyint"
+            },
+            {
+                "name": "created_at",
+                "type": "timestamp"
+            },
+            {
+                "name": "updated_at",
+                "type": "timestamp"
+            }
+        ],
+        "foreign_keys": []
+    },
+    "info_kunjungan_faqs": {
+        "columns": [
+            {
+                "name": "id",
+                "type": "bigint"
+            },
+            {
+                "name": "question",
+                "type": "varchar"
+            },
+            {
+                "name": "answer",
+                "type": "text"
+            },
+            {
+                "name": "order",
+                "type": "int"
+            },
+            {
+                "name": "is_active",
+                "type": "tinyint"
+            },
+            {
+                "name": "created_at",
+                "type": "timestamp"
+            },
+            {
+                "name": "updated_at",
+                "type": "timestamp"
+            }
+        ],
+        "foreign_keys": []
+    },
+    "info_kunjungans": {
+        "columns": [
+            {
+                "name": "id",
+                "type": "bigint"
+            },
+            {
+                "name": "title",
+                "type": "varchar"
+            },
+            {
+                "name": "slug",
+                "type": "varchar"
+            },
+            {
+                "name": "description",
+                "type": "text"
+            },
+            {
+                "name": "source_link",
+                "type": "varchar"
+            },
+            {
+                "name": "cover_image",
+                "type": "varchar"
+            },
+            {
+                "name": "is_active",
+                "type": "tinyint"
+            },
+            {
+                "name": "created_at",
+                "type": "timestamp"
+            },
+            {
+                "name": "updated_at",
+                "type": "timestamp"
+            }
+        ],
+        "foreign_keys": []
+    },
+    "info_magang_faqs": {
+        "columns": [
+            {
+                "name": "id",
+                "type": "bigint"
+            },
+            {
+                "name": "question",
+                "type": "varchar"
+            },
+            {
+                "name": "answer",
+                "type": "text"
+            },
+            {
+                "name": "order",
+                "type": "int"
+            },
+            {
+                "name": "is_active",
+                "type": "tinyint"
+            },
+            {
+                "name": "created_at",
+                "type": "timestamp"
+            },
+            {
+                "name": "updated_at",
+                "type": "timestamp"
+            }
+        ],
+        "foreign_keys": []
+    },
+    "info_magangs": {
+        "columns": [
+            {
+                "name": "id",
+                "type": "bigint"
+            },
+            {
+                "name": "title",
+                "type": "varchar"
+            },
+            {
+                "name": "slug",
+                "type": "varchar"
+            },
+            {
+                "name": "description",
+                "type": "text"
+            },
+            {
+                "name": "source_link",
+                "type": "varchar"
+            },
+            {
+                "name": "cover_image",
+                "type": "varchar"
+            },
+            {
+                "name": "is_active",
+                "type": "tinyint"
+            },
+            {
+                "name": "created_at",
+                "type": "timestamp"
+            },
+            {
+                "name": "updated_at",
+                "type": "timestamp"
+            }
+        ],
+        "foreign_keys": []
+    },
+    "jadwal_acaras": {
+        "columns": [
+            {
+                "name": "id",
+                "type": "bigint"
+            },
+            {
+                "name": "title",
+                "type": "varchar"
+            },
+            {
+                "name": "slug",
+                "type": "varchar"
+            },
+            {
+                "name": "start_time",
+                "type": "time"
+            },
+            {
+                "name": "end_time",
+                "type": "time"
+            },
+            {
+                "name": "broadcast_category_id",
+                "type": "bigint"
+            },
+            {
+                "name": "is_active",
+                "type": "tinyint"
+            },
+            {
+                "name": "created_at",
+                "type": "timestamp"
+            },
+            {
+                "name": "updated_at",
+                "type": "timestamp"
+            },
+            {
+                "name": "jadwal_category_id",
+                "type": "bigint"
+            }
+        ],
+        "foreign_keys": [
+            {
+                "local": "broadcast_category_id",
+                "foreign_table": "broadcast_categories",
+                "foreign_col": "id"
+            },
+            {
+                "local": "jadwal_category_id",
+                "foreign_table": "jadwal_categories",
+                "foreign_col": "id"
+            }
+        ]
+    },
+    "jadwal_categories": {
+        "columns": [
+            {
+                "name": "id",
+                "type": "bigint"
+            },
+            {
+                "name": "name",
+                "type": "varchar"
+            },
+            {
+                "name": "slug",
+                "type": "varchar"
+            },
+            {
+                "name": "order",
+                "type": "int"
+            },
+            {
+                "name": "color",
+                "type": "varchar"
+            },
+            {
+                "name": "created_at",
+                "type": "timestamp"
+            },
+            {
+                "name": "updated_at",
+                "type": "timestamp"
+            }
+        ],
+        "foreign_keys": []
+    },
+    "news": {
+        "columns": [
+            {
+                "name": "id",
+                "type": "bigint"
+            },
+            {
+                "name": "user_id",
+                "type": "bigint"
+            },
+            {
+                "name": "news_category_id",
+                "type": "bigint"
+            },
+            {
+                "name": "title",
+                "type": "varchar"
+            },
+            {
+                "name": "slug",
+                "type": "varchar"
+            },
+            {
+                "name": "body",
+                "type": "text"
+            },
+            {
+                "name": "featured_image",
+                "type": "varchar"
+            },
+            {
+                "name": "excerpt",
+                "type": "text"
+            },
+            {
+                "name": "link_berita",
+                "type": "varchar"
+            },
+            {
+                "name": "status",
+                "type": "enum"
+            },
+            {
+                "name": "published_at",
+                "type": "timestamp"
+            },
+            {
+                "name": "meta_title",
+                "type": "varchar"
+            },
+            {
+                "name": "meta_description",
+                "type": "varchar"
+            },
+            {
+                "name": "views",
+                "type": "bigint"
+            },
+            {
+                "name": "created_at",
+                "type": "timestamp"
+            },
+            {
+                "name": "updated_at",
+                "type": "timestamp"
+            },
+            {
+                "name": "deleted_at",
+                "type": "timestamp"
+            }
+        ],
+        "foreign_keys": [
+            {
+                "local": "news_category_id",
+                "foreign_table": "news_categories",
+                "foreign_col": "id"
+            },
+            {
+                "local": "user_id",
+                "foreign_table": "users",
+                "foreign_col": "id"
+            }
+        ]
+    },
+    "news_categories": {
+        "columns": [
+            {
+                "name": "id",
+                "type": "bigint"
+            },
+            {
+                "name": "name",
+                "type": "varchar"
+            },
+            {
+                "name": "slug",
+                "type": "varchar"
+            },
+            {
+                "name": "color",
+                "type": "varchar"
+            },
+            {
+                "name": "created_at",
+                "type": "timestamp"
+            },
+            {
+                "name": "updated_at",
+                "type": "timestamp"
+            }
+        ],
+        "foreign_keys": []
+    },
+    "posts": {
+        "columns": [
+            {
+                "name": "id",
+                "type": "bigint"
+            },
+            {
+                "name": "user_id",
+                "type": "bigint"
+            },
+            {
+                "name": "category_id",
+                "type": "bigint"
+            },
+            {
+                "name": "title",
+                "type": "varchar"
+            },
+            {
+                "name": "slug",
+                "type": "varchar"
+            },
+            {
+                "name": "body",
+                "type": "text"
+            },
+            {
+                "name": "link_postingan",
+                "type": "varchar"
+            },
+            {
+                "name": "featured_image",
+                "type": "varchar"
+            },
+            {
+                "name": "excerpt",
+                "type": "text"
+            },
+            {
+                "name": "status",
+                "type": "enum"
+            },
+            {
+                "name": "published_at",
+                "type": "timestamp"
+            },
+            {
+                "name": "meta_title",
+                "type": "varchar"
+            },
+            {
+                "name": "meta_description",
+                "type": "varchar"
+            },
+            {
+                "name": "views",
+                "type": "bigint"
+            },
+            {
+                "name": "created_at",
+                "type": "timestamp"
+            },
+            {
+                "name": "updated_at",
+                "type": "timestamp"
+            },
+            {
+                "name": "deleted_at",
+                "type": "timestamp"
+            }
+        ],
+        "foreign_keys": [
+            {
+                "local": "category_id",
+                "foreign_table": "categories",
+                "foreign_col": "id"
+            },
+            {
+                "local": "user_id",
+                "foreign_table": "users",
+                "foreign_col": "id"
+            }
+        ]
+    },
+    "ppids": {
+        "columns": [
+            {
+                "name": "id",
+                "type": "bigint"
+            },
+            {
+                "name": "title",
+                "type": "varchar"
+            },
+            {
+                "name": "description",
+                "type": "text"
+            },
+            {
+                "name": "source_link",
+                "type": "varchar"
+            },
+            {
+                "name": "cover_image",
+                "type": "varchar"
+            },
+            {
+                "name": "is_active",
+                "type": "tinyint"
+            },
+            {
+                "name": "created_at",
+                "type": "timestamp"
+            },
+            {
+                "name": "updated_at",
+                "type": "timestamp"
+            }
+        ],
+        "foreign_keys": []
+    },
+    "prestasis": {
+        "columns": [
+            {
+                "name": "id",
+                "type": "bigint"
+            },
+            {
+                "name": "title",
+                "type": "varchar"
+            },
+            {
+                "name": "award_name",
+                "type": "varchar"
+            },
+            {
+                "name": "type",
+                "type": "varchar"
+            },
+            {
+                "name": "category",
+                "type": "varchar"
+            },
+            {
+                "name": "year",
+                "type": "year"
+            },
+            {
+                "name": "description",
+                "type": "text"
+            },
+            {
+                "name": "image",
+                "type": "varchar"
+            },
+            {
+                "name": "is_active",
+                "type": "tinyint"
+            },
+            {
+                "name": "created_at",
+                "type": "timestamp"
+            },
+            {
+                "name": "updated_at",
+                "type": "timestamp"
+            }
+        ],
+        "foreign_keys": []
+    },
+    "reformasi_rbs": {
+        "columns": [
+            {
+                "name": "id",
+                "type": "bigint"
+            },
+            {
+                "name": "title",
+                "type": "varchar"
+            },
+            {
+                "name": "slug",
+                "type": "varchar"
+            },
+            {
+                "name": "description",
+                "type": "text"
+            },
+            {
+                "name": "file_link",
+                "type": "varchar"
+            },
+            {
+                "name": "cover_image",
+                "type": "varchar"
+            },
+            {
+                "name": "is_active",
+                "type": "tinyint"
+            },
+            {
+                "name": "created_at",
+                "type": "timestamp"
+            },
+            {
+                "name": "updated_at",
+                "type": "timestamp"
+            }
+        ],
+        "foreign_keys": []
+    },
+    "social_medias": {
+        "columns": [
+            {
+                "name": "id",
+                "type": "bigint"
+            },
+            {
+                "name": "email",
+                "type": "varchar"
+            },
+            {
+                "name": "phone",
+                "type": "varchar"
+            },
+            {
+                "name": "instagram",
+                "type": "varchar"
+            },
+            {
+                "name": "twitter",
+                "type": "varchar"
+            },
+            {
+                "name": "facebook",
+                "type": "varchar"
+            },
+            {
+                "name": "tiktok",
+                "type": "varchar"
+            },
+            {
+                "name": "youtube",
+                "type": "varchar"
+            },
+            {
+                "name": "created_at",
+                "type": "timestamp"
+            },
+            {
+                "name": "updated_at",
+                "type": "timestamp"
+            }
+        ],
+        "foreign_keys": []
+    },
+    "tugas_fungsis": {
+        "columns": [
+            {
+                "name": "id",
+                "type": "bigint"
+            },
+            {
+                "name": "type",
+                "type": "enum"
+            },
+            {
+                "name": "order",
+                "type": "int"
+            },
+            {
+                "name": "image",
+                "type": "varchar"
+            },
+            {
+                "name": "content",
+                "type": "text"
+            },
+            {
+                "name": "is_active",
+                "type": "tinyint"
+            },
+            {
+                "name": "created_at",
+                "type": "timestamp"
+            },
+            {
+                "name": "updated_at",
+                "type": "timestamp"
+            }
+        ],
+        "foreign_keys": []
+    },
+    "users": {
+        "columns": [
+            {
+                "name": "id",
+                "type": "bigint"
+            },
+            {
+                "name": "name",
+                "type": "varchar"
+            },
+            {
+                "name": "username",
+                "type": "varchar"
+            },
+            {
+                "name": "email",
+                "type": "varchar"
+            },
+            {
+                "name": "email_verified_at",
+                "type": "timestamp"
+            },
+            {
+                "name": "password",
+                "type": "varchar"
+            },
+            {
+                "name": "role",
+                "type": "varchar"
+            },
+            {
+                "name": "remember_token",
+                "type": "varchar"
+            },
+            {
+                "name": "created_at",
+                "type": "timestamp"
+            },
+            {
+                "name": "updated_at",
+                "type": "timestamp"
+            }
+        ],
+        "foreign_keys": []
+    },
+    "visi_misis": {
+        "columns": [
+            {
+                "name": "id",
+                "type": "bigint"
+            },
+            {
+                "name": "type",
+                "type": "enum"
+            },
+            {
+                "name": "content",
+                "type": "text"
+            },
+            {
+                "name": "image",
+                "type": "varchar"
+            },
+            {
+                "name": "order",
+                "type": "int"
+            },
+            {
+                "name": "is_active",
+                "type": "tinyint"
+            },
+            {
+                "name": "created_at",
+                "type": "timestamp"
+            },
+            {
+                "name": "updated_at",
+                "type": "timestamp"
+            }
+        ],
+        "foreign_keys": []
+    },
+    "visitors": {
+        "columns": [
+            {
+                "name": "id",
+                "type": "bigint"
+            },
+            {
+                "name": "ip_address",
+                "type": "varchar"
+            },
+            {
+                "name": "date",
+                "type": "date"
+            },
+            {
+                "name": "hits",
+                "type": "int"
+            },
+            {
+                "name": "created_at",
+                "type": "timestamp"
+            },
+            {
+                "name": "updated_at",
+                "type": "timestamp"
+            }
+        ],
+        "foreign_keys": []
+    }
+}

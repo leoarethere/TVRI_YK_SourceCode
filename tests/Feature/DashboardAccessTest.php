@@ -30,6 +30,24 @@ class DashboardAccessTest extends TestCase
         $response->assertStatus(200);
     }
 
+    public function test_secondary_admin_can_access_content_but_not_super_admin_settings(): void
+    {
+        $secondary = User::factory()->create(['role' => 'secondary']);
+
+        $this->actingAs($secondary)
+            ->get(route('dashboard.postingan.index'))
+            ->assertOk();
+
+        foreach ([
+            route('dashboard.users.index'),
+            route('dashboard.social-media.index'),
+            route('dashboard.contact-info.index'),
+            route('dashboard.akses-informasi.index'),
+        ] as $route) {
+            $this->actingAs($secondary)->get($route)->assertForbidden();
+        }
+    }
+
     public function test_non_admin_cannot_access_admin_routes(): void
     {
         $user = User::factory()->create(['role' => 'pegawai']);

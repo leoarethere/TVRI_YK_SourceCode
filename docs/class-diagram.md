@@ -17,7 +17,7 @@ classDiagram
         +string username
         +string email
         +string password
-        +boolean is_admin
+        +string role
         +HasMany posts()
         +HasMany news()
         +HasMany broadcasts()

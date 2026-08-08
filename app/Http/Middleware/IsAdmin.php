@@ -15,9 +15,10 @@ class IsAdmin
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (! auth()->user() || ! auth()->user()->isDashboardUser()) {
+        if (! $request->user()?->isAdmin()) {
             abort(403, 'Unauthorized access.');
         }
+
         return $next($request);
     }
 }

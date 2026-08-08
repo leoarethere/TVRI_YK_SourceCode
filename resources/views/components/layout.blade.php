@@ -56,55 +56,58 @@
     {{-- JSON-LD STRUCTURED DATA (Organization)         --}}
     {{-- Membantu Google menampilkan Knowledge Panel     --}}
     {{-- ============================================== --}}
-    <script type="application/ld+json">
-    {
-        "@context": "https://schema.org",
-        "@type": "BroadcastService",
-        "name": "TVRI Stasiun D.I. Yogyakarta",
-        "alternateName": "TVRI Jogja",
-        "description": "Lembaga Penyiaran Publik TVRI Stasiun Daerah Istimewa Yogyakarta - Media Pemersatu Bangsa",
-        "url": "{{ config('app.url') }}",
-        "logo": "{{ asset('img/favicon.png') }}",
-        "broadcastDisplayName": "TVRI D.I. Yogyakarta",
-        "broadcastTimezone": "Asia/Jakarta",
-        "parentService": {
-            "@type": "BroadcastService",
-            "name": "Televisi Republik Indonesia (TVRI)",
-            "url": "https://www.tvri.go.id"
-        },
-        "broadcaster": {
-            "@type": "Organization",
-            "name": "TVRI Stasiun D.I. Yogyakarta",
-            "url": "{{ config('app.url') }}",
-            "logo": "{{ asset('img/favicon.png') }}",
-            "sameAs": {!! json_encode(array_values(array_filter([
-                ($socialMedia ?? null)?->instagram,
-                ($socialMedia ?? null)?->youtube,
-                ($socialMedia ?? null)?->facebook,
-                ($socialMedia ?? null)?->twitter,
-                ($socialMedia ?? null)?->tiktok,
-            ]))) !!},
-            "address": {
-                "@type": "PostalAddress",
-                "streetAddress": "Jl. Magelang KM 4.5",
-                "addressLocality": "Yogyakarta",
-                "addressRegion": "D.I. Yogyakarta",
-                "postalCode": "55284",
-                "addressCountry": "ID"
-            },
-            "geo": {
-                "@type": "GeoCoordinates",
-                "latitude": "-7.7554382",
-                "longitude": "110.3613585"
-            },
-            "contactPoint": {
-                "@type": "ContactPoint",
-                "contactType": "customer service",
-                "availableLanguage": "Indonesian"
-            }
-        }
-    }
-    </script>
+    @php
+        $jsonLdOptions = JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE
+            | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT;
+        $organizationSchema = [
+            '@context' => 'https://schema.org',
+            '@type' => 'BroadcastService',
+            'name' => 'TVRI Stasiun D.I. Yogyakarta',
+            'alternateName' => 'TVRI Jogja',
+            'description' => 'Lembaga Penyiaran Publik TVRI Stasiun Daerah Istimewa Yogyakarta - Media Pemersatu Bangsa',
+            'url' => config('app.url'),
+            'logo' => asset('img/favicon.png'),
+            'broadcastDisplayName' => 'TVRI D.I. Yogyakarta',
+            'broadcastTimezone' => 'Asia/Jakarta',
+            'parentService' => [
+                '@type' => 'BroadcastService',
+                'name' => 'Televisi Republik Indonesia (TVRI)',
+                'url' => 'https://www.tvri.go.id',
+            ],
+            'broadcaster' => [
+                '@type' => 'Organization',
+                'name' => 'TVRI Stasiun D.I. Yogyakarta',
+                'url' => config('app.url'),
+                'logo' => asset('img/favicon.png'),
+                'sameAs' => array_values(array_filter([
+                    ($socialMedia ?? null)?->instagram,
+                    ($socialMedia ?? null)?->youtube,
+                    ($socialMedia ?? null)?->facebook,
+                    ($socialMedia ?? null)?->twitter,
+                    ($socialMedia ?? null)?->tiktok,
+                ])),
+                'address' => [
+                    '@type' => 'PostalAddress',
+                    'streetAddress' => 'Jl. Magelang KM 4.5',
+                    'addressLocality' => 'Yogyakarta',
+                    'addressRegion' => 'D.I. Yogyakarta',
+                    'postalCode' => '55284',
+                    'addressCountry' => 'ID',
+                ],
+                'geo' => [
+                    '@type' => 'GeoCoordinates',
+                    'latitude' => '-7.7554382',
+                    'longitude' => '110.3613585',
+                ],
+                'contactPoint' => [
+                    '@type' => 'ContactPoint',
+                    'contactType' => 'customer service',
+                    'availableLanguage' => 'Indonesian',
+                ],
+            ],
+        ];
+    @endphp
+    <script type="application/ld+json">{!! json_encode($organizationSchema, $jsonLdOptions) !!}</script>
     <style>
         html, body {
             overscroll-behavior: none;

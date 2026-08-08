@@ -21,6 +21,9 @@ class TrackVisitor
         if ($request->isMethod('GET') &&
             ! $request->is('dashboard*') &&
             ! $request->is('login*') &&
+            ! $request->is('pegawai*') &&
+            ! $request->is('forgot-password*') &&
+            ! $request->is('reset-password*') &&
             ! $request->is('livewire*') &&
             ! $request->ajax()) {
 
@@ -30,14 +33,20 @@ class TrackVisitor
 
                 // Anonimisasi IP menggunakan Hashing (SHA-256) + Salt dari App Key
                 // Ini memastikan IP asli tidak bisa dibaca balik (irreversible) demi kepatuhan Privasi Data
-                $anonymizedIp = hash('sha256', $ip . config('app.key'));
+                $anonymizedIp = hash('sha256', $ip.config('app.key'));
 
-                $visitor = Visitor::firstOrCreate(
-                    ['ip_address' => $anonymizedIp, 'date' => $date],
-                    ['hits' => 0] // Default 0 sebelum ditambah
-                );
+                Visitor::query()->insertOrIgnore([
+                    'ip_address' => $anonymizedIp,
+                    'date' => $date,
+                    'hits' => 0,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
 
-                $visitor->increment('hits');
+                Visitor::query()
+                    ->where('ip_address', $anonymizedIp)
+                    ->where('date', $date)
+                    ->increment('hits');
             } catch (\Exception $e) {
                 Log::error('Visitor tracking failed: '.$e->getMessage());
             }

@@ -95,7 +95,7 @@
                                     <div class="space-y-1">
                                         <p class="font-semibold text-gray-900 dark:text-white line-clamp-2 leading-tight">{{ $item->title }}</p>
                                         <div class="text-sm text-gray-600 dark:text-gray-300 line-clamp-2">
-                                            {!! Str::limit(strip_tags($item->content), 100) !!}
+                                            {{ Str::limit(strip_tags($item->content), 100) }}
                                         </div>
                                     </div>
                                 </td>

@@ -14,7 +14,7 @@
     {{-- GRAFIK PENGUNJUNG (Paling Atas) --}}
     <div x-data="visitorChart()" x-init="init()" class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm p-5 sm:p-6 mb-8">
         <div class="flex items-center justify-between mb-4">
-            <h4 class="text-lg font-bold text-gray-900 dark:text-white">Statistik Pengunjung</h4>
+            <h4 class="text-lg font-bold text-gray-900 dark:text-white">Statistik Tayangan</h4>
             <select x-model="filter" @change="fetchData" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-indigo-500 dark:focus:border-indigo-500">
                 <option value="today">Hari Ini</option>
                 <option value="week">7 Hari Terakhir</option>
@@ -137,7 +137,7 @@
         {{-- 8. Total Pengunjung --}}
         <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-5 flex items-center justify-between transition-all hover:shadow-md border-l-4 border-l-emerald-500">
             <div class="flex-1 min-w-0">
-                <p class="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">Total Pengunjung</p>
+                <p class="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">Total Tayangan</p>
                 <p class="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mt-1">{{ number_format($totalVisitors, 0, ',', '.') }}</p>
                 <p class="text-xs text-emerald-600 dark:text-emerald-400 mt-1 font-medium">+{{ number_format($todayVisitors, 0, ',', '.') }} hari ini</p>
             </div>
@@ -248,7 +248,7 @@
                 renderChart() {
                     const options = {
                         series: [{
-                            name: 'Pengunjung',
+                            name: 'Tayangan',
                             data: []
                         }],
                         chart: {
@@ -331,7 +331,7 @@
                         .then(data => {
                             if (this.chart) {
                                 this.chart.updateSeries([{
-                                    name: 'Pengunjung',
+                                    name: 'Tayangan',
                                     data: data.series
                                 }]);
                                 this.chart.updateOptions({

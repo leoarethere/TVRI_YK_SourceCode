@@ -12,7 +12,7 @@
             // Set dropdown terbuka jika route aktif saat sidebar terbuka
             if (this.isSidebarOpen) {
                 this.dropdowns.publikasi = {{ request()->is('dashboard/penyiaran*', 'dashboard/jadwal-acara*') ? 'true' : 'false' }};
-                this.dropdowns.layanan = {{ request()->is('dashboard/ppid*', 'dashboard/info-rb*', 'dashboard/info-magang*', 'dashboard/info-magang-faq*', 'dashboard/info-kunjungan*', 'dashboard/info-kunjungan-faq*', 'dashboard/akses-informasi*') ? 'true' : 'false' }};
+                this.dropdowns.layanan = {{ request()->is('dashboard/ppid*', 'dashboard/info-rb*', 'dashboard/info-magang*', 'dashboard/info-magang-faq*', 'dashboard/info-kunjungan*', 'dashboard/info-kunjungan-faq*') ? 'true' : 'false' }};
                 this.dropdowns.tentang = {{ request()->is('dashboard/sejarah*', 'dashboard/visi-misi*', 'dashboard/prestasi*', 'dashboard/tugas-fungsi*', 'dashboard/himne-tvri*') ? 'true' : 'false' }};
             }
         },
@@ -178,7 +178,7 @@
                 {{-- Dropdown Layanan --}}
                 @php 
                     // [UPDATE] Tambahkan 'dashboard/info-kunjungan-faq*' agar sidebar tetap terbuka
-                    $isLayananActive = request()->is('dashboard/ppid*', 'dashboard/info-rb*', 'dashboard/info-magang*', 'dashboard/info-magang-faq*', 'dashboard/info-kunjungan*', 'dashboard/info-kunjungan-faq*', 'dashboard/akses-informasi*');
+                    $isLayananActive = request()->is('dashboard/ppid*', 'dashboard/info-rb*', 'dashboard/info-magang*', 'dashboard/info-magang-faq*', 'dashboard/info-kunjungan*', 'dashboard/info-kunjungan-faq*');
                 @endphp
                 <li class="relative">
                     
@@ -475,6 +475,7 @@
                     Banner Carousel
                 </x-sidebar-item>
 
+                @if(auth()->user()->isAdmin())
                 {{-- MANAJEMEN USER --}}
                 <x-sidebar-item href="{{ route('dashboard.users.index') }}" :active="request()->is('dashboard/users*')">
                     <x-slot:icon>
@@ -488,6 +489,7 @@
                     </x-slot:icon>
                     Manajemen Pengguna
                 </x-sidebar-item>
+                @endif
 
                 {{-- MANAJEMEN KOMENTAR --}}
                 <x-sidebar-item href="{{ route('dashboard.komentar.index') }}" :active="request()->is('dashboard/komentar*')">
@@ -500,6 +502,7 @@
                     Manajemen Komentar
                 </x-sidebar-item>
 
+                @if(auth()->user()->isAdmin())
                 {{-- SOSIAL MEDIA --}}
                 <x-sidebar-item href="{{ route('dashboard.social-media.index') }}" :active="request()->is('dashboard/social-media*')">
                     <x-slot:icon>
@@ -534,6 +537,7 @@
                     </x-slot:icon>
                     Akses Informasi
                 </x-sidebar-item>
+                @endif
             </ul>
         </div>
 

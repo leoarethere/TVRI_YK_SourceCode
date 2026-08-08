@@ -2,24 +2,23 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Post;
 use App\Models\Category;
-use Illuminate\View\View;
-use Illuminate\Support\Str;
+use App\Models\Post;
+use App\Services\ImageService;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Auth;
-use Intervention\Image\ImageManager;
-use Illuminate\Http\RedirectResponse;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
+use Illuminate\View\View;
 
 // ✅ GUNAKAN GD DRIVER - Lebih universal dan tersedia di hampir semua server
-use Intervention\Image\Drivers\Gd\Driver;
-
 class DashboardPostController extends Controller
 {
+    public function __construct(private readonly ImageService $images) {}
+
     /**
      * Display a listing of the resource.
      */
@@ -30,7 +29,7 @@ class DashboardPostController extends Controller
         // Filter pencarian
         $query->when($request->filled('search'), function ($q) use ($request) {
             $search = str_replace(['%', '_'], ['\%', '\_'], $request->search);
-            $q->where('title', 'like', '%' . $search . '%');
+            $q->where('title', 'like', '%'.$search.'%');
         });
 
         // Filter kategori
@@ -62,6 +61,7 @@ class DashboardPostController extends Controller
     public function create(): View
     {
         $categories = Category::orderBy('name')->get();
+
         return view('backend.postingan.create', compact('categories'));
     }
 
@@ -93,35 +93,19 @@ class DashboardPostController extends Controller
         $validated['user_id'] = Auth::id();
 
         // ✅ Process & Compress Image dengan error handling
+        $newImagePath = null;
         if ($request->hasFile('featured_image')) {
             try {
-                $file = $request->file('featured_image');
-                $filename = Str::random(40) . '.jpg';
-                $path = 'post-images/' . $filename;
-
-                // Create ImageManager instance dengan GD Driver
-                $manager = new ImageManager(new Driver());
-                
-                // Read and process image
-                $image = $manager->read($file);
-                
-                // Optional: Resize if too large (max width 1200px)
-                $image->scale(width: 1200);
-                
-                // Encode to JPEG with 70% quality
-                $encodedImage = $image->toJpeg(quality: 70);
-
-                // Save to storage
-                Storage::disk('public')->put($path, (string) $encodedImage);
-
-                $validated['featured_image'] = $path;
-                
+                $newImagePath = $this->images->processAndStore(
+                    $request->file('featured_image'),
+                    'post-images'
+                );
+                $validated['featured_image'] = $newImagePath;
             } catch (\Exception $e) {
-                // Log error untuk debugging
-                Log::error('Image processing error: ' . $e->getMessage());
-                
+                Log::error('Image processing error: '.$e->getMessage());
+
                 return back()
-                    ->withErrors(['featured_image' => 'Gagal memproses gambar: ' . $e->getMessage()])
+                    ->withErrors(['featured_image' => 'Gagal memproses gambar. Silakan coba lagi.'])
                     ->withInput();
             }
         }
@@ -134,8 +118,8 @@ class DashboardPostController extends Controller
         // Set status based on action
         if ($request->input('action') === 'publish') {
             $validated['status'] = 'published';
-            $validated['published_at'] = $request->filled('published_at') 
-                ? $request->published_at 
+            $validated['published_at'] = $request->filled('published_at')
+                ? $request->published_at
                 : now();
         } else {
             $validated['status'] = 'draft';
@@ -146,15 +130,16 @@ class DashboardPostController extends Controller
         try {
             Post::create($validated);
         } catch (\Exception $e) {
-            Log::error('Post creation error: ' . $e->getMessage());
-            
+            $this->images->deleteImageQuietly($newImagePath);
+            Log::error('Post creation error: '.$e->getMessage());
+
             return back()
-                ->withErrors(['error' => 'Gagal menyimpan postingan: ' . $e->getMessage()])
+                ->withErrors(['error' => 'Gagal menyimpan postingan. Silakan coba lagi.'])
                 ->withInput();
         }
 
-        $message = $validated['status'] === 'published' 
-            ? 'Postingan berhasil dipublikasikan!' 
+        $message = $validated['status'] === 'published'
+            ? 'Postingan berhasil dipublikasikan!'
             : 'Postingan berhasil disimpan sebagai draft!';
 
         return redirect()->route('dashboard.postingan.index')->with('success', $message);
@@ -174,6 +159,7 @@ class DashboardPostController extends Controller
     public function edit(Post $post)
     {
         $categories = Category::orderBy('name')->get();
+
         return view('backend.postingan.edit', compact('post', 'categories'));
     }
 
@@ -187,10 +173,10 @@ class DashboardPostController extends Controller
             $validated = $request->validate([
                 'title' => 'required|string|max:255',
                 'slug' => [
-                    'required', 
-                    'string', 
-                    'max:255', 
-                    Rule::unique('posts')->ignore($post->id)
+                    'required',
+                    'string',
+                    'max:255',
+                    Rule::unique('posts')->ignore($post->id),
                 ],
                 'category_id' => 'required|exists:categories,id',
                 'body' => 'required|string',
@@ -207,39 +193,20 @@ class DashboardPostController extends Controller
         }
 
         // ✅ Process & Compress New Image
+        $oldImagePath = $post->featured_image;
+        $newImagePath = null;
         if ($request->hasFile('featured_image')) {
             try {
-                // Delete old image
-                if ($post->featured_image && Storage::disk('public')->exists($post->featured_image)) {
-                    Storage::disk('public')->delete($post->featured_image);
-                }
-
-                $file = $request->file('featured_image');
-                $filename = Str::random(40) . '.jpg';
-                $path = 'post-images/' . $filename;
-
-                // Create ImageManager instance dengan GD Driver
-                $manager = new ImageManager(new Driver());
-                
-                // Read and process image
-                $image = $manager->read($file);
-                
-                // Optional: Resize if too large (max width 1200px)
-                $image->scale(width: 1200);
-                
-                // Encode to JPEG with 70% quality
-                $encodedImage = $image->toJpeg(quality: 70);
-
-                // Save to storage
-                Storage::disk('public')->put($path, (string) $encodedImage);
-
-                $validated['featured_image'] = $path;
-                
+                $newImagePath = $this->images->processAndStore(
+                    $request->file('featured_image'),
+                    'post-images'
+                );
+                $validated['featured_image'] = $newImagePath;
             } catch (\Exception $e) {
-                Log::error('Image processing error: ' . $e->getMessage());
-                
+                Log::error('Image processing error: '.$e->getMessage());
+
                 return back()
-                    ->withErrors(['featured_image' => 'Gagal memproses gambar: ' . $e->getMessage()])
+                    ->withErrors(['featured_image' => 'Gagal memproses gambar. Silakan coba lagi.'])
                     ->withInput();
             }
         }
@@ -252,8 +219,8 @@ class DashboardPostController extends Controller
         // Set status based on action
         if ($request->input('action') === 'publish') {
             $validated['status'] = 'published';
-            $validated['published_at'] = $request->filled('published_at') 
-                ? $request->published_at 
+            $validated['published_at'] = $request->filled('published_at')
+                ? $request->published_at
                 : ($post->published_at ?? now());
         } else {
             $validated['status'] = 'draft';
@@ -264,15 +231,20 @@ class DashboardPostController extends Controller
         try {
             $post->update($validated);
         } catch (\Exception $e) {
-            Log::error('Post update error: ' . $e->getMessage());
-            
+            $this->images->deleteImageQuietly($newImagePath);
+            Log::error('Post update error: '.$e->getMessage());
+
             return back()
-                ->withErrors(['error' => 'Gagal memperbarui postingan: ' . $e->getMessage()])
+                ->withErrors(['error' => 'Gagal memperbarui postingan. Silakan coba lagi.'])
                 ->withInput();
         }
 
-        $message = $validated['status'] === 'published' 
-            ? 'Postingan berhasil diperbarui!' 
+        if ($newImagePath) {
+            $this->images->deleteImageQuietly($oldImagePath);
+        }
+
+        $message = $validated['status'] === 'published'
+            ? 'Postingan berhasil diperbarui!'
             : 'Perubahan berhasil disimpan sebagai draft!';
 
         return redirect()->route('dashboard.postingan.index')
@@ -287,21 +259,18 @@ class DashboardPostController extends Controller
         try {
             $postTitle = $post->title;
 
-            // Delete featured image if exists
-            if ($post->featured_image && Storage::disk('public')->exists($post->featured_image)) {
-                Storage::disk('public')->delete($post->featured_image);
-            }
-
+            $imagePath = $post->featured_image;
             $post->delete();
+            $this->images->deleteImageQuietly($imagePath);
 
             return redirect()->route('dashboard.postingan.index')
-                ->with('success', 'Postingan "' . $postTitle . '" berhasil dihapus! 🗑️');
-                
+                ->with('success', 'Postingan "'.$postTitle.'" berhasil dihapus! 🗑️');
+
         } catch (\Exception $e) {
-            Log::error('Post deletion error: ' . $e->getMessage());
-            
+            Log::error('Post deletion error: '.$e->getMessage());
+
             return redirect()->route('dashboard.postingan.index')
-                ->with('error', 'Gagal menghapus postingan. Terjadi error: ' . $e->getMessage());
+                ->with('error', 'Gagal menghapus postingan. Silakan coba lagi.');
         }
     }
 }

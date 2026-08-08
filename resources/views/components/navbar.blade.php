@@ -323,13 +323,15 @@
                             </form>
                         @else
                             {{-- Pegawai: Tombol Logout ke portal pegawai --}}
-                            <a href="{{ route('pegawai.logout.get') }}" data-turbo="false"
-                               class="group flex items-center gap-2 rounded-lg px-4 py-3 text-base font-medium transition-all duration-200 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white">
-                                <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                                </svg>
-                                <span>Keluar</span>
-                                </a>
+                            <form action="{{ route('pegawai.logout') }}" method="POST" data-turbo="false" class="inline">
+                                @csrf
+                                <button type="submit" class="group flex items-center gap-2 rounded-lg px-4 py-3 text-base font-medium transition-all duration-200 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white">
+                                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                                    </svg>
+                                    <span>Keluar</span>
+                                </button>
+                            </form>
                             @endif
                         @else
                             <a href="{{ route('login') }}" data-turbo="false"
@@ -547,14 +549,18 @@
                             </form>
                         @else
                             {{-- Pegawai: Tombol Keluar ke portal pegawai --}}
-                            <a href="{{ route('pegawai.logout.get') }}" data-turbo="false"
-                               class="block rounded-lg px-4 py-2.5 text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800">
-                                <span class="flex items-center gap-3">
-                                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                                    </svg>
-                                    <span>Keluar</span>
-                            </a>
+                            <form action="{{ route('pegawai.logout') }}" method="POST" data-turbo="false" class="inline">
+                                @csrf
+                                <button type="submit"
+                                   class="block rounded-lg px-4 py-2.5 text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 w-full text-left">
+                                    <span class="flex items-center gap-3">
+                                        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                                        </svg>
+                                        <span>Keluar</span>
+                                    </span>
+                                </button>
+                            </form>
                         @endif
                     </div>
                 @else

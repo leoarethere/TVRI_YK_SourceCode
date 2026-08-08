@@ -3,12 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\InfoMagang;
-use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
-use Intervention\Image\ImageManager;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Intervention\Image\Drivers\Gd\Driver;
+use Intervention\Image\ImageManager;
 
 class DashboardInfoMagangController extends Controller
 {
@@ -18,7 +18,7 @@ class DashboardInfoMagangController extends Controller
 
         // Fitur Pencarian
         if ($request->filled('search')) {
-            $query->where('title', 'like', '%' . $request->search . '%');
+            $query->where('title', 'like', '%'.$request->search.'%');
         }
 
         // Fitur Sorting
@@ -41,23 +41,23 @@ class DashboardInfoMagangController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'title'       => 'required|string|max:255',
+            'title' => 'required|string|max:255',
             'source_link' => 'required|url',
             'cover_image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:5120', // Max 5MB
             'description' => 'required|string',
         ]);
 
         $data = $validated;
-        $data['slug'] = Str::slug($validated['title']) . '-' . Str::random(5);
+        $data['slug'] = Str::slug($validated['title']).'-'.Str::random(5);
         $data['is_active'] = $request->has('is_active');
 
         // Handle Upload Cover (dengan kompresi)
         if ($request->hasFile('cover_image')) {
             try {
                 $file = $request->file('cover_image');
-                $filename = 'magang-covers/' . Str::random(40) . '.jpg';
+                $filename = 'magang-covers/'.Str::random(40).'.jpg';
 
-                $manager = new ImageManager(new Driver());
+                $manager = new ImageManager(new Driver);
                 $image = $manager->read($file);
                 $image->scale(width: 800);
                 $encoded = $image->toJpeg(quality: 80);
@@ -65,7 +65,9 @@ class DashboardInfoMagangController extends Controller
                 Storage::disk('public')->put($filename, (string) $encoded);
                 $data['cover_image'] = $filename;
             } catch (\Exception $e) {
-                return back()->withErrors(['cover_image' => 'Gagal memproses gambar: ' . $e->getMessage()])->withInput();
+                report($e);
+
+                return back()->withErrors(['cover_image' => 'Gagal memproses gambar. Silakan coba lagi.'])->withInput();
             }
         }
 
@@ -83,25 +85,27 @@ class DashboardInfoMagangController extends Controller
     public function update(Request $request, InfoMagang $infoMagang)
     {
         $validated = $request->validate([
-            'title'       => 'required|string|max:255',
+            'title' => 'required|string|max:255',
             'source_link' => 'required|url',
             'cover_image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:5120',
             'description' => 'required|string',
         ]);
 
         $data = $validated;
-        
+
         // [PERBAIKAN SEO] Slug hanya dibuat sekali saat create agar link permanen.
 
         $data['is_active'] = $request->has('is_active');
+
+        $oldCoverPath = $infoMagang->cover_image;
 
         // [PERBAIKAN LOGIKA GAMBAR] Upload baru sukses -> Baru hapus lama (dengan kompresi)
         if ($request->hasFile('cover_image')) {
             try {
                 $file = $request->file('cover_image');
-                $filename = 'magang-covers/' . Str::random(40) . '.jpg';
+                $filename = 'magang-covers/'.Str::random(40).'.jpg';
 
-                $manager = new ImageManager(new Driver());
+                $manager = new ImageManager(new Driver);
                 $image = $manager->read($file);
                 $image->scale(width: 800);
                 $encoded = $image->toJpeg(quality: 80);
@@ -109,17 +113,19 @@ class DashboardInfoMagangController extends Controller
                 // 1. Simpan gambar baru
                 Storage::disk('public')->put($filename, (string) $encoded);
 
-                // 2. Jika sukses, hapus gambar lama
-                if ($infoMagang->cover_image && Storage::disk('public')->exists($infoMagang->cover_image)) {
-                    Storage::disk('public')->delete($infoMagang->cover_image);
-                }
                 $data['cover_image'] = $filename;
             } catch (\Exception $e) {
-                return back()->withErrors(['cover_image' => 'Gagal memproses gambar: ' . $e->getMessage()])->withInput();
+                report($e);
+
+                return back()->withErrors(['cover_image' => 'Gagal memproses gambar. Silakan coba lagi.'])->withInput();
             }
         }
 
         $infoMagang->update($data);
+
+        if (isset($data['cover_image']) && $oldCoverPath) {
+            Storage::disk('public')->delete($oldCoverPath);
+        }
 
         return redirect()->route('dashboard.info-magang.index')
             ->with('success', 'Informasi Magang berhasil diperbarui!');
@@ -127,12 +133,12 @@ class DashboardInfoMagangController extends Controller
 
     public function destroy(InfoMagang $infoMagang)
     {
-        // Hapus file gambar jika ada
-        if ($infoMagang->cover_image && Storage::disk('public')->exists($infoMagang->cover_image)) {
-            Storage::disk('public')->delete($infoMagang->cover_image);
-        }
-
+        $coverPath = $infoMagang->cover_image;
         $infoMagang->delete();
+
+        if ($coverPath) {
+            Storage::disk('public')->delete($coverPath);
+        }
 
         return redirect()->route('dashboard.info-magang.index')
             ->with('success', 'Informasi Magang berhasil dihapus!');

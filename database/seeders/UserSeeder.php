@@ -13,24 +13,27 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-        // 1. Buat User Admin Khusus
-        User::factory()->admin()->create([
-            'password' => Hash::make('password'), // Password untuk admin
-        ]);
+        $admin = config('seeding.admin');
 
-        // 2. Buat User Leo (Opsional, jika ingin tetap ada)
-        User::firstOrCreate(
-            ['username' => 'leo'],
+        if (blank($admin['username']) || blank($admin['email']) || blank($admin['password'])) {
+            throw new \RuntimeException(
+                'Set SEED_ADMIN_USERNAME, SEED_ADMIN_EMAIL, and SEED_ADMIN_PASSWORD before running db:seed.'
+            );
+        }
+
+        if (strlen($admin['password']) < 12) {
+            throw new \RuntimeException('SEED_ADMIN_PASSWORD must contain at least 12 characters.');
+        }
+
+        User::updateOrCreate(
+            ['email' => $admin['email']],
             [
-                'name' => 'Leo',
-                'email' => 'leonardounofficialz@gmail.com',
+                'name' => $admin['name'],
+                'username' => $admin['username'],
                 'email_verified_at' => now(),
-                'password' => Hash::make('12345678'),
-                'role' => 'admin', // Leo sebagai Akun Utama
+                'password' => Hash::make($admin['password']),
+                'role' => 'admin',
             ]
         );
-        
-        // 3. Buat 5 user dummy biasa
-        User::factory(5)->create();
     }
 }

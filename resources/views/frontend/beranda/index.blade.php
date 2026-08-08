@@ -80,7 +80,6 @@
             {{-- Header Section --}}
             <div class="flex items-end justify-between mb-8">
                 <div>
-                    <span class="text-blue-600 dark:text-blue-400 font-bold tracking-wider uppercase text-sm">Hiburan dan Edukasi</span>
                     <h2 class="text-2xl md:text-3xl font-extrabold text-gray-900 dark:text-white mt-1">Program Unggulan</h2>
                 </div>
                 <a href="{{ route('penyiaran.index') }}" class="group flex items-center text-sm font-semibold text-blue-600 hover:text-blue-700 dark:text-blue-400 transition-colors">
@@ -474,7 +473,6 @@
                 
                 {{-- Kolom Kiri: Informasi Kontak --}}
                 <div class="flex-1">
-                    <span class="text-blue-600 dark:text-blue-400 font-bold tracking-wider uppercase text-sm">Hubungi Kami</span>
                     <h2 class="text-2xl md:text-3xl font-extrabold text-gray-900 dark:text-white mt-2 mb-6">
                         Tetap Terhubung Bersama TVRI Stasiun Yogyakarta
                     </h2>

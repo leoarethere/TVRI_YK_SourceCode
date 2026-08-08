@@ -152,7 +152,7 @@
 
                                     {{-- Deskripsi --}}
                                     <div class="text-sm text-gray-600 dark:text-gray-400 line-clamp-2 mb-4 leading-relaxed">
-                                        {!! strip_tags($item->description) !!}
+                                        {{ strip_tags($item->description) }}
                                     </div>
                                 </div>
 

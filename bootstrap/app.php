@@ -10,11 +10,17 @@ return Application::configure(basePath: dirname(__DIR__))
         commands: __DIR__.'/../routes/console.php',
         health: '/up',
     )
-    
+
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->alias([
             'isAdmin' => \App\Http\Middleware\IsAdmin::class,
+            'dashboardUser' => \App\Http\Middleware\IsDashboardUser::class,
             'isPegawai' => \App\Http\Middleware\IsPegawai::class,
+        ]);
+
+        // Daftarkan TrackVisitor sebagai middleware web global
+        $middleware->web(append: [
+            \App\Http\Middleware\TrackVisitor::class,
         ]);
     })
 

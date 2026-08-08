@@ -1,6 +1,6 @@
 # 🗄️ Dokumentasi Database — Website TVRI D.I. Yogyakarta
 
-**Total Tabel:** 25 tabel aktif  
+**Total Tabel:** 26 tabel aktif
 **DBMS:** MySQL 8  
 **Framework ORM:** Laravel Eloquent
 
@@ -16,7 +16,7 @@ erDiagram
         string username UK
         string email UK
         string password
-        boolean is_admin
+        string role
         timestamp email_verified_at
         string remember_token
         timestamps created_at
@@ -328,7 +328,7 @@ LRS menggambarkan hubungan antar tabel beserta atribut kunci secara lebih detail
 │                    KONTEN UTAMA (Content Core)                     │
 └──────────────────────────────────────────────────────────────────┘
 
-users (id*, name, username°, email°, password, is_admin, ...)
+users (id*, name, username°, email°, password, role, ...)
     │
     ├──────────────────────────────────────────────────┐
     │                                                  │
@@ -425,7 +425,7 @@ Keterangan: * = Primary Key, ** = Foreign Key, ° = Unique
 | username | varchar(255) | No | — | Username unik untuk login |
 | email | varchar(255) | No | — | Email unik |
 | password | varchar(255) | No | — | Hash Bcrypt |
-| is_admin | tinyint(1) | No | 0 | Flag hak akses (1=Admin) |
+| role | varchar(255) | No | secondary | Peran: admin, secondary, atau pegawai |
 | remember_token | varchar(100) | Yes | NULL | Token "ingat saya" |
 | created_at | timestamp | Yes | NULL | Waktu dibuat |
 | updated_at | timestamp | Yes | NULL | Waktu diperbarui |

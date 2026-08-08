@@ -12,7 +12,7 @@ class NewsCategory extends Model
 {
     use HasFactory;
 
-    protected $guarded = ['id'];
+    protected $fillable = ['name', 'slug', 'color'];
 
     // Relasi: Satu kategori memiliki banyak berita
     public function news(): HasMany

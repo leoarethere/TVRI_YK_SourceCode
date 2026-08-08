@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Support\Str;
-use Illuminate\Http\Request;
 use App\Models\InfoKunjungan;
+use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
-use Intervention\Image\ImageManager;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Intervention\Image\Drivers\Gd\Driver;
+use Intervention\Image\ImageManager;
 
 class DashboardInfoKunjunganController extends Controller
 {
@@ -18,7 +18,7 @@ class DashboardInfoKunjunganController extends Controller
 
         // Pencarian
         if ($request->filled('search')) {
-            $query->where('title', 'like', '%' . $request->search . '%');
+            $query->where('title', 'like', '%'.$request->search.'%');
         }
 
         // Sorting
@@ -41,23 +41,23 @@ class DashboardInfoKunjunganController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'title'       => 'required|string|max:255',
+            'title' => 'required|string|max:255',
             'source_link' => 'required|url',
             'cover_image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:5120', // Max 5MB
             'description' => 'required|string',
         ]);
 
         $data = $validated;
-        $data['slug'] = Str::slug($validated['title']) . '-' . Str::random(5);
+        $data['slug'] = Str::slug($validated['title']).'-'.Str::random(5);
         $data['is_active'] = $request->has('is_active');
 
         // Upload Cover (dengan kompresi)
         if ($request->hasFile('cover_image')) {
             try {
                 $file = $request->file('cover_image');
-                $filename = 'kunjungan-covers/' . Str::random(40) . '.jpg';
+                $filename = 'kunjungan-covers/'.Str::random(40).'.jpg';
 
-                $manager = new ImageManager(new Driver());
+                $manager = new ImageManager(new Driver);
                 $image = $manager->read($file);
                 $image->scale(width: 800);
                 $encoded = $image->toJpeg(quality: 80);
@@ -65,7 +65,9 @@ class DashboardInfoKunjunganController extends Controller
                 Storage::disk('public')->put($filename, (string) $encoded);
                 $data['cover_image'] = $filename;
             } catch (\Exception $e) {
-                return back()->withErrors(['cover_image' => 'Gagal memproses gambar: ' . $e->getMessage()])->withInput();
+                report($e);
+
+                return back()->withErrors(['cover_image' => 'Gagal memproses gambar. Silakan coba lagi.'])->withInput();
             }
         }
 
@@ -83,25 +85,27 @@ class DashboardInfoKunjunganController extends Controller
     public function update(Request $request, InfoKunjungan $infoKunjungan)
     {
         $validated = $request->validate([
-            'title'       => 'required|string|max:255',
+            'title' => 'required|string|max:255',
             'source_link' => 'required|url',
             'cover_image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:5120',
             'description' => 'required|string',
         ]);
 
         $data = $validated;
-        
+
         // [PERBAIKAN SEO] Slug tidak diubah saat update judul
-        
+
         $data['is_active'] = $request->has('is_active');
+
+        $oldCoverPath = $infoKunjungan->cover_image;
 
         // [PERBAIKAN LOGIKA GAMBAR] Safe Image Update (dengan kompresi)
         if ($request->hasFile('cover_image')) {
             try {
                 $file = $request->file('cover_image');
-                $filename = 'kunjungan-covers/' . Str::random(40) . '.jpg';
+                $filename = 'kunjungan-covers/'.Str::random(40).'.jpg';
 
-                $manager = new ImageManager(new Driver());
+                $manager = new ImageManager(new Driver);
                 $image = $manager->read($file);
                 $image->scale(width: 800);
                 $encoded = $image->toJpeg(quality: 80);
@@ -109,17 +113,19 @@ class DashboardInfoKunjunganController extends Controller
                 // 1. Simpan gambar baru
                 Storage::disk('public')->put($filename, (string) $encoded);
 
-                // 2. Jika sukses, hapus gambar lama
-                if ($infoKunjungan->cover_image && Storage::disk('public')->exists($infoKunjungan->cover_image)) {
-                    Storage::disk('public')->delete($infoKunjungan->cover_image);
-                }
                 $data['cover_image'] = $filename;
             } catch (\Exception $e) {
-                return back()->withErrors(['cover_image' => 'Gagal memproses gambar: ' . $e->getMessage()])->withInput();
+                report($e);
+
+                return back()->withErrors(['cover_image' => 'Gagal memproses gambar. Silakan coba lagi.'])->withInput();
             }
         }
 
         $infoKunjungan->update($data);
+
+        if (isset($data['cover_image']) && $oldCoverPath) {
+            Storage::disk('public')->delete($oldCoverPath);
+        }
 
         return redirect()->route('dashboard.info-kunjungan.index')
             ->with('success', 'Informasi Kunjungan berhasil diperbarui!');
@@ -127,11 +133,12 @@ class DashboardInfoKunjunganController extends Controller
 
     public function destroy(InfoKunjungan $infoKunjungan)
     {
-        if ($infoKunjungan->cover_image && Storage::disk('public')->exists($infoKunjungan->cover_image)) {
-            Storage::disk('public')->delete($infoKunjungan->cover_image);
-        }
-
+        $coverPath = $infoKunjungan->cover_image;
         $infoKunjungan->delete();
+
+        if ($coverPath) {
+            Storage::disk('public')->delete($coverPath);
+        }
 
         return redirect()->route('dashboard.info-kunjungan.index')
             ->with('success', 'Informasi Kunjungan berhasil dihapus!');
