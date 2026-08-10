@@ -1,5 +1,5 @@
-<aside 
-    class="fixed top-0 left-0 z-40 h-screen bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 transition-all duration-300 ease-in-out md:translate-x-0 will-change-transform"
+<aside id="dashboard-sidebar"
+    class="fixed top-0 left-0 z-40 h-screen bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 transition-all duration-300 ease-in-out lg:translate-x-0 will-change-transform"
     x-data="{ 
         isHovering: false,
         dropdowns: {
@@ -59,7 +59,7 @@
     "
     :class="isSidebarOpen 
         ? 'translate-x-0 w-64' 
-        : '-translate-x-full md:translate-x-0 md:w-20'"
+        : '-translate-x-full lg:translate-x-0 lg:w-20'"
     style="padding-top: 4.5rem;">
 
     {{-- Sidebar Content --}}
@@ -156,7 +156,7 @@
                                 <svg class="h-5 w-5 flex-shrink-0 transition-transform duration-300 group-hover:scale-110" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                     <path d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                                 </svg>
-                                Penyiaran
+                                Program Siaran
                             </a>
                         </li>
                         <li>
@@ -472,7 +472,7 @@
                             <path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                         </svg>
                     </x-slot:icon>
-                    Banner Carousel
+                    Banner Beranda
                 </x-sidebar-item>
 
                 @if(auth()->user()->isAdmin())
@@ -487,7 +487,7 @@
                             <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
                         </svg>
                     </x-slot:icon>
-                    Manajemen Pengguna
+                    Pengguna
                 </x-sidebar-item>
                 @endif
 
@@ -499,7 +499,7 @@
                             <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
                         </svg>
                     </x-slot:icon>
-                    Manajemen Komentar
+                    Komentar
                 </x-sidebar-item>
 
                 @if(auth()->user()->isAdmin())
@@ -515,7 +515,7 @@
                             <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
                         </svg>
                     </x-slot:icon>
-                    Sosial Media
+                    Media Sosial
                 </x-sidebar-item>
 
                 {{-- HUBUNGI KAMI --}}
@@ -525,7 +525,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
                         </svg>
                     </x-slot:icon>
-                    Hubungi Kami
+                    Informasi Kontak
                 </x-sidebar-item>
 
                 {{-- AKSES INFORMASI --}}
@@ -545,7 +545,7 @@
         <div class="p-3 border-t border-gray-200 dark:border-gray-700 flex-shrink-0">
             <button 
                 @click="isSidebarOpen = !isSidebarOpen; closeAllDropdowns()"
-                class="hidden md:flex w-full items-center p-3 text-sm font-medium text-gray-500 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors duration-200 group"
+                class="hidden lg:flex w-full items-center p-3 text-sm font-medium text-gray-500 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors duration-200 group"
                 :class="{ 'justify-center': !isSidebarOpen }">
                 
                 <svg class="w-5 h-5 flex-shrink-0 transition-transform duration-300 group-hover:scale-110" 

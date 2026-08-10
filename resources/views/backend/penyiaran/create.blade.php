@@ -1,5 +1,5 @@
 <x-dashboard-layout>
-    <x-slot:title>Buat Penyiaran Baru</x-slot:title>
+    <x-slot:title>Tambah Program Siaran</x-slot:title>
 
     <div class="pb-6"
         {{-- Alpine.js untuk generate slug --}}
@@ -21,7 +21,7 @@
         <div class="flex flex-col md:flex-row md:justify-between md:items-start gap-4 mb-8 pt-2">
             <div>
                 <h1 class="text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white">
-                    Buat Penyiaran Baru
+                    Tambah Program Siaran
                 </h1>
                 <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
                     Isi detail untuk rilis, siaran, atau pengumuman baru.
@@ -183,7 +183,7 @@
                 </div>
                 
                 {{-- Action Buttons --}}
-                <div class="flex items-center justify-between p-6 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700/50 rounded-b-lg">
+                <div class="dashboard-form-actions flex items-center justify-between gap-3 p-6 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700/50 rounded-b-lg">
                     <a href="{{ route('dashboard.penyiaran.index') }}" class="px-5 py-2.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-600 transition-colors">
                         Batal
                     </a>

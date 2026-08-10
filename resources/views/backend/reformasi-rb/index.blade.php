@@ -1,5 +1,5 @@
 <x-dashboard-layout>
-    <x-slot:title>Manajemen Reformasi RB</x-slot:title>
+    <x-slot:title>Kelola Reformasi Birokrasi</x-slot:title>
 
     {{-- Data Alpine.js --}}
     <div x-data="{ 
@@ -27,7 +27,7 @@
         <div class="flex flex-col md:flex-row md:justify-between md:items-center gap-4 mb-6 pt-2">
             <div>
                 <h1 class="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white">
-                    Informasi Reformasi Birokrasi
+                    Kelola Reformasi Birokrasi
                 </h1>
                 <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
                     Kelola data dan dokumen terkait Reformasi Birokrasi.
@@ -38,7 +38,7 @@
             <a href="{{ route('dashboard.reformasi-rb.create') }}" 
                class="w-full md:w-auto inline-flex items-center justify-center px-4 py-2.5 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800 transition-colors whitespace-nowrap shadow-sm hover:shadow-md">
                 <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd"></path></svg>
-                Tambah Data RB
+                Tambah Dokumen
             </a>
         </div>
 
@@ -98,7 +98,7 @@
         {{-- TABEL --}}
         <div class="bg-white dark:bg-gray-800 shadow-md sm:rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
             <div class="overflow-x-auto">
-                <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+                <table class="dashboard-data-table w-full text-sm text-left text-gray-500 dark:text-gray-400">
                     <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-300">
                         <tr>
                             <th scope="col" class="px-4 py-3 text-center w-12">No</th>

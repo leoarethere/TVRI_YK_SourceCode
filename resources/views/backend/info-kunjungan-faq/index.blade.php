@@ -6,7 +6,7 @@
         <div class="flex flex-col md:flex-row md:justify-between md:items-start gap-4 mb-8 pt-2">
             <div>
                 <h1 class="text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white">
-                    FAQ Info Kunjungan
+                    Kelola FAQ Kunjungan
                 </h1>
                 <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
                     Kelola daftar pertanyaan umum seputar kunjungan tamu.
@@ -30,7 +30,7 @@
         {{-- Tabel Data --}}
         <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 overflow-hidden">
             <div class="overflow-x-auto">
-                <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+                <table class="dashboard-data-table w-full text-sm text-left text-gray-500 dark:text-gray-400">
                     <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                         <tr>
                             <th scope="col" class="px-6 py-3 w-16 text-center">Urutan</th>
@@ -100,7 +100,7 @@
                                         Tambahkan pertanyaan umum seputar kunjungan.
                                     </p>
                                     <a href="{{ route('dashboard.info-kunjungan-faq.create') }}" class="mt-4 text-blue-600 hover:underline text-sm font-medium">
-                                        Tambah Data Pertama
+                                        Tambah FAQ Pertama
                                     </a>
                                 </div>
                             </td>

@@ -1,3 +1,101 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer components {
+    .dashboard-main h1 {
+        @apply text-2xl font-bold leading-tight sm:text-3xl;
+    }
+
+    .dashboard-main input:not([type='hidden']):not([type='checkbox']):not([type='radio']),
+    .dashboard-main select,
+    .dashboard-main textarea {
+        min-height: 2.75rem;
+    }
+
+    .dashboard-form-actions > a,
+    .dashboard-form-actions > button,
+    .dashboard-form-actions > form > button,
+    .dashboard-form-actions > div > a,
+    .dashboard-form-actions > div > button,
+    .dashboard-form-actions > div > form > button {
+        @apply inline-flex min-h-11 items-center justify-center;
+    }
+}
+
+@media (max-width: 1023px) {
+    .dashboard-data-table th:last-child,
+    .dashboard-data-table td:last-child {
+        position: sticky;
+        right: 0;
+    }
+
+    .dashboard-data-table th:last-child {
+        z-index: 20;
+        background-color: rgb(249 250 251);
+        box-shadow: -8px 0 14px -12px rgb(15 23 42 / 0.65);
+    }
+
+    .dashboard-data-table td:last-child {
+        z-index: 10;
+        background-color: rgb(255 255 255);
+        box-shadow: -8px 0 14px -12px rgb(15 23 42 / 0.65);
+    }
+
+    .dashboard-data-table tbody tr:hover td:last-child {
+        background-color: rgb(249 250 251);
+    }
+
+    .dark .dashboard-data-table th:last-child {
+        background-color: rgb(55 65 81);
+    }
+
+    .dark .dashboard-data-table td:last-child {
+        background-color: rgb(31 41 55);
+    }
+
+    .dark .dashboard-data-table tbody tr:hover td:last-child {
+        background-color: rgb(55 65 81);
+    }
+
+    .dashboard-data-table td:last-child a,
+    .dashboard-data-table td:last-child button {
+        min-height: 2.5rem;
+        min-width: 2.5rem;
+    }
+}
+
+@media (max-width: 639px) {
+    .dashboard-header-actions {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr);
+        width: 100%;
+    }
+
+    .dashboard-header-actions > a,
+    .dashboard-header-actions > button {
+        width: 100%;
+    }
+
+    .dashboard-form-actions {
+        align-items: stretch;
+        flex-direction: column-reverse;
+    }
+
+    .dashboard-form-actions > a,
+    .dashboard-form-actions > button,
+    .dashboard-form-actions > form,
+    .dashboard-form-actions > form > button,
+    .dashboard-form-actions > div,
+    .dashboard-form-actions > div > a,
+    .dashboard-form-actions > div > button,
+    .dashboard-form-actions > div > form,
+    .dashboard-form-actions > div > form > button {
+        width: 100%;
+    }
+
+    .dashboard-form-actions > div {
+        align-items: stretch;
+        flex-direction: column-reverse;
+    }
+}

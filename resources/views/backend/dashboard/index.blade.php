@@ -5,7 +5,7 @@
 
     {{-- Header Halaman --}}
     <div class="mb-6 pt-2">
-        <h1 class="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">Dashboard Overview</h1>
+        <h1 class="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">Ringkasan Dashboard</h1>
         <p class="mt-1 text-sm sm:text-base text-gray-500 dark:text-gray-400">
             Selamat datang kembali, {{ auth()->user()->name }}! Berikut ringkasan data website Anda.
         </p>
@@ -13,16 +13,16 @@
 
     {{-- GRAFIK PENGUNJUNG (Paling Atas) --}}
     <div x-data="visitorChart()" x-init="init()" class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm p-5 sm:p-6 mb-8">
-        <div class="flex items-center justify-between mb-4">
+        <div class="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <h4 class="text-lg font-bold text-gray-900 dark:text-white">Statistik Tayangan</h4>
-            <select x-model="filter" @change="fetchData" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-indigo-500 dark:focus:border-indigo-500">
+            <select x-model="filter" @change="fetchData" class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-indigo-500 focus:ring-indigo-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-indigo-500 dark:focus:ring-indigo-500 sm:w-auto">
                 <option value="today">Hari Ini</option>
                 <option value="week">7 Hari Terakhir</option>
                 <option value="month">30 Hari Terakhir</option>
                 <option value="year">Tahun Ini</option>
             </select>
         </div>
-        <div id="visitor-chart-container" class="w-full h-[300px] relative">
+        <div id="visitor-chart-container" class="relative h-[260px] w-full sm:h-[300px]">
             <div x-show="loading" class="absolute inset-0 z-10 flex items-center justify-center bg-white/50 dark:bg-gray-800/50">
                 <svg class="animate-spin h-8 w-8 text-indigo-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                     <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
@@ -55,7 +55,7 @@
             <div class="flex-1 min-w-0">
                 <p class="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">Program Siaran</p>
                 <p class="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mt-1">{{ $totalBroadcasts }}</p>
-                <p class="text-xs text-gray-400 dark:text-gray-500 mt-1">Video & Live</p>
+                <p class="text-xs text-gray-400 dark:text-gray-500 mt-1">Video dan siaran</p>
             </div>
             <div class="flex-shrink-0 p-3 bg-red-50 text-red-600 dark:bg-red-900/20 dark:text-red-400 rounded-lg">
                 <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -109,7 +109,7 @@
         {{-- 6. Banner Aktif --}}
         <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-5 flex items-center justify-between transition-all hover:shadow-md border-l-4 border-l-pink-500">
             <div class="flex-1 min-w-0">
-                <p class="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">Banner Slider</p>
+                <p class="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">Banner Beranda</p>
                 <p class="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mt-1">{{ $totalBanners }}</p>
                 <p class="text-xs text-gray-400 dark:text-gray-500 mt-1">Gambar beranda</p>
             </div>
@@ -302,8 +302,25 @@
                         },
                         tooltip: {
                             theme: document.documentElement.classList.contains('dark') ? 'dark' : 'light',
-                            y: { formatter: function(val) { return val + " hits" } }
-                        }
+                            y: { formatter: function(val) { return val + " tayangan" } }
+                        },
+                        responsive: [{
+                            breakpoint: 640,
+                            options: {
+                                chart: { height: 260 },
+                                xaxis: {
+                                    tickAmount: 3,
+                                    labels: {
+                                        rotate: 0,
+                                        hideOverlappingLabels: true,
+                                        trim: true,
+                                        style: { fontSize: '10px' }
+                                    }
+                                },
+                                yaxis: { tickAmount: 2 },
+                                grid: { padding: { left: 16, right: 18 } }
+                            }
+                        }]
                     };
 
                     this.chart = new window.ApexCharts(document.querySelector("#apex-visitor-chart"), options);

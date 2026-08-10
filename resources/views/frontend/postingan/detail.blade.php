@@ -51,9 +51,9 @@
                         {{-- Separator --}}
                         <li><svg class="w-3 h-3 text-gray-300 dark:text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 6 10"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 9 4-4-4-4"/></svg></li>
 
-                        {{-- Berita --}}
+                        {{-- Postingan --}}
                         <li>
-                            <a href="{{ route('postingan.index') }}" class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Berita</a>
+                            <a href="{{ route('postingan.index') }}" class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Postingan</a>
                         </li>
 
                         {{-- Separator --}}

@@ -11,7 +11,7 @@ class BroadcastController extends Controller
 {
     public function index(Request $request)
     {
-        $title = 'Program Penyiaran';
+        $title = 'Program Siaran';
         $activeCategory = null; 
         
         // Ambil kategori yang punya program 'published' untuk sidebar/filter

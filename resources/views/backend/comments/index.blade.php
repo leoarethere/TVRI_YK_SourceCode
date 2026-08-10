@@ -1,5 +1,5 @@
 <x-dashboard-layout>
-    <x-slot:title>Manajemen Komentar</x-slot:title>
+    <x-slot:title>Kelola Komentar</x-slot:title>
 
     <div x-data="{ 
         deleteModal: false, 
@@ -26,7 +26,7 @@
         <div class="flex flex-col gap-4 mb-6 pt-2">
             <div>
                 <h1 class="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white">
-                    Manajemen Komentar
+                    Kelola Komentar
                 </h1>
                 <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
                     Kelola, setujui, dan hapus komentar publik yang masuk.
@@ -125,7 +125,7 @@
         {{-- TABEL DATA --}}
         <div class="bg-white dark:bg-gray-800 shadow-md sm:rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
             <div class="overflow-x-auto">
-                <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+                <table class="dashboard-data-table w-full text-sm text-left text-gray-500 dark:text-gray-400">
                     <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-300">
                         <tr>
                             <th scope="col" class="px-4 py-3 text-left min-w-[200px]">Pengirim</th>

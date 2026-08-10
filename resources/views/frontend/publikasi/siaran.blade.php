@@ -1,6 +1,6 @@
 <x-layout>
     <x-slot:title>
-        {{ $title ?? 'Program Penyiaran' }}
+        {{ $title ?? 'Program Siaran' }}
         @if(request('category') && isset($activeCategory))
             - {{ $activeCategory->name }}
         @endif
@@ -21,7 +21,7 @@
                         @if(isset($activeCategory))
                             {{ $activeCategory->name }}
                         @else
-                            Program Penyiaran
+                            Program Siaran
                         @endif
                     </h1>
                     <p class="text-blue-100 text-base sm:text-lg max-w-2xl mx-auto leading-relaxed">
@@ -172,11 +172,11 @@
                     <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2">Program Tidak Ditemukan</h3>
                     <p class="text-gray-500 dark:text-gray-400 max-w-md mx-auto mb-8">
                         @if(request('category')) 
-                            Tidak ada program penyiaran dalam kategori ini.
+                            Tidak ada program siaran dalam kategori ini.
                         @elseif(request('search'))
                             Tidak ada program yang cocok dengan kata kunci <strong>"{{ request('search') }}"</strong>.
                         @else
-                            Belum ada program penyiaran yang tersedia saat ini.
+                            Belum ada program siaran yang tersedia saat ini.
                         @endif
                     </p>
                     @if(request('category') || request('search'))

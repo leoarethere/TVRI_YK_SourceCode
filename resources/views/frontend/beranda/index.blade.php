@@ -1,6 +1,8 @@
 <x-layout>
     <x-slot:title>{{ $title ?? 'Beranda' }}</x-slot:title>
 
+    <h1 class="sr-only">TVRI Stasiun D.I. Yogyakarta</h1>
+
     {{-- ========================================== --}}
     {{-- 1. HERO CAROUSEL (BANNER UTAMA)            --}}
     {{-- ========================================== --}}

@@ -1,5 +1,5 @@
 <x-dashboard-layout>
-    <x-slot:title>Edit FAQ</x-slot:title>
+    <x-slot:title>Edit FAQ Magang</x-slot:title>
 
     <div class="pb-6">
         <div class="flex flex-col md:flex-row md:justify-between md:items-start gap-4 mb-8 pt-2">
@@ -57,7 +57,7 @@
                 </div>
 
                 {{-- Footer --}}
-                <div class="flex items-center justify-between p-6 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700/50">
+                <div class="dashboard-form-actions flex items-center justify-between gap-3 p-6 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700/50">
                     <a href="{{ route('dashboard.info-magang-faq.index') }}" class="px-5 py-2.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 transition-colors">Batal</a>
                     <button type="submit" class="px-5 py-2.5 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors">Simpan Perubahan</button>
                 </div>

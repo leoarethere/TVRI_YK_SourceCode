@@ -24,10 +24,9 @@
         .notification-banner { transition: all 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55); }
     </style>
 
-    <link rel="icon" href="{{ asset('img/favicon.png') }}" type="image/png">
-    <link rel="shortcut icon" href="{{ asset('img/favicon.png') }}" type="image/png">
+    <x-favicon />
 </head>
-<body class="bg-gray-50 dark:bg-gray-900">
+<body class="overflow-x-hidden bg-gray-50 dark:bg-gray-900">
 
     {{-- TAMBAHKAN @show-notification.window DI SINI --}}
     {{-- Ini menjamin listener aktif tepat saat komponen dibuat --}}
@@ -52,7 +51,7 @@
             x-transition:leave-start="opacity-100"
             x-transition:leave-end="opacity-0"
             @click="closeSidebar()"
-            class="fixed inset-0 z-30 bg-gray-900/50 md:hidden"
+            class="fixed inset-0 z-30 bg-gray-900/50 lg:hidden"
             style="display: none;">
         </div>
         
@@ -66,7 +65,7 @@
             x-transition:leave-start="opacity-100"
             x-transition:leave-end="opacity-0"
             x-cloak
-            class="fixed top-20 right-4 z-50 w-full max-w-sm p-4 rounded-lg shadow-xl border-0"
+            class="fixed top-20 left-4 right-4 z-50 w-auto rounded-lg border-0 p-4 shadow-xl sm:left-auto sm:w-full sm:max-w-sm"
             :class="{
                 'bg-green-600 text-white dark:bg-green-600': notificationType === 'success',
                 'bg-red-600 text-white dark:bg-red-600': notificationType === 'error'
@@ -101,19 +100,21 @@
             </div>
         </div>
 
-        <main class="p-4 md:p-6 min-h-screen transition-all duration-300 ease-out" 
+        <main class="dashboard-main min-h-screen p-4 transition-all duration-300 ease-out sm:p-5 lg:p-6"
             :class="{
-                'md:ml-64': isSidebarOpen && !isMobile(), 
-                'md:ml-20': !isSidebarOpen && !isMobile()
+                'lg:ml-64': isSidebarOpen && !isMobile(),
+                'lg:ml-20': !isSidebarOpen && !isMobile()
             }" 
             style="padding-top: 5.5rem;">
-            {{ $slot }}
+            <div class="mx-auto w-full max-w-screen-2xl">
+                {{ $slot }}
+            </div>
         </main>
 
         <footer class="bg-gray-900 dark:bg-gray-950 border-t border-white/10 transition-all duration-300 ease-out"
                 :class="{ 
-                    'md:ml-64': isSidebarOpen && !isMobile(), 
-                    'md:ml-20': !isSidebarOpen && !isMobile() 
+                    'lg:ml-64': isSidebarOpen && !isMobile(),
+                    'lg:ml-20': !isSidebarOpen && !isMobile()
                 }">
             <x-dashboard-footer />
         </footer>
@@ -152,7 +153,7 @@
 
         function dashboardState() {
             return {
-                isSidebarOpen: window.innerWidth >= 768,
+                isSidebarOpen: window.innerWidth >= 1024,
                 notificationOpen: false,
                 notificationMessage: '',
                 notificationType: 'success',
@@ -244,14 +245,14 @@
                 },
 
                 // ... (sisa fungsi helper isMobile, closeSidebar, dll tetap sama) ...
-                isMobile() { return window.innerWidth < 768; },
+                isMobile() { return window.innerWidth < 1024; },
                 closeSidebar() { if (this.isMobile()) { this.isSidebarOpen = false; } },
                 setupResizeHandler() {
                     let resizeTimeout;
                     window.addEventListener('resize', () => {
                         clearTimeout(resizeTimeout);
                         resizeTimeout = setTimeout(() => {
-                            this.isSidebarOpen = window.innerWidth >= 768;
+                            this.isSidebarOpen = window.innerWidth >= 1024;
                         }, 100);
                     });
                 }

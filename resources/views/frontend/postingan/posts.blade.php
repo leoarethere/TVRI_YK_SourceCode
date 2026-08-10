@@ -1,5 +1,5 @@
 <x-layout>
-    <x-slot:title>{{ $title ?? 'Berita & Artikel' }}</x-slot:title>
+    <x-slot:title>{{ $title ?? 'Postingan' }}</x-slot:title>
 
     {{-- KONTAINER UTAMA --}}
     <div class="min-h-screen px-4 sm:px-6 lg:px-8">

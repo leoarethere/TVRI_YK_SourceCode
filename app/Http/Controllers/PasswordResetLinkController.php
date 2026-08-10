@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Str;
+use Throwable;
 
 class PasswordResetLinkController extends Controller
 {
@@ -14,7 +16,7 @@ class PasswordResetLinkController extends Controller
     public function create()
     {
         return view('auth.forgot-password', [
-            'title' => 'Lupa Kata Sandi'
+            'title' => 'Lupa Kata Sandi',
         ]);
     }
 
@@ -23,19 +25,23 @@ class PasswordResetLinkController extends Controller
      */
     public function store(Request $request)
     {
+        $request->merge([
+            'email' => Str::lower(trim((string) $request->input('email'))),
+        ]);
+
         $request->validate([
             'email' => ['required', 'email'],
         ]);
 
-        // We will send the password reset link to this user. Once we have attempted
-        // to send the link, we will examine the response then see the message we
-        // need to show to the user. Finally, we'll send out a proper response.
-        $status = Password::sendResetLink(
-            $request->only('email')
-        );
+        try {
+            Password::sendResetLink($request->only('email'));
+        } catch (Throwable $exception) {
+            report($exception);
+        }
 
-        return $status == Password::RESET_LINK_SENT
-                    ? back()->with('success', __($status))
-                    : back()->withErrors(['email' => __($status)]);
+        // Selalu berikan respons yang sama agar keberadaan akun tidak dapat ditebak.
+        return back()
+            ->withInput($request->only('email'))
+            ->with('success', __('passwords.request_received'));
     }
 }

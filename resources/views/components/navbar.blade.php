@@ -1,3 +1,9 @@
+@php
+    $hasSocialLinks = ($socialMedia ?? null) && collect([
+        'facebook', 'twitter', 'instagram', 'youtube', 'tiktok',
+    ])->contains(fn ($platform) => filled($socialMedia->{$platform}));
+@endphp
+
 <header 
     x-data="{ 
         scrolled: false,
@@ -7,14 +13,14 @@
             });
         }
     }"
-    :class="{ '-translate-y-10': scrolled, 'translate-y-0': !scrolled }"
+    :class="{ 'sm:-translate-y-10': scrolled, 'translate-y-0': !scrolled }"
     class="fixed top-0 w-full z-50 transition-transform duration-300 ease-in-out"
 >
 
     {{-- ====================================================================== --}}
     {{-- BAGIAN 1: TOP BAR (Warna Biru Gelap - Hilang saat scroll)              --}}
     {{-- ====================================================================== --}}
-    <div class="h-10 bg-blue-900 text-white text-xs font-medium relative z-50 border-b border-blue-800">
+    <div class="relative z-50 hidden h-10 border-b border-blue-800 bg-blue-900 text-xs font-medium text-white sm:block">
         <div class="container mx-auto px-4 sm:px-6 lg:px-8 h-full flex justify-between items-center">
             
             {{-- Kiri: Tanggal / Info --}}
@@ -35,7 +41,8 @@
                 </a>
             </div>
 
-            {{-- Kanan: Kontak & Sosial Media Dinamis --}}
+            {{-- Kanan: Media Sosial Dinamis --}}
+            @if($hasSocialLinks)
             <div class="flex items-center gap-3 ml-auto">
                 <div class="flex gap-3 items-center">
                     <span class="hidden sm:inline">Ikuti kami di</span>
@@ -81,6 +88,7 @@
                     </div>
                 </div>
             </div>
+            @endif
         </div>
     </div>
 
@@ -165,7 +173,7 @@
                                     <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                                     </svg>
-                                    <span>Penyiaran</span>
+                                    <span>Program Siaran</span>
                                 </a>
                                 <a href="{{ route('publikasi.jadwal') }}" class="flex items-center gap-3 px-4 py-2 text-sm transition-colors duration-200 {{ request()->is('jadwal-acara*') ? 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white' : 'text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700' }}">
                                     <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -397,7 +405,7 @@
                     <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
                     </svg>
-                    <span>Home</span>
+                    <span>Beranda</span>
                 </a>
 
                 {{-- Dropdown Publikasi Mobile --}}
@@ -422,7 +430,7 @@
                          class="pl-4 pr-2 pt-2 space-y-1">
                         <a href="{{ route('penyiaran.index') }}" class="flex items-center gap-3 rounded-lg px-4 py-2.5 text-sm font-medium transition-colors duration-200 {{ request()->is('penyiaran*') ? 'text-blue-600 dark:text-blue-400 bg-blue-50/50 dark:bg-blue-900/20' : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-800' }}">
                             <span class="w-1.5 h-1.5 rounded-full {{ request()->is('penyiaran*') ? 'bg-blue-600 dark:bg-blue-400' : 'bg-gray-400' }}"></span>
-                            <span>Penyiaran</span>
+                            <span>Program Siaran</span>
                         </a>
                         <a href="{{ route('publikasi.jadwal') }}" class="flex items-center gap-3 rounded-lg px-4 py-2.5 text-sm font-medium transition-colors duration-200 {{ request()->is('jadwal-acara*') ? 'text-blue-600 dark:text-blue-400 bg-blue-50/50 dark:bg-blue-900/20' : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-800' }}">
                             <span class="w-1.5 h-1.5 rounded-full {{ request()->is('jadwal-acara*') ? 'bg-blue-600 dark:bg-blue-400' : 'bg-gray-400' }}"></span>

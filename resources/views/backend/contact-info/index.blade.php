@@ -1,12 +1,12 @@
 <x-dashboard-layout>
-    <x-slot:title>Informasi Kontak</x-slot:title>
+    <x-slot:title>Kelola Informasi Kontak</x-slot:title>
 
     <div class="pb-6">
         {{-- HEADER HALAMAN --}}
         <div class="flex flex-col md:flex-row md:justify-between md:items-center gap-4 mb-6 pt-2">
             <div>
                 <h1 class="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white">
-                    Hubungi Kami
+                    Kelola Informasi Kontak
                 </h1>
                 <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
                     Kelola nomor telepon, hotline, dan alamat kantor.

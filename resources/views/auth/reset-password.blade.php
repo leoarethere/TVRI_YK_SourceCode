@@ -12,122 +12,9 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:opsz,wght@6..144,1..1000&display=swap" rel="stylesheet">
     
-    {{-- Favicon --}}
-    <link rel="icon" href="{{ asset('img/favicon.png') }}" type="image/png">
+    <x-favicon />
     
-    <style>
-        body {
-            font-family: "Google Sans Flex", sans-serif;
-        }
-        
-        .login-container {
-            min-height: 100vh;
-            display: grid;
-            grid-template-columns: 1fr;
-        }
-        
-        @media (min-width: 1024px) {
-            .login-container {
-                grid-template-columns: 1fr 1fr;
-            }
-        }
-        
-        .login-banner {
-            display: none;
-        }
-        
-        @media (min-width: 1024px) {
-            .login-banner {
-                display: block;
-            }
-        }
-        
-        .login-form-section {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 2rem;
-        }
-        
-        @media (min-width: 640px) {
-            .login-form-section {
-                padding: 3rem;
-            }
-        }
-        
-        @media (min-width: 1024px) {
-            .login-form-section {
-                padding: 4rem;
-            }
-        }
-        
-        .login-form-container {
-            width: 100%;
-            max-width: 28rem;
-            margin: 0 auto;
-        }
-        
-        .login-logo {
-            height: 2.25rem;
-            width: auto;
-        }
-        
-        @media (min-width: 768px) {
-            .login-logo {
-                height: 3rem;
-            }
-        }
-        
-        .login-input {
-            background-color: rgb(249 250 251);
-            border: 1px solid rgb(209 213 219);
-            color: rgb(17 24 39);
-            font-size: 0.875rem;
-            border-radius: 0.5rem;
-            padding: 0.625rem;
-            width: 100%;
-        }
-        
-        .login-input:focus {
-            outline: none;
-            box-shadow: 0 0 0 2px rgb(37 99 235 / 20%);
-            border-color: rgb(37 99 235);
-        }
-        
-        .dark .login-input {
-            background-color: rgb(55 65 81);
-            border-color: rgb(75 85 99);
-            color: rgb(255 255 255);
-        }
-        
-        .dark .login-input:focus {
-            box-shadow: 0 0 0 2px rgb(59 130 246 / 20%);
-            border-color: rgb(59 130 246);
-        }
-        
-        .login-input-error {
-            border-color: rgb(239 68 68);
-        }
-        
-        .alert-container {
-            padding: 1rem;
-            font-size: 0.875rem;
-            border-radius: 0.5rem;
-            border: 1px solid;
-        }
-        
-        .alert-error {
-            color: rgb(153 27 27);
-            background-color: rgb(254 242 242);
-            border-color: rgb(254 202 202);
-        }
-        
-        .dark .alert-error {
-            color: rgb(254 202 202);
-            background-color: rgb(127 29 29);
-            border-color: rgb(153 27 27);
-        }
-    </style>
+    @include('components.auth-styles')
 </head>
 <body class="h-full font-google-sans antialiased text-gray-900 dark:text-white">
 
@@ -177,7 +64,7 @@
 
                 {{-- Notifikasi Error --}}
                 @if ($errors->any())
-                    <div class="alert-container alert-error">
+                    <div id="form-errors" class="alert-container alert-error" role="alert" aria-live="assertive">
                         <div class="flex items-start">
                             <svg class="flex-shrink-0 w-5 h-5 mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
@@ -212,7 +99,9 @@
                                 placeholder="nama@email.com" 
                                 required 
                                 autofocus
-                                autocomplete="email">
+                                autocomplete="email"
+                                inputmode="email"
+                                @error('email') aria-invalid="true" aria-describedby="form-errors" @enderror>
                         </div>
 
                         {{-- Password Baru --}}
@@ -223,7 +112,14 @@
                             <input type="password" name="password" id="password" 
                                 placeholder="••••••••" 
                                 class="login-input @error('password') login-input-error @enderror" 
-                                required>
+                                required
+                                minlength="8"
+                                autocomplete="new-password"
+                                aria-describedby="password-requirements @error('password') form-errors @enderror"
+                                @error('password') aria-invalid="true" @enderror>
+                            <p id="password-requirements" class="mt-2 text-xs text-gray-500 dark:text-gray-400">
+                                Minimal 8 karakter dengan huruf besar, huruf kecil, angka, dan simbol.
+                            </p>
                         </div>
                         
                         {{-- Konfirmasi Password Baru --}}
@@ -234,22 +130,32 @@
                             <input type="password" name="password_confirmation" id="password_confirmation" 
                                 placeholder="••••••••" 
                                 class="login-input" 
-                                required>
+                                required
+                                minlength="8"
+                                autocomplete="new-password"
+                                @error('password') aria-invalid="true" aria-describedby="form-errors" @enderror>
                         </div>
                     </div>
 
                     {{-- Submit Button --}}
                     <div class="flex justify-center mt-6">
-                        <button type="submit" 
-                            class="w-full max-w-md px-8 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-500 dark:hover:bg-blue-600 dark:focus:ring-blue-800 transition-colors duration-300">
+                        <button type="submit" data-loading-text="Menyimpan..."
+                            class="min-h-11 w-full max-w-md px-8 py-2.5 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-500 dark:hover:bg-blue-600 dark:focus:ring-blue-800 transition-colors duration-300">
                             Reset Kata Sandi
                         </button>
+                    </div>
+
+                    <div class="flex justify-center">
+                        <a href="{{ $request->query('portal') === 'pegawai' ? route('pegawai.login') : route('login') }}"
+                            class="text-sm font-medium text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white transition-colors">
+                            &larr; Kembali ke {{ $request->query('portal') === 'pegawai' ? 'Portal Pegawai' : 'halaman Login' }}
+                        </a>
                     </div>
                 </form>
 
                 {{-- Footer --}}
                 <div class="mt-6 text-center text-xs text-gray-400 dark:text-gray-500">
-                    <p>Copyright {{ date('Y') }} Lembaga Penyiaran Publik TVRI D.I. Yogyakarta</p>
+                    <p>&copy; {{ date('Y') }} Lembaga Penyiaran Publik TVRI D.I. Yogyakarta</p>
                     <p class="mt-1">Hak cipta dilindungi undang-undang.</p>
                 </div>
             </div>

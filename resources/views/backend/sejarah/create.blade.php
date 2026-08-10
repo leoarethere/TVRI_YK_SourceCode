@@ -1,5 +1,5 @@
 <x-dashboard-layout>
-    <x-slot:title>Tambah Data Sejarah</x-slot:title>
+    <x-slot:title>Tambah Peristiwa Sejarah</x-slot:title>
 
     {{-- CSS Trix --}}
     <link rel="stylesheet" type="text/css" href="https://unpkg.com/trix@2.0.8/dist/trix.css">
@@ -105,7 +105,7 @@
                 </div>
                 
                 {{-- Action Buttons --}}
-                <div class="flex items-center justify-between p-6 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700/50 rounded-b-lg">
+                <div class="dashboard-form-actions flex items-center justify-between gap-3 p-6 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700/50 rounded-b-lg">
                     <a href="{{ route('dashboard.sejarah.index') }}" class="px-5 py-2.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-600 transition-colors">
                         Batal
                     </a>

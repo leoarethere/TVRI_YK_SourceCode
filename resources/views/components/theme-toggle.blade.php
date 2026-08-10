@@ -30,11 +30,13 @@
 >
     <button 
         @click="toggleTheme" 
-        class="flex items-center justify-center
+        class="flex h-11 w-11 items-center justify-center rounded-lg
                text-gray-500 dark:text-gray-400 
                hover:text-yellow-500 dark:hover:text-yellow-300 
-               transition-colors duration-300 ease-in-out"
-        aria-label="Toggle Dark Mode"
+               transition-colors duration-300 ease-in-out
+               focus:outline-none focus:ring-4 focus:ring-blue-200 dark:focus:ring-blue-900/60"
+        aria-label="Ganti tema terang atau gelap"
+        title="Ganti tema terang atau gelap"
     >
         <svg x-show="theme === 'light'" 
              xmlns="http://www.w3.org/2000/svg" 

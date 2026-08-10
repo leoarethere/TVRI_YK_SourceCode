@@ -2,13 +2,11 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
-use App\Models\News;
-use App\Models\Post; // <--- [1] JANGAN LUPA TAMBAHKAN INI
-use Illuminate\Notifications\Notifiable;
+use App\Notifications\ResetPasswordNotification;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
@@ -55,7 +53,6 @@ class User extends Authenticatable
         return $this->hasMany(Post::class);
     }
 
-    // [2] TAMBAHKAN FUNGSI INI
     public function news(): HasMany
     {
         return $this->hasMany(News::class);
@@ -79,5 +76,10 @@ class User extends Authenticatable
     public function isDashboardUser(): bool
     {
         return in_array($this->role, ['admin', 'secondary']);
+    }
+
+    public function sendPasswordResetNotification($token): void
+    {
+        $this->notify(new ResetPasswordNotification($token));
     }
 }

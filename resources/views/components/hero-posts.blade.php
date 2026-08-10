@@ -56,9 +56,9 @@
             {{-- Heading & Description --}}
             <div class="space-y-3 sm:space-y-4">
                 {{-- Typography di-tweak: text-3xl di mobile, naik ke 4xl dan 5xl di layar lebih besar --}}
-                <h2 class="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-white drop-shadow-lg leading-tight">
+                <h1 class="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-white drop-shadow-lg leading-tight">
                     Apa yang kamu cari?
-                </h2>
+                </h1>
                 <p class="text-sm sm:text-base md:text-lg text-gray-200 font-medium max-w-2xl mx-auto drop-shadow-md leading-relaxed px-2">
                     Jelajahi postingan terbaru, dan beragam dokumentasi di TVRI D.I. Yogyakarta
                 </p>

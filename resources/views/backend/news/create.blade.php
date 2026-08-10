@@ -1,5 +1,5 @@
 <x-dashboard-layout>
-    <x-slot:title>Buat Berita Baru</x-slot:title>
+    <x-slot:title>Tambah Berita</x-slot:title>
 
     {{-- CSS Trix --}}
     <link rel="stylesheet" type="text/css" href="https://unpkg.com/trix@2.0.8/dist/trix.css">
@@ -23,7 +23,7 @@
         }
     }">
         <div class="mb-8 pt-2">
-            <h1 class="text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white">Buat Berita Baru</h1>
+            <h1 class="text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white">Tambah Berita</h1>
         </div>
 
         <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 overflow-hidden">
@@ -87,7 +87,7 @@
                 </div>
 
                 {{-- Tombol Aksi --}}
-                <div class="flex items-center justify-end gap-3 p-6 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700/50">
+                <div class="dashboard-form-actions flex items-center justify-end gap-3 p-6 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700/50">
                     <button type="submit" name="action" value="draft" class="px-5 py-2.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-100">Simpan Draft</button>
                     <button type="submit" name="action" value="publish" class="px-5 py-2.5 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700">Publikasikan</button>
                 </div>

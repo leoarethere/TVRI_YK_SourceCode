@@ -3,7 +3,7 @@
 
     {{-- Header --}}
     <div class="mb-6 pt-2">
-        <h1 class="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">Manajemen Akses Informasi</h1>
+        <h1 class="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">Kelola Akses Informasi</h1>
         <p class="mt-1 text-sm sm:text-base text-gray-500 dark:text-gray-400">
             Kelola link untuk tombol <strong>Akses Informasi Internal</strong> dan <strong>Akses Informasi Publik</strong> yang tampil di halaman beranda.
         </p>

@@ -1,5 +1,5 @@
 <x-dashboard-layout>
-    <x-slot:title>Manajemen Banner Carousel</x-slot:title>
+    <x-slot:title>Kelola Banner Beranda</x-slot:title>
 
     {{-- Data Alpine.js untuk Modal Hapus --}}
     <div x-data="{ 
@@ -27,10 +27,10 @@
         <div class="flex flex-col md:flex-row md:justify-between md:items-center gap-4 mb-6 pt-2">
             <div>
                 <h1 class="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white">
-                    Banner Carousel
+                    Kelola Banner Beranda
                 </h1>
                 <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                    Kelola banner slide yang tampil di halaman depan website.
+                    Kelola banner yang tampil di halaman beranda website.
                 </p>
             </div>
             
@@ -139,7 +139,7 @@
                             Mulai dengan menambahkan banner baru untuk mempercantik halaman depan website Anda.
                         </p>
                         <a href="{{ route('banners.create') }}" class="mt-4 inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors">
-                            Buat Banner Pertama
+                            Tambah Banner Pertama
                         </a>
                     </div>
                 </div>

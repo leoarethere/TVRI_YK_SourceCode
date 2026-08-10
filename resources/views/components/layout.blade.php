@@ -66,7 +66,7 @@
             'alternateName' => 'TVRI Jogja',
             'description' => 'Lembaga Penyiaran Publik TVRI Stasiun Daerah Istimewa Yogyakarta - Media Pemersatu Bangsa',
             'url' => config('app.url'),
-            'logo' => asset('img/favicon.png'),
+            'logo' => asset('img/favicon-brand-512.png'),
             'broadcastDisplayName' => 'TVRI D.I. Yogyakarta',
             'broadcastTimezone' => 'Asia/Jakarta',
             'parentService' => [
@@ -78,7 +78,7 @@
                 '@type' => 'Organization',
                 'name' => 'TVRI Stasiun D.I. Yogyakarta',
                 'url' => config('app.url'),
-                'logo' => asset('img/favicon.png'),
+                'logo' => asset('img/favicon-brand-512.png'),
                 'sameAs' => array_values(array_filter([
                     ($socialMedia ?? null)?->instagram,
                     ($socialMedia ?? null)?->youtube,
@@ -117,11 +117,19 @@
             overflow-x: hidden;
             overscroll-behavior-y: contain;
         }
+
+        /* Hindari widget aksesibilitas menutupi judul/kategori di sisi kiri kartu. */
+        .asw-menu-btn {
+            left: auto !important;
+            right: max(1rem, env(safe-area-inset-right)) !important;
+            bottom: max(1rem, env(safe-area-inset-bottom)) !important;
+            min-width: 2.75rem !important;
+            min-height: 2.75rem !important;
+        }
     </style>
     @vite([
         'resources/css/app.css', 
-        'resources/js/app.js', 
-        'resources/js/dashboard.js'
+        'resources/js/app.js'
     ])
 
     {{-- 👇 TEMPELKAN KODE GOOGLE FONTS BARU DI SINI --}}
@@ -129,9 +137,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:opsz,wght@6..144,1..1000&display=swap" rel="stylesheet">
 
-    {{-- PERBAIKAN FAVICON --}}
-    <link rel="icon" href="{{ asset('img/favicon.png') }}" type="image/png">
-    <link rel="shortcut icon" href="{{ asset('img/favicon.png') }}" type="image/png">
+    <x-favicon />
 </head>
 
 {{-- PERBAIKAN 1: Hapus kelas yang tidak perlu dari body --}}
@@ -139,8 +145,8 @@
     {{-- Struktur flex untuk sticky footer --}}
     <div class="flex flex-col min-h-screen">
         <x-navbar/>
-        {{-- PERBAIKAN 2: Tambahkan 'pt-16' untuk memberi ruang bagi navbar --}}
-        <main class="flex-grow pt-24">
+        {{-- Ruang untuk navbar: 72 px di ponsel, ditambah top bar mulai breakpoint sm. --}}
+        <main class="flex-grow pt-[72px] sm:pt-24">
             {{-- PERBAIKAN 3: Gunakan kontainer yang konsisten dengan halaman lain --}}
             {{-- Padding vertikal (py-8) ditambahkan di sini untuk jarak atas/bawah konten --}}
             <div class="container px-0 sm:px-0 lg:px-0 py-11 lg:py-11 relative mx-auto">

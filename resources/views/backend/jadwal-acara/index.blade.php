@@ -1,5 +1,5 @@
 <x-dashboard-layout>
-    <x-slot:title>Manajemen Jadwal Acara</x-slot:title>
+    <x-slot:title>Kelola Jadwal Acara</x-slot:title>
 
     <div x-data="{ 
         // Modal Hapus Jadwal
@@ -94,14 +94,14 @@
         <div class="flex flex-col md:flex-row md:justify-between md:items-center gap-4 mb-6 pt-2">
             <div>
                 <h1 class="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white">
-                    Semua Jadwal Acara
+                    Kelola Jadwal Acara
                 </h1>
                 <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
                     Kelola jadwal penayangan program TV.
                 </p>
             </div>
             
-            <div class="flex flex-wrap items-center gap-3">
+            <div class="dashboard-header-actions flex flex-wrap items-center gap-3">
                 {{-- Tombol Kelola Hari --}}
                 <button @click="openCategoryModal('create')" 
                         type="button" 
@@ -117,7 +117,7 @@
                     <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd"></path>
                     </svg>
-                    Buat Jadwal
+                    Tambah Jadwal
                 </a>
             </div>
         </div>
@@ -193,7 +193,7 @@
         {{-- TABEL DATA --}}
         <div class="bg-white dark:bg-gray-800 shadow-md sm:rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
             <div class="overflow-x-auto">
-                <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+                <table class="dashboard-data-table w-full text-sm text-left text-gray-500 dark:text-gray-400">
                     <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-300">
                         <tr>
                             <th scope="col" class="px-4 py-3 text-center w-24">Pukul</th>
@@ -335,7 +335,7 @@
                         @csrf
                         <input type="hidden" name="_method" value="POST">
                         
-                        <h4 class="text-lg font-medium text-gray-900 dark:text-white mb-4" x-text="catMode === 'edit' ? 'Edit Hari' : 'Buat Hari Baru'"></h4>
+                        <h4 class="text-lg font-medium text-gray-900 dark:text-white mb-4" x-text="catMode === 'edit' ? 'Edit Hari' : 'Tambah Hari Baru'"></h4>
 
                         {{-- Nama Hari --}}
                         <div class="mb-4">
@@ -420,7 +420,7 @@
                                     @click="openCategoryModal('create')" 
                                     x-show="catMode === 'edit'"
                                     class="px-5 py-2.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-600 transition-colors">
-                                Buat Baru
+                                Tambah Baru
                             </button>
                         </div>
                     </form>

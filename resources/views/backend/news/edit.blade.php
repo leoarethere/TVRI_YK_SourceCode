@@ -89,7 +89,7 @@
                 </div>
 
                 {{-- Tombol Aksi --}}
-                <div class="flex items-center justify-end gap-3 p-6 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700/50">
+                <div class="dashboard-form-actions flex items-center justify-end gap-3 p-6 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700/50">
                     <button type="submit" name="action" value="draft" class="px-5 py-2.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-100">Simpan Draft</button>
                     <button type="submit" name="action" value="publish" class="px-5 py-2.5 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700">Perbarui & Publikasikan</button>
                 </div>

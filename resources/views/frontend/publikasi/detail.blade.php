@@ -1,8 +1,8 @@
 <x-layout>
     {{-- Slot Title & Meta Description (SEO) --}}
-    <x-slot:title>{{ $title ?? 'Detail Penyiaran' }}</x-slot:title>
+    <x-slot:title>{{ $title ?? 'Detail Program Siaran' }}</x-slot:title>
     <x-slot:meta_description>
-        {{ Str::limit(strip_tags($broadcast->synopsis ?? ''), 150, '...') ?: 'Program penyiaran TVRI D.I. Yogyakarta' }}
+        {{ Str::limit(strip_tags($broadcast->synopsis ?? ''), 150, '...') ?: 'Program siaran TVRI D.I. Yogyakarta' }}
     </x-slot:meta_description>
 
     {{-- Open Graph: Gambar Poster & Tipe --}}
@@ -16,7 +16,7 @@
         "@context": "https://schema.org",
         "@type": "{{ $broadcast->youtubeEmbedUrl ? 'VideoObject' : 'BroadcastEvent' }}",
         "name": "{{ addslashes($broadcast->title) }}",
-        "description": "{{ addslashes($broadcast->synopsis ?? 'Program penyiaran') }}",
+        "description": "{{ addslashes($broadcast->synopsis ?? 'Program siaran') }}",
         @if($broadcast->youtubeEmbedUrl)
         "embedUrl": "{{ $broadcast->youtubeEmbedUrl }}",
         "thumbnailUrl": "{{ $broadcast->poster ? Storage::url($broadcast->poster) : '' }}",
@@ -55,9 +55,9 @@
                         {{-- Separator --}}
                         <li><svg class="w-3 h-3 text-gray-300 dark:text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 6 10"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 9 4-4-4-4"/></svg></li>
 
-                        {{-- Penyiaran --}}
+                        {{-- Program Siaran --}}
                         <li>
-                            <a href="{{ route('penyiaran.index') }}" class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Penyiaran</a>
+                            <a href="{{ route('penyiaran.index') }}" class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Program Siaran</a>
                         </li>
 
                         {{-- Separator --}}
@@ -188,7 +188,7 @@
                 <a href="{{ route('penyiaran.index') }}" 
                    class="w-full sm:w-auto inline-flex justify-center items-center gap-2 px-5 py-2.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-xl hover:bg-gray-50 hover:text-blue-600 hover:border-blue-300 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-700 transition-all shadow-sm">
                     <svg class="w-4 h-4 transition-transform group-hover:-translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
-                    Semua Program Penyiaran
+                    Semua Program Siaran
                 </a>
 
                 {{-- Social Share --}}

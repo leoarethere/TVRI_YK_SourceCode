@@ -12,8 +12,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:opsz,wght@6..144,1..1000&display=swap" rel="stylesheet">
     
-    {{-- Favicon --}}
-    <link rel="icon" href="{{ asset('img/favicon.png') }}" type="image/png">
+    <x-favicon />
     
     @include('components.auth-styles')
 </head>
@@ -160,8 +159,8 @@
 
                     {{-- Submit Button --}}
                     <div class="flex justify-center mb-4">
-                        <button type="submit" 
-                            class="w-full max-w-md px-8 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-500 dark:hover:bg-blue-600 dark:focus:ring-blue-800 transition-colors duration-300">
+                        <button type="submit" data-loading-text="Memproses..."
+                            class="min-h-11 w-full max-w-md px-8 py-2.5 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-500 dark:hover:bg-blue-600 dark:focus:ring-blue-800 transition-colors duration-300">
                             Masuk
                         </button>
                     </div>
@@ -212,7 +211,7 @@
 
                 {{-- Footer --}}
                 <div class="mt-6 text-center text-xs text-gray-400 dark:text-gray-500">
-                    <p>Copyright {{ date('Y') }} Lembaga Penyiaran Publik TVRI D.I. Yogyakarta</p>
+                    <p>&copy; {{ date('Y') }} Lembaga Penyiaran Publik TVRI D.I. Yogyakarta</p>
                     <p class="mt-1">Hak cipta dilindungi undang-undang.</p>
                 </div>
             </div>

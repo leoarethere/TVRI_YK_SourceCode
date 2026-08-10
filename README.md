@@ -65,3 +65,17 @@ If you discover a security vulnerability within Laravel, please send an e-mail t
 
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
 # LiteBeam
+
+## Operasional antrean email
+
+Email pengaturan ulang kata sandi dikirim melalui antrean database agar permintaan web tidak menunggu koneksi SMTP. Pastikan proses worker berikut selalu berjalan pada lingkungan lokal maupun produksi:
+
+```bash
+php artisan queue:work --tries=3 --timeout=60
+```
+
+Setelah deployment kode baru, mulai ulang worker agar memuat perubahan terbaru:
+
+```bash
+php artisan queue:restart
+```

@@ -1,14 +1,14 @@
 <x-dashboard-layout>
-    <x-slot:title>Edit Sosial Media</x-slot:title>
+    <x-slot:title>Edit Media Sosial</x-slot:title>
 
     <div class="pb-6">
         <div class="flex flex-col md:flex-row md:justify-between md:items-start gap-4 mb-8 pt-2">
             <div>
                 <h1 class="text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white">
-                    Edit Sosial Media
+                    Edit Media Sosial
                 </h1>
                 <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                    Perbarui tautan sosial media. <span class="text-red-500 font-semibold">Wajib gunakan awalan https://</span>
+                    Perbarui tautan media sosial. <span class="text-red-500 font-semibold">Wajib gunakan awalan https://</span>
                 </p>
             </div>
         </div>
@@ -78,7 +78,7 @@
                 </div>
 
                 {{-- Tombol Aksi --}}
-                <div class="flex items-center justify-between p-6 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700/50 rounded-b-lg">
+                <div class="dashboard-form-actions flex items-center justify-between gap-3 p-6 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700/50 rounded-b-lg">
                     <a href="{{ route('dashboard.social-media.index') }}" class="px-5 py-2.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-600 transition-colors">
                         Batal
                     </a>

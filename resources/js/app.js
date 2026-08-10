@@ -4,9 +4,6 @@ import * as Turbo from '@hotwired/turbo';
 import Alpine from 'alpinejs';
 import './bootstrap';
 import 'flowbite';
-import ApexCharts from 'apexcharts';
-
-window.ApexCharts = ApexCharts;
 
 // --- Owl Carousel Setup ---
 import jQuery from 'jquery';
@@ -162,7 +159,7 @@ function showLoadingState(form) {
         
         const originalText = submitButton.innerHTML;
         submitButton.setAttribute('data-original-text', originalText);
-        submitButton.innerHTML = 'Loading...';
+        submitButton.innerHTML = submitButton.getAttribute('data-loading-text') || 'Memproses...';
     }
 }
 

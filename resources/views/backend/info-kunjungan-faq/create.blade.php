@@ -5,7 +5,7 @@
         <div class="flex flex-col md:flex-row md:justify-between md:items-start gap-4 mb-8 pt-2">
             <div>
                 <h1 class="text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white">
-                    Tambah FAQ Baru
+                    Tambah FAQ Kunjungan
                 </h1>
                 <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
                     Buat pertanyaan baru seputar kunjungan.
@@ -66,14 +66,14 @@
                 </div>
 
                 {{-- Footer Action --}}
-                <div class="flex items-center justify-between p-6 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700/50">
+                <div class="dashboard-form-actions flex items-center justify-between gap-3 p-6 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700/50">
                     <a href="{{ route('dashboard.info-kunjungan-faq.index') }}" 
                        class="px-5 py-2.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 hover:text-gray-900 focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700 transition-colors">
                         Batal
                     </a>
                     <button type="submit" 
                             class="px-5 py-2.5 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 transition-colors shadow-sm">
-                        Simpan FAQ
+                        Simpan
                     </button>
                 </div>
             </form>

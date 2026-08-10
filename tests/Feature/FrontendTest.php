@@ -41,6 +41,48 @@ class FrontendTest extends TestCase
         $response->assertSee('TVRI');
     }
 
+    public function test_primary_frontend_pages_have_an_h1(): void
+    {
+        $this->get('/')
+            ->assertOk()
+            ->assertSee('<h1', false);
+
+        $this->get(route('postingan.index'))
+            ->assertOk()
+            ->assertSee('<h1', false);
+    }
+
+    public function test_public_layout_does_not_load_dashboard_bundle(): void
+    {
+        $this->get('/')
+            ->assertOk()
+            ->assertDontSee('assets/dashboard-', false);
+    }
+
+    public function test_public_and_auth_pages_publish_the_brand_favicon(): void
+    {
+        foreach (['/', route('login'), route('pegawai.login'), route('password.request')] as $url) {
+            $this->get($url)
+                ->assertOk()
+                ->assertSee('favicon.ico', false)
+                ->assertSee('favicon-brand-48.png', false)
+                ->assertSee('apple-touch-icon.png', false)
+                ->assertSee('site.webmanifest', false)
+                ->assertSee('content="#1D3365"', false);
+        }
+
+        foreach ([
+            public_path('favicon.ico'),
+            public_path('img/favicon-brand-48.png'),
+            public_path('img/apple-touch-icon.png'),
+            public_path('img/favicon-brand-192.png'),
+            public_path('img/favicon-brand-512.png'),
+        ] as $faviconPath) {
+            $this->assertFileExists($faviconPath);
+            $this->assertGreaterThan(0, filesize($faviconPath));
+        }
+    }
+
     public function test_posts_page_loads(): void
     {
         $response = $this->get(route('postingan.index'));
@@ -108,6 +150,8 @@ class FrontendTest extends TestCase
         $response = $this->get(route('penyiaran.index'));
         $response->assertViewHas('broadcasts');
         $this->assertGreaterThan(0, $response->viewData('broadcasts')->total());
+        $response->assertSee('Program Siaran');
+        $response->assertDontSee('Program Penyiaran');
     }
 
     public function test_visi_misi_page_loads(): void
