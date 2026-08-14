@@ -22,6 +22,11 @@
         [x-cloak] { display: none !important; }
         .turbo-loading { opacity: 0.7; pointer-events: none; }
         .notification-banner { transition: all 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55); }
+
+        /* Cegah konten tertutup sidebar sebelum Alpine selesai diinisialisasi. */
+        @media (min-width: 1280px) {
+            .dashboard-shell-offset { margin-left: 16rem; }
+        }
     </style>
 
     <x-favicon />
@@ -100,21 +105,19 @@
             </div>
         </div>
 
-        <main class="dashboard-main min-h-screen p-4 transition-all duration-300 ease-out sm:p-5 lg:p-6"
-            :class="{
-                'xl:ml-64': isSidebarOpen && !isMobile(),
-                'xl:ml-20': !isSidebarOpen && !isMobile()
-            }" 
-            style="padding-top: 5.5rem;">
+        <main class="dashboard-main dashboard-shell-offset min-h-screen p-4 transition-all duration-300 ease-out sm:p-5 lg:p-6"
+            :style="{
+                paddingTop: '5.5rem',
+                marginLeft: !isMobile() ? (isSidebarOpen ? '16rem' : '5rem') : '0'
+            }">
             <div class="mx-auto w-full max-w-screen-2xl">
                 {{ $slot }}
             </div>
         </main>
 
-        <footer class="bg-gray-900 dark:bg-gray-950 border-t border-white/10 transition-all duration-300 ease-out"
-                :class="{ 
-                    'xl:ml-64': isSidebarOpen && !isMobile(),
-                    'xl:ml-20': !isSidebarOpen && !isMobile()
+        <footer class="dashboard-shell-offset border-t border-white/10 bg-gray-900 transition-all duration-300 ease-out dark:bg-gray-950"
+                :style="{
+                    marginLeft: !isMobile() ? (isSidebarOpen ? '16rem' : '5rem') : '0'
                 }">
             <x-dashboard-footer />
         </footer>

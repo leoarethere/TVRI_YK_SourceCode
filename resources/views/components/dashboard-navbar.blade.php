@@ -20,12 +20,15 @@
             
             {{-- BAGIAN KIRI: Toggle Sidebar & Logo --}}
             <div class="flex items-center gap-1">
-                {{-- Toggle Sidebar (Mobile Only) --}}
+                {{-- Toggle Sidebar: mobile dan tombol pemulihan saat desktop diciutkan --}}
                 <button 
                     @click="isSidebarOpen = !isSidebarOpen"
+                    x-show="isMobile() || !isSidebarOpen"
+                    x-cloak
                     type="button"
-                    class="-ml-2 rounded-lg p-2 text-gray-600 transition-colors hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white dark:focus:ring-gray-700 xl:hidden"
+                    class="-ml-2 rounded-lg p-2 text-gray-600 transition-colors hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white dark:focus:ring-gray-700"
                     :aria-expanded="isSidebarOpen"
+                    :aria-label="isSidebarOpen ? 'Tutup navigasi dashboard' : 'Buka navigasi dashboard'"
                     aria-controls="dashboard-sidebar">
                     <span class="sr-only">Buka navigasi dashboard</span>
                     {{-- Heroicon: Bars 3 --}}

@@ -1,6 +1,6 @@
 <aside id="dashboard-sidebar"
     x-cloak
-    class="fixed left-0 top-0 z-40 h-screen w-64 max-w-[calc(100vw-2rem)] border-r border-gray-200 bg-white transition-all duration-300 ease-in-out will-change-transform dark:border-gray-700 dark:bg-gray-800 xl:translate-x-0"
+    class="fixed left-0 top-0 z-40 h-screen border-r border-gray-200 bg-white transition-all duration-300 ease-in-out will-change-transform dark:border-gray-700 dark:bg-gray-800"
     aria-label="Navigasi dashboard"
     x-data="{ 
         isHovering: false,
@@ -59,11 +59,13 @@
             }
         });
     "
-    :class="isSidebarOpen 
-        ? 'translate-x-0'
-        : '-translate-x-full xl:w-20 xl:translate-x-0'"
+    :style="{
+        paddingTop: '4.5rem',
+        width: !isMobile() && !isSidebarOpen ? '5rem' : 'min(16rem, calc(100vw - 2rem))',
+        transform: isSidebarOpen || !isMobile() ? 'translateX(0)' : 'translateX(-100%)'
+    }"
     :aria-hidden="!isSidebarOpen && isMobile()"
-    style="padding-top: 4.5rem;">
+    >
 
     {{-- Sidebar Content --}}
     {{-- PERBAIKAN: overflow-hidden dihapus dari sini dan dipindah ke logic kondisional di bawah --}}

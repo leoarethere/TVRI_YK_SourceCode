@@ -21,7 +21,7 @@
     {{-- BAGIAN 1: TOP BAR (Warna Biru Gelap - Hilang saat scroll)              --}}
     {{-- ====================================================================== --}}
     <div class="relative z-50 hidden h-10 border-b border-blue-800 bg-blue-900 text-xs font-medium text-white sm:block">
-        <div class="mx-auto flex h-full w-full max-w-[1600px] items-center justify-between px-4 sm:px-6 lg:px-8">
+        <div class="container mx-auto flex h-full items-center justify-between px-4 sm:px-6 lg:px-8">
             
             {{-- Kiri: Tanggal / Info --}}
             <div class="hidden sm:flex items-center gap-4">
@@ -111,7 +111,7 @@
              }
          }">
         
-        <div class="mx-auto w-full max-w-[1600px] px-4 sm:px-6 lg:px-8">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
             <div class="relative flex h-[72px] items-center justify-between">
                 
                 {{-- Bagian Kiri: Logo --}}
@@ -127,7 +127,7 @@
                             class="hidden h-9 w-auto dark:block sm:h-10 md:h-12 xl:h-10 2xl:h-12"
                             alt="Logo TVRI Yogyakarta" />
 
-                        <span class="hidden whitespace-nowrap text-xl font-bold text-gray-900 dark:text-white min-[360px]:inline sm:text-2xl xl:text-xl 2xl:text-2xl">
+                        <span class="whitespace-nowrap text-lg font-bold text-gray-900 dark:text-white sm:text-2xl xl:text-xl 2xl:text-2xl">
                             Yogyakarta
                         </span>
                     </a>
