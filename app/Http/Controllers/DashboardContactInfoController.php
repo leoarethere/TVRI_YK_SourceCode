@@ -3,47 +3,42 @@
 namespace App\Http\Controllers;
 
 use App\Models\ContactInfo;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use Illuminate\View\View;
 
 class DashboardContactInfoController extends Controller
 {
     /**
      * Menampilkan daftar kontak (biasanya hanya ada 1 data).
      */
-    public function index()
+    public function index(): View
     {
-        // 1. Ambil data pertama
-        $contactInfo = ContactInfo::first();
-        
-        // 2. LOGIKA BARU: Jika data tidak ditemukan (null), buat data default otomatis
-        if (!$contactInfo) {
-            $contactInfo = ContactInfo::create([
-                'admin_phone'       => '-',
-                'partnership_phone' => '-',
-                'hotline_phone'     => '-',
-                'address'           => '-',
-                'email'             => null,
-                'is_active'         => false,
-            ]);
-        }
-        
+        $contactInfo = ContactInfo::firstOrCreate([], [
+            'admin_phone' => '-',
+            'partnership_phone' => '-',
+            'hotline_phone' => '-',
+            'address' => '-',
+            'email' => null,
+            'is_active' => false,
+        ]);
+
         return view('backend.contact-info.index', compact('contactInfo'));
     }
 
     /**
      * Menampilkan form edit.
      */
-    public function edit($id)
+    public function edit(ContactInfo $contactInfo): View
     {
-        $contactInfo = ContactInfo::findOrFail($id);
         return view('backend.contact-info.edit', compact('contactInfo'));
     }
 
     /**
      * Memproses update data ke database.
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, ContactInfo $contactInfo): RedirectResponse
     {
         $request->validate([
             'admin_phone'       => 'required|string|max:40',
@@ -54,9 +49,7 @@ class DashboardContactInfoController extends Controller
             'google_maps_embed' => 'nullable|string|max:2000',
         ]);
 
-        $contactInfo = ContactInfo::findOrFail($id);
-
-        // ✅ PERBAIKAN: Ekstrak URL src dari iframe tag jika user input full iframe
+        // Ekstrak URL src jika pengguna menempelkan tag iframe lengkap.
         $googleMapsEmbed = $request->google_maps_embed;
         
         if ($googleMapsEmbed) {
@@ -70,21 +63,21 @@ class DashboardContactInfoController extends Controller
             }
             
             // Validasi bahwa hasilnya adalah URL Google Maps Embed yang valid
-            if (!preg_match('#^https://www\.google\.com/maps/embed#', $googleMapsEmbed)) {
+            if (! preg_match('#^https://www\.google\.com/maps/embed#', $googleMapsEmbed)) {
                 return back()->withErrors([
-                    'google_maps_embed' => 'Link yang Anda masukkan bukan link Google Maps Embed yang valid. Pastikan URL diawali dengan https://www.google.com/maps/embed'
+                    'google_maps_embed' => 'Link yang Anda masukkan bukan link Google Maps Embed yang valid. Pastikan URL diawali dengan https://www.google.com/maps/embed',
                 ])->withInput();
             }
         }
 
         $contactInfo->update([
-            'admin_phone'       => $request->admin_phone,
+            'admin_phone' => $request->admin_phone,
             'partnership_phone' => $request->partnership_phone,
             'hotline_phone'     => $request->hotline_phone,
             'address'           => $request->address,
             'email'             => $request->email,
-            'google_maps_embed' => $googleMapsEmbed, // Simpan URL yang sudah dibersihkan
-            'is_active'         => $request->has('is_active'),
+            'google_maps_embed' => $googleMapsEmbed,
+            'is_active' => $request->has('is_active'),
         ]);
 
         return redirect()->route('dashboard.contact-info.index')

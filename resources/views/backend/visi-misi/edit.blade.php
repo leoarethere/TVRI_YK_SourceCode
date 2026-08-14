@@ -33,9 +33,9 @@
             <form action="{{ route('dashboard.visi-misi.update', $visiMisi->id) }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 @method('PUT')
-                
+
                 <div class="p-6 space-y-6">
-                    
+
                     {{-- Error Summary --}}
                     @if ($errors->any())
                         <div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-red-900/30 dark:text-red-400 border border-red-200 dark:border-red-800" role="alert">
@@ -61,8 +61,8 @@
                     </div>
 
                     {{-- Gambar / Ikon (Alpine Preview) --}}
-                    <div x-data="{ 
-                        preview: '{{ $visiMisi->image ? Storage::url($visiMisi->image) : null }}',
+                    <div x-data="{
+                        preview: @js($visiMisi->image ? Storage::url($visiMisi->image) : null),
                         handleFile(event) {
                             const file = event.target.files[0];
                             if (!file) return;
@@ -77,7 +77,7 @@
                         <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                             Gambar / Ikon (Opsional)
                         </label>
-                        
+
                         {{-- Preview Box --}}
                         <div class="mb-3" x-show="preview">
                             <div class="relative w-full max-w-xs rounded-lg overflow-hidden border border-gray-300 dark:border-gray-600">
@@ -88,8 +88,8 @@
                             </div>
                         </div>
 
-                        <input type="file" name="image" id="image" @change="handleFile($event)" 
-                            class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400" 
+                        <input type="file" name="image" id="image" @change="handleFile($event)"
+                            class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
                             accept="image/png, image/jpeg, image/jpg, image/webp">
                         <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Ganti gambar jika ingin mengubahnya (Maks. 5MB).</p>
                         @error('image') <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p> @enderror
@@ -111,7 +111,7 @@
                             <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                                 Urutan Tampil
                             </label>
-                            <input type="number" name="order" value="{{ old('order', $visiMisi->order) }}" min="1" 
+                            <input type="number" name="order" value="{{ old('order', $visiMisi->order) }}" min="1"
                                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" required>
                             @error('order') <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p> @enderror
                         </div>

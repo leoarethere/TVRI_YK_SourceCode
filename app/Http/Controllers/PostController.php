@@ -5,13 +5,19 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use App\Models\Post;
 use App\Models\User;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use Illuminate\View\View;
 
 class PostController extends Controller
 {
-    public function index(Request $request)
+    public function index(Request $request): View
     {
+        $request->validate([
+            'search' => ['nullable', 'string', 'max:100'],
+        ]);
+
         $title = 'Semua Postingan';
 
         // Logika Judul Dinamis
@@ -36,7 +42,7 @@ class PostController extends Controller
         // Menggunakan ScopeFilter dari Model (Pastikan model Post sudah memiliki scopeFilter)
         $query = Post::query()
             ->with(['user', 'category'])
-            ->where('status', 'published')
+            ->publiclyVisible()
             ->filter($request->only(['search', 'category', 'author']));
 
         // Logika Sorting
@@ -54,20 +60,20 @@ class PostController extends Controller
         }
 
         $posts = $query->paginate(9)->withQueryString();
-        $categories = Category::whereHas('posts', fn ($query) => $query->where('status', 'published'))
+        $categories = Category::whereHas('posts', fn ($query) => $query->publiclyVisible())
             ->orderBy('name')
             ->get();
-        $authors = User::whereHas('posts', fn ($query) => $query->where('status', 'published'))
+        $authors = User::whereHas('posts', fn ($query) => $query->publiclyVisible())
             ->orderBy('name')
             ->get();
 
         return view('frontend.postingan.posts', compact('title', 'posts', 'categories', 'authors'));
     }
 
-    public function show(Post $post)
+    public function show(Post $post): View
     {
         // Prevent access to unpublished posts
-        if ($post->status !== 'published') {
+        if (! $post->isPubliclyVisible()) {
             abort(404);
         }
 
@@ -89,12 +95,12 @@ class PostController extends Controller
         ]);
     }
 
-    public function category(Category $category)
+    public function category(Category $category): RedirectResponse
     {
         return redirect()->route('postingan.index', ['category' => $category->slug]);
     }
 
-    public function author(User $user)
+    public function author(User $user): RedirectResponse
     {
         return redirect()->route('postingan.index', ['author' => $user->username]);
     }

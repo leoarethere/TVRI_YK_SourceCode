@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\Category;
+use App\Models\Comment;
 use App\Models\News;
 use App\Models\NewsCategory;
 use App\Models\Post;
@@ -209,5 +210,40 @@ class CommentTest extends TestCase
         $response->assertRedirect();
 
         $this->assertDatabaseMissing('comments', ['id' => $comment->id]);
+    }
+
+    public function test_dashboard_comment_search_treats_wildcards_as_literal_characters(): void
+    {
+        $literal = Comment::create([
+            'name' => 'Viewer 100%',
+            'email' => 'literal@example.com',
+            'body' => 'Komentar literal.',
+            'status' => 'pending',
+            'commentable_type' => Post::class,
+            'commentable_id' => $this->post->id,
+        ]);
+        Comment::create([
+            'name' => 'Viewer Biasa',
+            'email' => 'ordinary@example.com',
+            'body' => 'Komentar biasa.',
+            'status' => 'pending',
+            'commentable_type' => Post::class,
+            'commentable_id' => $this->post->id,
+        ]);
+
+        $response = $this->actingAs($this->admin)
+            ->get(route('dashboard.komentar.index', ['search' => '%']))
+            ->assertOk();
+
+        $this->assertSame([$literal->id], $response->viewData('comments')->pluck('id')->all());
+    }
+
+    public function test_dashboard_comment_search_limits_input_length(): void
+    {
+        $this->actingAs($this->admin)
+            ->from(route('dashboard.komentar.index'))
+            ->get(route('dashboard.komentar.index', ['search' => str_repeat('a', 101)]))
+            ->assertRedirect(route('dashboard.komentar.index'))
+            ->assertSessionHasErrors('search');
     }
 }

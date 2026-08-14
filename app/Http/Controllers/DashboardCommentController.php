@@ -3,22 +3,27 @@
 namespace App\Http\Controllers;
 
 use App\Models\Comment;
-use Illuminate\View\View;
-use Illuminate\Http\Request;
+use App\Support\LikeSearch;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\View\View;
 
 class DashboardCommentController extends Controller
 {
     public function index(Request $request): View
     {
+        $request->validate([
+            'search' => ['nullable', 'string', 'max:100'],
+        ]);
+
         $query = Comment::with('commentable');
 
         if ($request->filled('search')) {
-            $search = str_replace(['%', '_'], ['\%', '\_'], $request->search);
-            $query->where(function($q) use ($search) {
-                $q->where('name', 'like', '%' . $search . '%')
-                  ->orWhere('email', 'like', '%' . $search . '%')
-                  ->orWhere('body', 'like', '%' . $search . '%');
+            $search = $request->string('search')->toString();
+            $query->where(function ($q) use ($search): void {
+                LikeSearch::contains($q, 'name', $search);
+                LikeSearch::contains($q, 'email', $search, 'or');
+                LikeSearch::contains($q, 'body', $search, 'or');
             });
         }
 
@@ -42,14 +47,14 @@ class DashboardCommentController extends Controller
     {
         $comment->update(['status' => 'approved']);
 
-        return back()->with('success', 'Komentar dari "' . $comment->name . '" berhasil disetujui.');
+        return back()->with('success', 'Komentar dari "'.$comment->name.'" berhasil disetujui.');
     }
 
     public function reject(Comment $comment): RedirectResponse
     {
         $comment->update(['status' => 'rejected']);
 
-        return back()->with('success', 'Komentar dari "' . $comment->name . '" berhasil ditolak.');
+        return back()->with('success', 'Komentar dari "'.$comment->name.'" berhasil ditolak.');
     }
 
     public function destroy(Comment $comment): RedirectResponse

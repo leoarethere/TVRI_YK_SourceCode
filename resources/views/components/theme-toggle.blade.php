@@ -29,6 +29,7 @@
     class="flex items-center"
 >
     <button 
+        type="button"
         @click="toggleTheme" 
         class="flex h-11 w-11 items-center justify-center rounded-lg
                text-gray-500 dark:text-gray-400 

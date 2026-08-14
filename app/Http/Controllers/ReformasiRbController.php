@@ -5,10 +5,11 @@ namespace App\Http\Controllers;
 use App\Models\ReformasiRb;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use Illuminate\View\View;
 
 class ReformasiRbController extends Controller
 {
-    public function index(Request $request)
+    public function index(Request $request): View
     {
         // Query dasar: hanya yang aktif
         $query = ReformasiRb::where('is_active', true);

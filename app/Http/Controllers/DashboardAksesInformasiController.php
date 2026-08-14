@@ -3,18 +3,20 @@
 namespace App\Http\Controllers;
 
 use App\Models\AksesInformasi;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use Illuminate\View\View;
 
 class DashboardAksesInformasiController extends Controller
 {
     /**
      * Tampilkan halaman pengaturan akses informasi.
      */
-    public function index()
+    public function index(): View
     {
         $internal = AksesInformasi::internal();
-        $publik   = AksesInformasi::publik();
+        $publik = AksesInformasi::publik();
 
         return view('backend.akses-informasi.index', compact('internal', 'publik'));
     }
@@ -22,7 +24,7 @@ class DashboardAksesInformasiController extends Controller
     /**
      * Perbarui link akses informasi (internal atau publik).
      */
-    public function update(Request $request, AksesInformasi $aksesInformasi)
+    public function update(Request $request, AksesInformasi $aksesInformasi): RedirectResponse
     {
         $validated = $request->validate([
             'url'       => 'nullable|url|max:2048',
@@ -35,6 +37,6 @@ class DashboardAksesInformasiController extends Controller
 
         $aksesInformasi->update($validated);
 
-        return back()->with('success', 'Link "' . ucfirst($aksesInformasi->type) . '" berhasil diperbarui!');
+        return back()->with('success', 'Link "'.ucfirst($aksesInformasi->type).'" berhasil diperbarui!');
     }
 }

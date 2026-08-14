@@ -3,16 +3,17 @@
 namespace App\Http\Controllers;
 
 use App\Models\InfoMagang;
-use Illuminate\Http\Request;
 use App\Models\InfoMagangFaq;
+use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use Illuminate\View\View;
 
 class InfoMagangController extends Controller
 {
     /**
      * Menampilkan halaman publik informasi magang.
      */
-    public function index(Request $request)
+    public function index(Request $request): View
     {
         // Ambil data yang aktif saja
         $query = InfoMagang::where('is_active', true);

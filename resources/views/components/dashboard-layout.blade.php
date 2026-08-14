@@ -4,14 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="turbo-visit-control" content="reload">
+    <meta name="turbo-cache-control" content="no-cache">
     {{-- Mencegah halaman admin/dashboard terindeks oleh mesin pencari --}}
     <meta name="robots" content="noindex, nofollow">
     <title>{{ $title ?? 'Dashboard Admin' }}</title>
     
     @vite([
         'resources/css/app.css', 
-        'resources/js/app.js', 
-        'resources/js/dashboard.js' 
+        'resources/js/dashboard.js',
+        'resources/js/app.js'
     ])
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -92,12 +93,12 @@
                 {{-- Tombol Tutup --}}
                 <button type="button" 
                     @click="notificationOpen = false" 
-                    class="ml-auto -mx-1.5 -my-1.5 rounded-lg p-1.5 inline-flex h-8 w-8 transition-colors duration-200 focus:outline-none"
+                    class="ml-auto -mx-1.5 -my-1.5 rounded-lg p-1.5 inline-flex h-8 w-8 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-white/80"
                     :class="{
                         'text-green-100 hover:bg-green-700 hover:text-white': notificationType === 'success',
                         'text-red-100 hover:bg-red-700 hover:text-white': notificationType === 'error'
                     }">
-                    <span class="sr-only">Close</span>
+                    <span class="sr-only">Tutup notifikasi</span>
                     <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
                     </svg>
@@ -125,11 +126,57 @@
     </div>
 
     <script>
-        // ✅ PERBAIKAN: Nonaktifkan Turbo untuk semua form di dashboard
-        // Ini memastikan form submissions menggunakan full page reload
-        // sehingga session flash messages bekerja dengan benar
-        
-        // Fungsi untuk menonaktifkan Turbo pada semua form
+        // Jika bundle JavaScript gagal dimuat, navigasi penting tetap dapat dipakai.
+        // Fallback ini tidak berjalan ketika Alpine sudah berhasil diinisialisasi.
+        function enableDashboardNavigationFallback() {
+            if (window.alpineStarted) {
+                return;
+            }
+
+            const sidebar = document.getElementById('dashboard-sidebar');
+            const toggle = document.querySelector('[data-dashboard-sidebar-toggle]');
+
+            if (!sidebar || !toggle) {
+                return;
+            }
+
+            document.querySelectorAll('[data-dashboard-critical][x-cloak]').forEach(element => {
+                element.removeAttribute('x-cloak');
+            });
+
+            let isOpen = window.innerWidth >= 1280;
+
+            const render = () => {
+                const isDesktop = window.innerWidth >= 1280;
+                sidebar.style.width = '16rem';
+                sidebar.style.transform = isOpen ? 'translateX(0)' : 'translateX(-100%)';
+                toggle.style.display = isOpen && isDesktop ? 'none' : 'inline-flex';
+                toggle.setAttribute('aria-expanded', String(isOpen));
+                document.body.classList.toggle('overflow-hidden', isOpen && !isDesktop);
+
+                document.querySelectorAll('.dashboard-shell-offset').forEach(element => {
+                    element.style.marginLeft = isDesktop && isOpen ? '16rem' : '0';
+                });
+            };
+
+            if (!toggle.dataset.fallbackBound) {
+                toggle.addEventListener('click', () => {
+                    if (window.alpineStarted) {
+                        return;
+                    }
+
+                    isOpen = !isOpen;
+                    render();
+                });
+                toggle.dataset.fallbackBound = 'true';
+            }
+
+            render();
+        }
+
+        window.setTimeout(enableDashboardNavigationFallback, 2500);
+
+        // Form dashboard memakai navigasi penuh agar flash message tetap konsisten.
         function disableTurboForForms() {
             const dashboardForms = document.querySelectorAll('form');
             dashboardForms.forEach(form => {
@@ -139,19 +186,10 @@
             });
         }
 
-        // Setup sekali di DOMContentLoaded
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', disableTurboForForms);
         } else {
-            disableTurboForForms(); // DOM sudah siap
-        }
-
-        // Juga nonaktifkan Turbo saat form baru ditambahkan (untuk dynamic forms)
-        // Gunakan once: true untuk mencegah multiple listeners (jika browser support)
-        // Fallback: gunakan flag untuk mencegah duplikasi
-        if (!window.dashboardTurboFormListenerAttached) {
-            document.addEventListener('turbo:render', disableTurboForForms);
-            window.dashboardTurboFormListenerAttached = true;
+            disableTurboForForms();
         }
 
         function dashboardState() {
@@ -166,9 +204,14 @@
                 modalType: 'success',
                 modalTitle: '',
                 modalMessage: '',
+                resizeHandler: null,
+                resizeTimeout: null,
+                notificationTimeout: null,
+                flashTimeout: null,
+                turboFlashHandler: null,
+                modalReturnFocus: null,
 
                 init() {
-                    console.log('🏠 Dashboard Alpine initialized');
                     this.setupResizeHandler();
                     this.$watch('isSidebarOpen', () => this.syncBodyScroll());
                     this.syncBodyScroll();
@@ -179,27 +222,13 @@
                         this.checkForFlashMessages();
                     });
 
-                    // ✅ PERBAIKAN: Setup Turbo event listeners hanya sekali
-                    // Menggunakan flag untuk mencegah multiple listeners
-                    if (!window.dashboardTurboListenersAttached) {
-                        const checkFlash = () => {
-                            setTimeout(() => {
-                                this.checkForFlashMessages();
-                            }, 100);
-                        };
-
-                        document.addEventListener('turbo:render', () => {
-                            console.log('🎨 Turbo render - checking flash messages');
-                            checkFlash();
-                        });
-
-                        document.addEventListener('turbo:load', () => {
-                            console.log('📦 Turbo load - checking flash messages');
-                            checkFlash();
-                        });
-
-                        window.dashboardTurboListenersAttached = true;
-                    }
+                    // Listener disimpan agar dapat dilepas saat komponen dihancurkan.
+                    this.turboFlashHandler = () => {
+                        clearTimeout(this.flashTimeout);
+                        this.flashTimeout = setTimeout(() => this.checkForFlashMessages(), 100);
+                    };
+                    document.addEventListener('turbo:render', this.turboFlashHandler);
+                    document.addEventListener('turbo:load', this.turboFlashHandler);
                 },
 
                 checkForFlashMessages() {
@@ -211,7 +240,6 @@
                         const type = toastTrigger.getAttribute('data-type');
                         
                         if (message) {
-                            console.log('📢 Alpine menemukan pesan flash:', message);
                             this.showNotification(message, type);
                             toastTrigger.remove(); // Hapus agar tidak muncul 2x
                         }
@@ -232,23 +260,28 @@
                 },
 
                 showNotification(message, type) {
-                    // ... (logika sama seperti sebelumnya) ...
-                    console.log('✅ Showing notification:', message);
                     this.notificationMessage = message;
                     this.notificationType = type;
                     this.notificationOpen = true;
-                    
-                    setTimeout(() => {
+
+                    clearTimeout(this.notificationTimeout);
+                    this.notificationTimeout = setTimeout(() => {
                         this.notificationOpen = false;
                     }, 4000);
                 },
 
                 showModal(title, message, type = 'success') {
-                    // ... (logika sama seperti sebelumnya) ...
+                    this.modalReturnFocus = document.activeElement;
                     this.modalTitle = title;
                     this.modalMessage = message;
                     this.modalType = type;
                     this.modalOpen = true;
+                },
+
+                closeModal() {
+                    this.modalOpen = false;
+                    this.$nextTick(() => this.modalReturnFocus?.focus?.());
+                    this.modalReturnFocus = null;
                 },
 
                 // Sidebar menjadi drawer sampai lebar 1280px agar konten tetap lega.
@@ -258,10 +291,9 @@
                     document.body.classList.toggle('overflow-hidden', this.isSidebarOpen && this.isMobile());
                 },
                 setupResizeHandler() {
-                    let resizeTimeout;
-                    window.addEventListener('resize', () => {
-                        clearTimeout(resizeTimeout);
-                        resizeTimeout = setTimeout(() => {
+                    this.resizeHandler = () => {
+                        clearTimeout(this.resizeTimeout);
+                        this.resizeTimeout = setTimeout(() => {
                             this.viewportWidth = window.innerWidth;
                             const isDesktopViewport = this.viewportWidth >= 1280;
 
@@ -274,7 +306,17 @@
 
                             this.syncBodyScroll();
                         }, 100);
-                    });
+                    };
+                    window.addEventListener('resize', this.resizeHandler, { passive: true });
+                },
+                destroy() {
+                    window.removeEventListener('resize', this.resizeHandler);
+                    document.removeEventListener('turbo:render', this.turboFlashHandler);
+                    document.removeEventListener('turbo:load', this.turboFlashHandler);
+                    clearTimeout(this.resizeTimeout);
+                    clearTimeout(this.notificationTimeout);
+                    clearTimeout(this.flashTimeout);
+                    document.body.classList.remove('overflow-hidden');
                 }
             }
         }

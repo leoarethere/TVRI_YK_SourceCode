@@ -33,9 +33,9 @@
             <form action="{{ route('dashboard.ppid.update', $ppid->id) }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 @method('PUT')
-                
+
                 <div class="p-6 space-y-6">
-                    
+
                     {{-- Error Summary --}}
                     @if ($errors->any())
                         <div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-red-900/30 dark:text-red-400 border border-red-200 dark:border-red-800" role="alert">
@@ -53,7 +53,7 @@
                         <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                             Judul Informasi <span class="text-red-500">*</span>
                         </label>
-                        <input type="text" name="title" value="{{ old('title', $ppid->title) }}" 
+                        <input type="text" name="title" value="{{ old('title', $ppid->title) }}"
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" required>
                         @error('title') <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p> @enderror
                     </div>
@@ -64,21 +64,21 @@
                             <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                                 Link Sumber Dokumen <span class="text-red-500">*</span>
                             </label>
-                            
+
                             @if($ppid->source_link)
                             <div class="mb-2 text-xs text-blue-600 dark:text-blue-400">
-                                Link saat ini: <a href="{{ $ppid->source_link }}" target="_blank" class="underline hover:text-blue-800 dark:hover:text-blue-300">Buka Link</a>
+                                Link saat ini: <a href="{{ $ppid->source_link }}" target="_blank" rel="noopener noreferrer" class="underline hover:text-blue-800 dark:hover:text-blue-300">Buka Tautan</a>
                             </div>
                             @endif
 
-                            <input type="url" name="source_link" value="{{ old('source_link', $ppid->source_link) }}" 
+                            <input type="url" name="source_link" value="{{ old('source_link', $ppid->source_link) }}"
                                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" required>
                             @error('source_link') <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p> @enderror
                         </div>
 
                         {{-- Cover Image --}}
-                        <div x-data="{ 
-                            preview: '{{ $ppid->cover_image ? Storage::url($ppid->cover_image) : null }}',
+                        <div x-data="{
+                            preview: @js($ppid->cover_image ? Storage::url($ppid->cover_image) : null),
                             handleFile(event) {
                                 const file = event.target.files[0];
                                 if (!file) return;
@@ -93,7 +93,7 @@
                             <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                                 Cover Gambar (Opsional)
                             </label>
-                            
+
                             {{-- Preview Image --}}
                             <div class="mb-3" x-show="preview">
                                 <div class="relative w-32 h-32 rounded-lg overflow-hidden border border-gray-300 dark:border-gray-600">
@@ -104,8 +104,8 @@
                                 </div>
                             </div>
 
-                            <input type="file" name="cover_image" id="cover_image" @change="handleFile($event)" 
-                                class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400" 
+                            <input type="file" name="cover_image" id="cover_image" @change="handleFile($event)"
+                                class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
                                 accept="image/png, image/jpeg, image/jpg, image/webp">
                             <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Biarkan kosong jika tidak ingin mengubah cover.</p>
                             @error('cover_image') <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p> @enderror

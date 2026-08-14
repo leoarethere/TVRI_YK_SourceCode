@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use App\Models\Post;
 use App\Services\ImageService;
+use App\Support\LikeSearch;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
@@ -12,6 +13,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 
 // ✅ GUNAKAN GD DRIVER - Lebih universal dan tersedia di hampir semua server
@@ -24,12 +26,15 @@ class DashboardPostController extends Controller
      */
     public function index(Request $request): View
     {
+        $request->validate([
+            'search' => ['nullable', 'string', 'max:100'],
+        ]);
+
         $query = Post::with(['user', 'category']);
 
         // Filter pencarian
         $query->when($request->filled('search'), function ($q) use ($request) {
-            $search = str_replace(['%', '_'], ['\%', '\_'], $request->search);
-            $q->where('title', 'like', '%'.$search.'%');
+            LikeSearch::contains($q, 'title', $request->string('search')->toString());
         });
 
         // Filter kategori
@@ -85,7 +90,7 @@ class DashboardPostController extends Controller
                 'meta_title' => 'nullable|string|max:255',       // [TAMBAHAN]
                 'meta_description' => 'nullable|string|max:160', // [TAMBAHAN] SEO standard max 160 chars
             ]);
-        } catch (\Illuminate\Validation\ValidationException $e) {
+        } catch (ValidationException $e) {
             // Redirect kembali dengan error validation
             return back()->withErrors($e->validator)->withInput();
         }
@@ -148,15 +153,10 @@ class DashboardPostController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Post $post)
-    {
-        return redirect()->route('postingan.show', $post);
-    }
-
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Post $post)
+    public function edit(Post $post): View
     {
         $categories = Category::orderBy('name')->get();
 
@@ -188,7 +188,7 @@ class DashboardPostController extends Controller
                 'meta_title' => 'nullable|string|max:255',       // [TAMBAHAN]
                 'meta_description' => 'nullable|string|max:160', // [TAMBAHAN] SEO standard max 160 chars
             ]);
-        } catch (\Illuminate\Validation\ValidationException $e) {
+        } catch (ValidationException $e) {
             return back()->withErrors($e->validator)->withInput();
         }
 

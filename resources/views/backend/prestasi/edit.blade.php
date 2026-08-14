@@ -33,9 +33,9 @@
             <form action="{{ route('dashboard.prestasi.update', $prestasi->id) }}" method="POST" enctype="multipart/form-data" novalidate>
                 @csrf
                 @method('PUT')
-                
+
                 <div class="p-6 space-y-6">
-                    
+
                     {{-- Error Summary --}}
                     @if ($errors->any())
                         <div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-red-900/30 dark:text-red-400 border border-red-200 dark:border-red-800" role="alert">
@@ -54,7 +54,7 @@
                             <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                                 Judul Prestasi <span class="text-red-500">*</span>
                             </label>
-                            <input type="text" name="title" value="{{ old('title', $prestasi->title) }}" 
+                            <input type="text" name="title" value="{{ old('title', $prestasi->title) }}"
                                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" required>
                             @error('title') <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p> @enderror
                         </div>
@@ -64,7 +64,7 @@
                             <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                                 Nama Penghargaan <span class="text-red-500">*</span>
                             </label>
-                            <input type="text" name="award_name" value="{{ old('award_name', $prestasi->award_name) }}" 
+                            <input type="text" name="award_name" value="{{ old('award_name', $prestasi->award_name) }}"
                                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" required>
                             @error('award_name') <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p> @enderror
                         </div>
@@ -74,7 +74,7 @@
                             <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                                 Tahun Perolehan <span class="text-red-500">*</span>
                             </label>
-                            <input type="number" name="year" value="{{ old('year', $prestasi->year) }}" 
+                            <input type="number" name="year" value="{{ old('year', $prestasi->year) }}"
                                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" required>
                             @error('year') <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p> @enderror
                         </div>
@@ -97,7 +97,7 @@
                             <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                                 Jenis / Peringkat <span class="text-red-500">*</span>
                             </label>
-                            <input type="text" name="type" value="{{ old('type', $prestasi->type) }}" 
+                            <input type="text" name="type" value="{{ old('type', $prestasi->type) }}"
                                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" required>
                             @error('type') <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p> @enderror
                         </div>
@@ -114,8 +114,8 @@
                     </div>
 
                     {{-- Foto --}}
-                    <div x-data="{ 
-                        preview: '{{ $prestasi->image ? Storage::url($prestasi->image) : null }}',
+                    <div x-data="{
+                        preview: @js($prestasi->image ? Storage::url($prestasi->image) : null),
                         handleFile(event) {
                             const file = event.target.files[0];
                             if (!file) return;
@@ -130,7 +130,7 @@
                         <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                             Foto Dokumentasi
                         </label>
-                        
+
                         {{-- Preview Box --}}
                         <div class="mb-3" x-show="preview">
                             <div class="relative w-32 h-32 rounded-lg overflow-hidden border border-gray-300 dark:border-gray-600">
@@ -141,8 +141,8 @@
                             </div>
                         </div>
 
-                        <input type="file" name="image" id="image" @change="handleFile($event)" 
-                            class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400" 
+                        <input type="file" name="image" id="image" @change="handleFile($event)"
+                            class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
                             accept="image/png, image/jpeg, image/jpg, image/webp">
                         <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Upload baru untuk mengganti. Format: JPG, PNG, WebP (Maks. 5MB)</p>
                         @error('image') <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p> @enderror

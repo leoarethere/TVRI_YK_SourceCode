@@ -33,7 +33,7 @@
             <form action="{{ route('dashboard.sejarah.update', $history) }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 @method('PUT')
-                
+
                 <div class="p-6 space-y-6">
 
                     {{-- Error Summary --}}
@@ -47,20 +47,20 @@
                             </ul>
                         </div>
                     @endif
-                    
+
                     {{-- Judul --}}
                     <div>
                         <label for="title" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                             Judul <span class="text-red-500">*</span>
                         </label>
-                        <input type="text" name="title" id="title" value="{{ old('title', $history->title) }}" 
+                        <input type="text" name="title" id="title" value="{{ old('title', $history->title) }}"
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" required>
                         @error('title') <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p> @enderror
                     </div>
 
                     {{-- Gambar Ilustrasi --}}
-                    <div x-data="{ 
-                        preview: '{{ $history->image ? Storage::url($history->image) : null }}',
+                    <div x-data="{
+                        preview: @js($history->image ? Storage::url($history->image) : null),
                         handleFile(event) {
                             const file = event.target.files[0];
                             if (!file) return;
@@ -75,7 +75,7 @@
                         <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                             Gambar Ilustrasi (Opsional)
                         </label>
-                        
+
                         {{-- Preview Box --}}
                         <div class="mb-3" x-show="preview">
                             <div class="relative w-full max-w-md rounded-lg overflow-hidden border border-gray-300 dark:border-gray-600">
@@ -85,9 +85,9 @@
                                 </button>
                             </div>
                         </div>
-                        
-                        <input type="file" name="image" id="image" @change="handleFile($event)" 
-                            class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400" 
+
+                        <input type="file" name="image" id="image" @change="handleFile($event)"
+                            class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
                             accept="image/png, image/jpeg, image/jpg, image/webp">
                         <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Pilih gambar baru untuk mengganti yang lama (Max 5MB)</p>
                         @error('image') <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p> @enderror
@@ -103,7 +103,7 @@
                         @error('content') <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p> @enderror
                     </div>
                 </div>
-                
+
                 {{-- Action Buttons --}}
                 <div class="dashboard-form-actions flex items-center justify-between gap-3 p-6 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700/50 rounded-b-lg">
                     <a href="{{ route('dashboard.sejarah.index') }}" class="px-5 py-2.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-600 transition-colors">

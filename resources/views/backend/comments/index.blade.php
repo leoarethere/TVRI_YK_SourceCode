@@ -1,27 +1,27 @@
 <x-dashboard-layout>
     <x-slot:title>Kelola Komentar</x-slot:title>
 
-    <div x-data="{ 
-        deleteModal: false, 
-        deleteItemId: null, 
+    <div x-data="{
+        deleteModal: false,
+        deleteItemId: null,
         deleteItemName: '',
-        
+
         openDeleteModal(itemId, itemName) {
             this.deleteItemId = itemId;
             this.deleteItemName = itemName;
             this.deleteModal = true;
             document.body.style.overflow = 'hidden';
         },
-        
+
         closeDeleteModal() {
             this.deleteModal = false;
             this.deleteItemId = null;
             this.deleteItemName = '';
             document.body.style.overflow = '';
         }
-    }" 
+    }"
     class="pb-6">
-        
+
         {{-- HEADER HALAMAN --}}
         <div class="flex flex-col gap-4 mb-6 pt-2">
             <div>
@@ -35,32 +35,32 @@
 
             {{-- Status Filter Tabs --}}
             <div class="flex flex-wrap gap-2">
-                <a href="{{ route('dashboard.komentar.index') }}" 
+                <a href="{{ route('dashboard.komentar.index') }}"
                 class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-full transition-colors
                 {{ !request('status') ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300' : 'bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600' }}">
                     Semua
                     <span class="inline-flex items-center justify-center w-5 h-5 text-[10px] font-bold rounded-full bg-white/50 dark:bg-gray-800/50">{{ $counts['all'] }}</span>
                 </a>
-                <a href="{{ route('dashboard.komentar.index', ['status' => 'pending']) }}" 
+                <a href="{{ route('dashboard.komentar.index', ['status' => 'pending']) }}"
                 class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-full transition-colors
                 {{ request('status') == 'pending' ? 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/50 dark:text-yellow-700' : 'bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600' }}">
                     Pending
                     <span class="inline-flex items-center justify-center w-5 h-5 text-[10px] font-bold rounded-full bg-white/50 dark:bg-gray-800/50">{{ $counts['pending'] }}</span>
                 </a>
-                <a href="{{ route('dashboard.komentar.index', ['status' => 'approved']) }}" 
+                <a href="{{ route('dashboard.komentar.index', ['status' => 'approved']) }}"
                 class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-full transition-colors
                 {{ request('status') == 'approved' ? 'bg-green-100 text-green-700 dark:bg-green-900/50 dark:text-green-300' : 'bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600' }}">
                     Disetujui
                     <span class="inline-flex items-center justify-center w-5 h-5 text-[10px] font-bold rounded-full bg-white/50 dark:bg-gray-800/50">{{ $counts['approved'] }}</span>
                 </a>
-                <a href="{{ route('dashboard.komentar.index', ['status' => 'rejected']) }}" 
+                <a href="{{ route('dashboard.komentar.index', ['status' => 'rejected']) }}"
                 class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-full transition-colors
                 {{ request('status') == 'rejected' ? 'bg-red-100 text-red-700 dark:bg-red-900/50 dark:text-red-700' : 'bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600' }}">
                     Ditolak
                     <span class="inline-flex items-center justify-center w-5 h-5 text-[10px] font-bold rounded-full bg-white/50 dark:bg-gray-800/50">{{ $counts['rejected'] }}</span>
                 </a>
             </div>
-            
+
             {{-- Pencarian --}}
             <div class="flex flex-col sm:flex-row gap-3 w-full items-center">
                 <form action="{{ route('dashboard.komentar.index') }}" method="GET" class="flex items-center w-full gap-2">
@@ -74,19 +74,19 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                             </svg>
                         </div>
-                        <input type="text" name="search" value="{{ request('search') }}" id="simple-search" 
-                            class="bg-white border border-gray-200 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5 shadow-sm dark:bg-gray-800 dark:border-gray-700 dark:placeholder-gray-400 dark:text-white transition-colors" 
+                        <input type="text" name="search" value="{{ request('search') }}" id="simple-search"
+                            class="bg-white border border-gray-200 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5 shadow-sm dark:bg-gray-800 dark:border-gray-700 dark:placeholder-gray-400 dark:text-white transition-colors"
                             placeholder="Cari nama, email, isi...">
                     </div>
-                    <button type="submit" class="p-2.5 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 shadow-sm transition-colors flex-shrink-0" title="Cari">
+                    <button type="submit" class="p-2.5 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 shadow-sm transition-colors flex-shrink-0" title="Cari" aria-label="Cari komentar">
                         <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                         </svg>
                         <span class="sr-only">Cari</span>
                     </button>
-                    
+
                     @if(request('search'))
-                        <a href="{{ route('dashboard.komentar.index', request()->only('status')) }}" class="p-2.5 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 focus:ring-4 focus:ring-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-700 dark:hover:bg-gray-700 shadow-sm transition-colors flex-shrink-0" title="Reset Pencarian">
+                        <a href="{{ route('dashboard.komentar.index', request()->only('status')) }}" class="p-2.5 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 focus:ring-4 focus:ring-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-700 dark:hover:bg-gray-700 shadow-sm transition-colors flex-shrink-0" title="Reset Pencarian" aria-label="Reset Pencarian">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                         </a>
                     @endif
@@ -139,7 +139,7 @@
                     <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
                         @forelse ($comments as $comment)
                             <tr class="bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
-                                
+
                                 {{-- Pengirim --}}
                                 <td class="px-4 py-4 align-middle">
                                     <div class="flex items-center gap-3">
@@ -215,7 +215,7 @@
                                         {{ $comment->created_at ? $comment->created_at->format('H:i') : '' }}
                                     </span>
                                 </td>
-                                
+
                                 {{-- Aksi --}}
                                 <td class="px-4 py-4 align-middle text-center">
                                     <div class="flex items-center justify-center gap-1">
@@ -223,7 +223,7 @@
                                             <form action="{{ route('dashboard.komentar.setujui', $comment) }}" method="POST" class="inline">
                                                 @csrf
                                                 @method('PUT')
-                                                <button type="submit" class="p-2 text-green-600 bg-green-50 rounded-lg hover:bg-green-100 dark:text-green-400 dark:bg-green-900/30 dark:hover:bg-green-900/50 transition-colors" title="Setujui Komentar">
+                                                <button type="submit" class="p-2 text-green-600 bg-green-50 rounded-lg hover:bg-green-100 dark:text-green-400 dark:bg-green-900/30 dark:hover:bg-green-900/50 transition-colors" title="Setujui Komentar" aria-label="Setujui Komentar">
                                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
                                                 </button>
                                             </form>
@@ -232,14 +232,14 @@
                                             <form action="{{ route('dashboard.komentar.tolak', $comment) }}" method="POST" class="inline">
                                                 @csrf
                                                 @method('PUT')
-                                                <button type="submit" class="p-2 text-red-600 bg-red-50 rounded-lg hover:bg-red-100 dark:text-red-400 dark:bg-red-900/30 dark:hover:bg-red-900/50 transition-colors" title="Tolak Komentar">
+                                                <button type="submit" class="p-2 text-red-600 bg-red-50 rounded-lg hover:bg-red-100 dark:text-red-400 dark:bg-red-900/30 dark:hover:bg-red-900/50 transition-colors" title="Tolak Komentar" aria-label="Tolak Komentar">
                                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                                                 </button>
                                             </form>
                                         @endif
-                                        <button @click="openDeleteModal({{ $comment->id }}, '{{ addslashes($comment->name) }}')"
+                                        <button type="button" @click="openDeleteModal({{ $comment->id }}, @js($comment->name))"
                                             class="p-2 text-gray-600 bg-gray-50 rounded-lg hover:bg-gray-100 dark:text-gray-400 dark:bg-gray-900/30 dark:hover:bg-gray-900/50 transition-colors"
-                                            title="Hapus Komentar">
+                                            title="Hapus Komentar" aria-label="Hapus Komentar">
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                                         </button>
                                     </div>
@@ -257,8 +257,8 @@
                         @endforelse
                     </tbody>
                 </table>
-            </div>  
-            
+            </div>
+
             {{-- Pagination --}}
             @if($comments->hasPages())
                 <div class="mt-4 mb-4 px-4 sm:px-6">
@@ -270,7 +270,7 @@
         </div>
 
         {{-- MODAL HAPUS (Alpine.js) --}}
-        <div x-show="deleteModal" 
+        <div x-show="deleteModal"
              x-cloak
              x-transition:enter="transition ease-out duration-300"
              x-transition:enter-start="opacity-0 transform scale-95"
@@ -280,9 +280,9 @@
              x-transition:leave-end="opacity-0 transform scale-95"
              class="fixed inset-0 z-50 overflow-y-auto bg-gray-900/75 backdrop-blur-sm flex items-center justify-center p-4"
              @keydown.escape.window="closeDeleteModal()">
-            
+
             <div class="relative bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-md w-full overflow-hidden" @click.away="closeDeleteModal()">
-                
+
                 {{-- Modal Header --}}
                 <div class="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
                     <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Konfirmasi Hapus</h3>
@@ -311,8 +311,8 @@
                     <button @click="closeDeleteModal()" type="button" class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:ring-4 focus:outline-none focus:ring-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700 transition-colors">
                         Batal
                     </button>
-                    
-                    <form :action="`{{ route('dashboard.komentar.destroy', '') }}/${deleteItemId}`" method="POST">
+
+                    <form :action="@js(route('dashboard.komentar.destroy', ':id')).replace(':id', deleteItemId)" method="POST">
                         @csrf
                         @method('DELETE')
                         <button type="submit" class="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-300 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800 transition-colors">

@@ -27,12 +27,10 @@
 @if($message)
     {{-- PERBAIKAN: ID diganti dari 'flash-message-trigger' menjadi 'notification-trigger' --}}
     {{-- Agar cocok dengan Javascript di dashboard-layout.blade.php --}}
-    <div id="notification-trigger" 
-         data-message="{{ $message }}" 
+    <div id="notification-trigger"
+         data-message="{{ $message }}"
          data-type="{{ $type }}"
          style="display: none;">
     </div>
-    
-    {{-- DEBUG (Opsional): Hapus baris di bawah ini jika notifikasi sudah muncul --}}
-    <script>console.log('📢 Server mengirim pesan: "{{ $message }}"');</script>
+
 @endif

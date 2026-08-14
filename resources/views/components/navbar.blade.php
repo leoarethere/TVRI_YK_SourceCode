@@ -7,10 +7,16 @@
 <header 
     x-data="{ 
         scrolled: false,
+        scrollHandler: null,
         init() {
-            window.addEventListener('scroll', () => {
+            this.scrollHandler = () => {
                 this.scrolled = window.scrollY > 20;
-            });
+            };
+            this.scrollHandler();
+            window.addEventListener('scroll', this.scrollHandler, { passive: true });
+        },
+        destroy() {
+            window.removeEventListener('scroll', this.scrollHandler);
         }
     }"
     :class="{ 'sm:-translate-y-10': scrolled, 'translate-y-0': !scrolled }"
@@ -100,6 +106,21 @@
              isMobileMenuOpen: false,
              openDropdown: null,
              timeoutId: null,
+             resizeHandler: null,
+             wasDesktop: window.innerWidth >= 1280,
+             init() {
+                 this.resizeHandler = () => {
+                     const isDesktop = window.innerWidth >= 1280;
+                     if (isDesktop !== this.wasDesktop) {
+                         this.closeAllMenus();
+                         this.wasDesktop = isDesktop;
+                     }
+                 };
+                 window.addEventListener('resize', this.resizeHandler, { passive: true });
+                 this.$watch('isMobileMenuOpen', (isOpen) => {
+                     document.body.classList.toggle('overflow-hidden', isOpen && window.innerWidth < 1280);
+                 });
+             },
              openMenu(name) {
                  clearTimeout(this.timeoutId);
                  this.openDropdown = name;
@@ -107,9 +128,25 @@
              closeMenu() {
                  this.timeoutId = setTimeout(() => {
                      this.openDropdown = null;
-                 }, 300); // ⏱ Delay 300ms sebelum menutup
+                 }, 300);
+             },
+             toggleMenu(name) {
+                 clearTimeout(this.timeoutId);
+                 this.openDropdown = this.openDropdown === name ? null : name;
+             },
+             closeAllMenus() {
+                 clearTimeout(this.timeoutId);
+                 this.openDropdown = null;
+                 this.isMobileMenuOpen = false;
+                 document.body.classList.remove('overflow-hidden');
+             },
+             destroy() {
+                 this.closeAllMenus();
+                 window.removeEventListener('resize', this.resizeHandler);
              }
-         }">
+         }"
+         @keydown.escape.window="closeAllMenus()"
+         @click.outside="closeAllMenus()">
         
         <div class="container mx-auto px-4 sm:px-6 lg:px-8">
             <div class="relative flex h-[72px] items-center justify-between">
@@ -150,7 +187,10 @@
                         @php $isPublikasiActive = request()->is('penyiaran*', 'jadwal-acara*'); @endphp
                         <div class="relative" @mouseenter="openMenu('publikasi')" @mouseleave="closeMenu()">
                             <button 
-                                @click="openDropdown = openDropdown === 'publikasi' ? null : 'publikasi'" 
+                                type="button"
+                                @click="toggleMenu('publikasi')"
+                                :aria-expanded="openDropdown === 'publikasi'"
+                                aria-controls="desktop-publikasi-menu"
                                 class="group flex items-center gap-1.5 rounded-lg px-2.5 py-2 text-sm font-medium transition-all duration-200 2xl:gap-2 2xl:px-4 2xl:py-3 2xl:text-base {{ $isPublikasiActive ? 'bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white shadow-lg' : 'text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white' }}">
                                 <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z" />
@@ -160,7 +200,7 @@
                                     <polyline points="6 9 12 15 18 9"></polyline>
                                 </svg>
                             </button>
-                            <div x-show="openDropdown === 'publikasi'" 
+                            <div id="desktop-publikasi-menu" x-show="openDropdown === 'publikasi'"
                                  x-transition:enter="transition ease-out duration-200"
                                  x-transition:enter-start="opacity-0 translate-y-1"
                                  x-transition:enter-end="opacity-100 translate-y-0"
@@ -188,7 +228,10 @@
                         @php $isLayananActive = request()->is('ppid*', 'info-rb*', 'info-magang*', 'info-kunjungan*'); @endphp
                         <div class="relative" @mouseenter="openMenu('layanan')" @mouseleave="closeMenu()">
                             <button 
-                                @click="openDropdown = openDropdown === 'layanan' ? null : 'layanan'" 
+                                type="button"
+                                @click="toggleMenu('layanan')"
+                                :aria-expanded="openDropdown === 'layanan'"
+                                aria-controls="desktop-layanan-menu"
                                 class="group flex items-center gap-1.5 rounded-lg px-2.5 py-2 text-sm font-medium transition-all duration-200 2xl:gap-2 2xl:px-4 2xl:py-3 2xl:text-base {{ $isLayananActive ? 'bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white shadow-lg' : 'text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white' }}">
                                 <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M7 11.5V14m0-2.5v-6a1.5 1.5 0 113 0m-3 6a1.5 1.5 0 00-3 0v2a7.5 7.5 0 0015 0v-5a1.5 1.5 0 00-3 0m-6-3V11m0-5.5v-1a1.5 1.5 0 013 0v1m0 0V11m0-5.5a1.5 1.5 0 013 0v3m0 0V11" />
@@ -198,7 +241,7 @@
                                     <polyline points="6 9 12 15 18 9"></polyline>
                                 </svg>
                             </button>
-                            <div x-show="openDropdown === 'layanan'"
+                            <div id="desktop-layanan-menu" x-show="openDropdown === 'layanan'"
                                  x-transition:enter="transition ease-out duration-200"
                                  x-transition:enter-start="opacity-0 translate-y-1"
                                  x-transition:enter-end="opacity-100 translate-y-0"
@@ -253,7 +296,10 @@
                         @php $isTentangActive = request()->is('sejarah*', 'visi-misi*', 'prestasi*', 'tugas-fungsi*', 'himne-tvri*'); @endphp
                         <div class="relative" @mouseenter="openMenu('tentang')" @mouseleave="closeMenu()">
                             <button 
-                                @click="openDropdown = openDropdown === 'tentang' ? null : 'tentang'" 
+                                type="button"
+                                @click="toggleMenu('tentang')"
+                                :aria-expanded="openDropdown === 'tentang'"
+                                aria-controls="desktop-tentang-menu"
                                 class="group flex items-center gap-1.5 rounded-lg px-2.5 py-2 text-sm font-medium transition-all duration-200 2xl:gap-2 2xl:px-4 2xl:py-3 2xl:text-base {{ $isTentangActive ? 'bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white shadow-lg' : 'text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white' }}">
                                 <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -264,7 +310,7 @@
                                 </svg>
                             </button>
                             
-                            <div x-show="openDropdown === 'tentang'"
+                            <div id="desktop-tentang-menu" x-show="openDropdown === 'tentang'"
                                 x-transition:enter="transition ease-out duration-200"
                                 x-transition:enter-start="opacity-0 scale-95"
                                 x-transition:enter-end="opacity-100 scale-100"
@@ -364,6 +410,8 @@
                     <div class="flex-shrink-0 ml-2">
                         <button @click="isMobileMenuOpen = !isMobileMenuOpen" 
                                 type="button" 
+                                :aria-expanded="isMobileMenuOpen"
+                                aria-controls="primary-mobile-menu"
                                 class="w-10 h-10 flex items-center justify-center rounded-lg p-2 
                                     text-gray-700 dark:text-gray-200 
                                     bg-gray-200 dark:bg-gray-800 
@@ -389,7 +437,7 @@
         </div>
 
         {{-- Menu Mobile --}}
-        <div x-show="isMobileMenuOpen" 
+        <div id="primary-mobile-menu" x-show="isMobileMenuOpen"
              x-transition:enter="transition ease-out duration-200"
              x-transition:enter-start="opacity-0 -translate-y-2"
              x-transition:enter-end="opacity-100 translate-y-0"
@@ -411,7 +459,9 @@
                 {{-- Dropdown Publikasi Mobile --}}
                 @php $isPublikasiMobileActive = request()->is('penyiaran*', 'jadwal-acara*'); @endphp
                 <div x-data="{ open: {{ $isPublikasiMobileActive ? 'true' : 'false' }} }">
-                    <button @click="open = !open" 
+                    <button type="button" @click="open = !open"
+                            :aria-expanded="open"
+                            aria-controls="mobile-publikasi-menu"
                             class="w-full flex items-center justify-between rounded-lg px-4 py-3 text-base font-medium transition-all duration-200 {{ $isPublikasiMobileActive ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800' }}">
                         <span class="flex items-center gap-3">
                             <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -423,7 +473,7 @@
                             <polyline points="6 9 12 15 18 9"></polyline>
                         </svg>
                     </button>
-                    <div x-show="open" 
+                    <div id="mobile-publikasi-menu" x-show="open"
                          x-transition:enter="transition ease-out duration-200"
                          x-transition:enter-start="opacity-0 -translate-y-2"
                          x-transition:enter-end="opacity-100 translate-y-0"
@@ -442,7 +492,9 @@
                 {{-- Dropdown Layanan Mobile --}}
                 @php $isLayananMobileActive = request()->is('ppid*', 'info-rb*', 'info-magang*', 'info-kunjungan*'); @endphp
                 <div x-data="{ open: {{ $isLayananMobileActive ? 'true' : 'false' }} }">
-                    <button @click="open = !open" 
+                    <button type="button" @click="open = !open"
+                            :aria-expanded="open"
+                            aria-controls="mobile-layanan-menu"
                             class="w-full flex items-center justify-between rounded-lg px-4 py-3 text-base font-medium transition-all duration-200 {{ $isLayananMobileActive ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800' }}">
                         <span class="flex items-center gap-3">
                             <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -454,7 +506,7 @@
                             <polyline points="6 9 12 15 18 9"></polyline>
                         </svg>
                     </button>
-                    <div x-show="open" 
+                    <div id="mobile-layanan-menu" x-show="open"
                          x-transition:enter="transition ease-out duration-200"
                          x-transition:enter-start="opacity-0 -translate-y-2"
                          x-transition:enter-end="opacity-100 translate-y-0"
@@ -495,7 +547,9 @@
                 {{-- Dropdown Tentang Mobile --}}
                 @php $isTentangMobileActive = request()->is('sejarah*', 'visi-misi*', 'prestasi*', 'tugas-fungsi*', 'himne-tvri*'); @endphp
                 <div x-data="{ open: {{ $isTentangMobileActive ? 'true' : 'false' }} }">
-                    <button @click="open = !open" 
+                    <button type="button" @click="open = !open"
+                            :aria-expanded="open"
+                            aria-controls="mobile-tentang-menu"
                             class="w-full flex items-center justify-between rounded-lg px-4 py-3 text-base font-medium transition-all duration-200 {{ $isTentangMobileActive ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800' }}">
                         <span class="flex items-center gap-3">
                             <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -507,7 +561,7 @@
                             <polyline points="6 9 12 15 18 9"></polyline>
                         </svg>
                     </button>
-                    <div x-show="open" 
+                    <div id="mobile-tentang-menu" x-show="open"
                          x-transition:enter="transition ease-out duration-200"
                          x-transition:enter-start="opacity-0 -translate-y-2"
                          x-transition:enter-end="opacity-100 translate-y-0"

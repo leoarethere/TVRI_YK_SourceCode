@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Str;
+use Illuminate\View\View;
 use Throwable;
 
 class PasswordResetLinkController extends Controller
@@ -13,7 +15,7 @@ class PasswordResetLinkController extends Controller
     /**
      * Menampilkan tampilan permintaan tautan reset kata sandi.
      */
-    public function create()
+    public function create(): View
     {
         return view('auth.forgot-password', [
             'title' => 'Lupa Kata Sandi',
@@ -23,7 +25,7 @@ class PasswordResetLinkController extends Controller
     /**
      * Menangani permintaan tautan reset kata sandi yang masuk.
      */
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
         $request->merge([
             'email' => Str::lower(trim((string) $request->input('email'))),

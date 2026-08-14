@@ -3,13 +3,14 @@
 namespace Tests\Feature;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class PerformanceTest extends TestCase
 {
     use RefreshDatabase;
 
-    /** @test */
+    #[Test]
     public function homepage_loads_under_acceptable_time_to_task()
     {
         $startTime = microtime(true);
@@ -25,7 +26,7 @@ class PerformanceTest extends TestCase
         $this->assertLessThan(1000, $executionTime, "Homepage took too long to load: {$executionTime}ms");
     }
 
-    /** @test */
+    #[Test]
     public function news_listing_loads_under_acceptable_time()
     {
         $startTime = microtime(true);

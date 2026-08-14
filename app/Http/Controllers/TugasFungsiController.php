@@ -3,12 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\TugasFungsi;
-use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use Illuminate\View\View;
 
 class TugasFungsiController extends Controller
 {
-    public function index()
+    public function index(): View
     {
         // 3. Gunakan Model Baru
         $tugas = TugasFungsi::where('type', 'tugas')
@@ -24,7 +24,7 @@ class TugasFungsiController extends Controller
         return view('frontend.tentang.tugas-fungsi', [
             'title' => 'Tugas dan Fungsi',
             'tugas' => $tugas,
-            'fungsi' => $fungsi
+            'fungsi' => $fungsi,
         ]);
     }
 }

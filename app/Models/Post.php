@@ -2,17 +2,18 @@
 
 namespace App\Models;
 
-use App\Models\User;
-use App\Models\Category;
-use Illuminate\Database\Eloquent\Model;
+use App\Models\Concerns\HasPublicPublicationStatus;
+use App\Models\Concerns\InvalidatesHomepageDataCache;
+use App\Support\LikeSearch;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 class Post extends Model
 {
-    use HasFactory;
+    use HasFactory, HasPublicPublicationStatus, InvalidatesHomepageDataCache;
 
     /**
      * Boot model: Hapus komentar terkait saat postingan dihapus.
@@ -43,9 +44,9 @@ class Post extends Model
     {
         return $this->belongsTo(Category::class);
     }
-    
+
     // ✅ TAMBAHKAN FUNGSI INI UNTUK MEMPERBAIKI ERROR
-    public function incrementViews()
+    public function incrementViews(): void
     {
         // increment() adalah fungsi bawaan Eloquent untuk menambah nilai kolom angka secara otomatis (+1)
         $this->increment('views');
@@ -56,28 +57,27 @@ class Post extends Model
     {
         // 1. Logika Search
         $query->when($filters['search'] ?? false, function ($query, $search) {
-            $query->where(function($q) use ($search) {
-                $q->where('title', 'like', '%' . $search . '%')
-                  ->orWhere('body', 'like', '%' . $search . '%')
-                  ->orWhereHas('user', function($userQuery) use ($search) {
-                      $userQuery->where('name', 'like', '%' . $search . '%');
-                  })
-                  ->orWhereHas('category', function($catQuery) use ($search) {
-                      $catQuery->where('name', 'like', '%' . $search . '%');
-                  });
+            $query->where(function ($q) use ($search) {
+                LikeSearch::contains($q, 'title', $search);
+                LikeSearch::contains($q, 'body', $search, 'or');
+                $q->orWhereHas('user', function ($userQuery) use ($search) {
+                    LikeSearch::contains($userQuery, 'name', $search);
+                })->orWhereHas('category', function ($catQuery) use ($search) {
+                    LikeSearch::contains($catQuery, 'name', $search);
+                });
             });
         });
 
         // 2. Filter Kategori
         $query->when($filters['category'] ?? false, function ($query, $category) {
-            $query->whereHas('category', function($q) use ($category) {
+            $query->whereHas('category', function ($q) use ($category) {
                 $q->where('slug', $category);
             });
         });
 
         // 3. Filter Author
         $query->when($filters['author'] ?? false, function ($query, $author) {
-            $query->whereHas('user', function($q) use ($author) {
+            $query->whereHas('user', function ($q) use ($author) {
                 $q->where('username', $author);
             });
         });

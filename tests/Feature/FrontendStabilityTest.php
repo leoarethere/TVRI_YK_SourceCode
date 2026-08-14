@@ -3,17 +3,16 @@
 namespace Tests\Feature;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class FrontendStabilityTest extends TestCase
 {
     use RefreshDatabase;
 
-    /**
-     * @test
-     *
-     * @dataProvider frontendRoutesProvider
-     */
+    #[Test]
+    #[DataProvider('frontendRoutesProvider')]
     public function frontend_pages_can_be_rendered_without_error($route)
     {
         $response = $this->get($route);

@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Support\PublicStorageWriter;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
@@ -37,7 +38,7 @@ class ImageService
 
             $encodedImage = $image->toJpeg(quality: $quality);
 
-            Storage::disk('public')->put($path, (string) $encodedImage);
+            PublicStorageWriter::put($path, (string) $encodedImage);
 
             return $path;
         } catch (\Exception $e) {

@@ -2,7 +2,7 @@
 
 **Versi Dokumen:** 1.1
 **Tanggal:** 8 Agustus 2026
-**Framework:** Laravel 11 · PHP 8.2 · MySQL · TailwindCSS
+**Framework:** Laravel 12 · PHP 8.2 · MySQL · TailwindCSS
 
 ---
 
@@ -50,7 +50,7 @@ Website resmi **TVRI Stasiun D.I. Yogyakarta** adalah sistem informasi berbasis 
 
 ### 1.3 Teknologi yang Digunakan
 
-- **Backend:** Laravel 11 (PHP 8.2)
+- **Backend:** Laravel 12 (PHP 8.2)
 - **Frontend:** Blade Templating, TailwindCSS, Alpine.js
 - **Database:** MySQL 8
 - **Rich Text Editor:** Trix Editor
@@ -122,7 +122,7 @@ cd Yogyakarta
 composer install
 
 # 3. Install dependensi frontend
-npm install
+npm ci
 
 # 4. Salin file environment
 cp .env.example .env
@@ -378,33 +378,18 @@ Sistem komentar menggunakan **Polymorphic Relationship** sehingga satu tabel `co
 
 ### 11.1 Konfigurasi `.env` Produksi
 
-```env
-APP_ENV=production
-APP_DEBUG=false
-APP_URL=https://domain-anda.com
-
-DB_HOST=localhost
-DB_DATABASE=nama_database
-DB_USERNAME=username_hosting
-DB_PASSWORD=password_hosting
-
-SESSION_DRIVER=database
-CACHE_STORE=database
-```
+Gunakan template private `deploy/cpanel/env.production.example`. Pertahankan
+`APP_KEY` live, gunakan timezone `Asia/Jakarta`, cookie sesi HTTPS, filesystem
+`public`, serta log `daily`. Jangan menyalin `.env` lokal ke server.
 
 ### 11.2 Perintah Deploy
 
-```bash
-composer install --optimize-autoloader --no-dev
-php artisan key:generate
-php artisan migrate --force
-php artisan storage:link
-npm install && npm run build
-php artisan config:cache
-php artisan route:cache
-php artisan view:cache
-php artisan optimize
-```
+Gunakan alur tunggal pada [deployment-cpanel.md](./deployment-cpanel.md). Jangan
+menjalankan `key:generate` pada database live, jangan menjalankan
+`artisan storage:link` untuk struktur public root terpisah, dan jangan membangun
+dependency frontend di server. Script deployment memakai PHP CLI cPanel,
+menjalankan migration/cache dengan urutan aman, serta mempublikasikan manifest
+Vite paling akhir.
 
 ### 11.3 Perizinan File
 

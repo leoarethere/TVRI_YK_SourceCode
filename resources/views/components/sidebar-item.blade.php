@@ -2,6 +2,7 @@
 
 <li>
     <a href="{{ $href }}"
+       aria-label="{{ trim(strip_tags((string) $slot)) }}"
        :class="{ 'justify-center': !isSidebarOpen }"
        @class([
            'flex items-center p-2 text-base font-medium rounded-lg group transition-all duration-300',

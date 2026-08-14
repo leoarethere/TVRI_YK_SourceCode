@@ -5,10 +5,11 @@ namespace App\Http\Controllers;
 use App\Models\JadwalAcara;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use Illuminate\View\View;
 
 class JadwalController extends Controller
 {
-    public function index(Request $request)
+    public function index(Request $request): View
     {
         // 1. Join dengan tabel kategori agar bisa sort berdasarkan 'jadwal_categories.order'
         $query = JadwalAcara::select('jadwal_acaras.*') // Pastikan hanya ambil kolom jadwal_acara agar ID tidak tertimpa

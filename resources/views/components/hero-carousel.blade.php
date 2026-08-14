@@ -13,9 +13,9 @@
     @php return; @endphp
 @endif
 
-<section 
+<section
     x-data="{
-        slides: {{ json_encode($slides) }},
+        slides: @js($slides),
         activeSlide: 0,
         progress: 0,
         autoplayInterval: null,
@@ -42,6 +42,7 @@
 
         stopAutoplay() {
             clearInterval(this.autoplayInterval);
+            this.autoplayInterval = null;
         },
 
         nextSlide() {
@@ -52,6 +53,10 @@
         selectSlide(index) {
             this.activeSlide = index;
             this.resetAutoplay();
+        },
+
+        destroy() {
+            this.stopAutoplay();
         }
     }"
     x-init="startAutoplay()"
@@ -63,7 +68,7 @@
 
     {{-- Slides Container --}}
     <template x-for="(slide, index) in slides" :key="index">
-        <div 
+        <div
             x-show="activeSlide === index"
             x-transition:enter="transition ease-out duration-1000"
             x-transition:enter-start="opacity-0 scale-105"
@@ -74,14 +79,14 @@
             class="absolute inset-0"
         >
             {{-- Background Image --}}
-            <img :src="slide.image" 
+            <img :src="slide.image"
                  class="h-full w-full object-cover"
                  :alt="slide.title"
                  loading="lazy">
-            
+
             {{-- Gradient Overlay (Lebih gelap di bawah untuk teks) --}}
             <div class="absolute inset-0 bg-gradient-to-t from-gray-900/90 via-gray-900/40 to-transparent"></div>
-            
+
             {{-- Content Wrapper --}}
             <div class="absolute inset-0 flex items-center justify-start p-6 sm:p-10 md:p-16 lg:p-24">
                 <div class="max-w-2xl text-left"
@@ -89,19 +94,19 @@
                      x-transition:enter="transition ease-out duration-700 delay-300"
                      x-transition:enter-start="opacity-0 translate-y-4"
                      x-transition:enter-end="opacity-100 translate-y-0">
-                    
+
                     {{-- Heading: Ukuran font responsif --}}
-                    <h2 class="mb-3 text-2xl font-extrabold tracking-tight text-white sm:text-2xl md:text-3xl lg:text-4xl drop-shadow-lg" 
+                    <h2 class="mb-3 text-2xl font-extrabold tracking-tight text-white sm:text-2xl md:text-3xl lg:text-4xl drop-shadow-lg"
                         x-text="slide.title">
                     </h2>
-                    
+
                     {{-- Subtitle: Ukuran font dan line-clamp responsif --}}
-                    <p class="mb-6 text-sm font-medium text-gray-200 sm:text-base md:text-lg lg:text-lg line-clamp-3 sm:line-clamp-2 drop-shadow-lg max-w-xl" 
+                    <p class="mb-6 text-sm font-medium text-gray-200 sm:text-base md:text-lg lg:text-lg line-clamp-3 sm:line-clamp-2 drop-shadow-lg max-w-xl"
                        x-text="slide.subtitle">
                     </p>
-                    
+
                     {{-- Button --}}
-                    <a :href="slide.link" 
+                    <a :href="slide.link"
                        class="inline-flex items-center gap-2 px-6 py-3 text-sm font-semibold text-white transition-all duration-200 bg-blue-600 rounded-xl hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 shadow-lg hover:shadow-blue-500/30">
                         <span x-text="slide.button_text || 'Selengkapnya'"></span>
                         {{-- Heroicon: Arrow Right --}}
@@ -118,17 +123,18 @@
     <div class="absolute bottom-0 left-0 right-0 z-20 w-full bg-gradient-to-t from-gray-900/80 to-transparent pt-12 pb-4">
         <div class="flex justify-center items-end px-4 gap-2 sm:gap-4">
             <template x-for="(slide, index) in slides" :key="index">
-                <button 
-                    @click="selectSlide(index)" 
+                <button
+                    type="button"
+                    @click="selectSlide(index)"
                     class="group relative flex flex-col justify-end w-full max-w-[80px] sm:max-w-[120px] focus:outline-none"
                     :aria-label="'Go to slide ' + (index + 1)">
-                    
+
                     {{-- Label Judul Kecil (Hidden on very small screens) --}}
                     <span class="hidden sm:block mb-2 text-xs font-medium truncate transition-colors duration-300 text-center"
                           :class="activeSlide === index ? 'text-white' : 'text-gray-400 group-hover:text-gray-300'"
                           x-text="slide.title">
                     </span>
-                    
+
                     {{-- Progress Bar Container --}}
                     <div class="h-1 w-full rounded-full bg-gray-700/50 overflow-hidden backdrop-blur-sm">
                         {{-- Active Progress --}}

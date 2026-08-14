@@ -4,8 +4,8 @@ use Illuminate\Http\Request;
 
 define('LARAVEL_START', microtime(true));
 
-// Sesuaikan hanya jalur ini dengan APP_ROOT yang sebenarnya.
-$appRoot = dirname(__DIR__).'/publik/app';
+// Project live berada langsung di /home/yogz7392/publik (artisan ada di root).
+$appRoot = dirname(__DIR__).'/publik';
 
 if (! is_file($appRoot.'/vendor/autoload.php') || ! is_file($appRoot.'/bootstrap/app.php')) {
     http_response_code(503);
@@ -20,4 +20,3 @@ require $appRoot.'/vendor/autoload.php';
 
 (require_once $appRoot.'/bootstrap/app.php')
     ->handleRequest(Request::capture());
-

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Prestasi;
+use App\Support\PublicStorageWriter;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
@@ -72,7 +73,7 @@ class DashboardPrestasiController extends Controller
                 $image->scale(width: 800);
                 $encoded = $image->toJpeg(quality: 80);
 
-                Storage::disk('public')->put($filename, (string) $encoded);
+                PublicStorageWriter::put($filename, (string) $encoded);
                 $validated['image'] = $filename;
 
             } catch (\Exception $e) {
@@ -127,7 +128,7 @@ class DashboardPrestasiController extends Controller
                 $encoded = $image->toJpeg(quality: 80);
 
                 // 1. Simpan gambar baru
-                Storage::disk('public')->put($filename, (string) $encoded);
+                PublicStorageWriter::put($filename, (string) $encoded);
 
                 // 2. Masukkan nama file baru ke data validasi
                 $validated['image'] = $filename;

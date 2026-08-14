@@ -3,52 +3,46 @@
 namespace App\Http\Controllers;
 
 use App\Models\SocialMedia;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\View\View;
 
 class DashboardSocialMediaController extends Controller
 {
     /**
      * Menampilkan data sosial media (Read Only).
      */
-    public function index()
+    public function index(): View
     {
-        // PERBAIKAN: Gunakan firstOrCreate agar lebih atomik dan rapi.
-        // Mencari data pertama, jika tidak ada maka buat baru dengan nilai null.
-        $socialMedia = SocialMedia::first();
+        $socialMedia = SocialMedia::firstOrCreate([], [
+            'instagram' => null,
+            'facebook' => null,
+            'twitter' => null,
+            'tiktok' => null,
+            'youtube' => null,
+        ]);
 
-        if (!$socialMedia) {
-            $socialMedia = SocialMedia::create([
-                'instagram' => null,
-                'facebook'  => null,
-                'twitter'   => null,
-                'tiktok'    => null,
-                'youtube'   => null,
-            ]);
-        }
-        
-        // Hapus cache jika data baru saja dibuat agar sinkron
         if ($socialMedia->wasRecentlyCreated) {
             Cache::forget('global_social_media');
         }
-        
+
         return view('backend.social-media.index', compact('socialMedia'));
     }
 
     /**
      * Menampilkan form edit.
      */
-    public function edit($id)
+    public function edit(SocialMedia $socialMedia): View
     {
-        $socialMedia = SocialMedia::findOrFail($id);
         return view('backend.social-media.edit', compact('socialMedia'));
     }
 
     /**
      * Memproses update data.
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, SocialMedia $socialMedia): RedirectResponse
     {
         $validated = $request->validate([
             'instagram' => 'nullable|url',
@@ -65,7 +59,6 @@ class DashboardSocialMediaController extends Controller
             'youtube.url'   => 'Link YouTube harus berupa URL valid',
         ]);
 
-        $socialMedia = SocialMedia::findOrFail($id);
         $socialMedia->update($validated);
         
         // Hapus cache agar frontend segera mendapat perubahan

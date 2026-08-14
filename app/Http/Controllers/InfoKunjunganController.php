@@ -2,17 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\InfoKunjungan;
 use App\Models\InfoKunjunganFaq;
+use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use Illuminate\View\View;
 
 class InfoKunjunganController extends Controller
 {
     /**
      * Menampilkan halaman publik informasi kunjungan.
      */
-    public function index(Request $request)
+    public function index(Request $request): View
     {
         // Ambil data yang aktif saja
         $query = InfoKunjungan::where('is_active', true);

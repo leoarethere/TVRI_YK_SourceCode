@@ -3,13 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\VisiMisi;
-use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\View\View;
 
 class VisiMisiController extends Controller
 {
-    public function visiMisi()
+    public function visiMisi(): View
     {
         $title = 'Visi dan Misi';
 

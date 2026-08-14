@@ -2,12 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Broadcast;
 use App\Models\Comment;
+use App\Models\News;
+use App\Models\Post;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
 class CommentController extends Controller
 {
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
@@ -25,15 +29,18 @@ class CommentController extends Controller
 
         // Map friendly names to model classes
         $typeMap = [
-            'news' => \App\Models\News::class,
-            'post' => \App\Models\Post::class,
-            'broadcast' => \App\Models\Broadcast::class,
+            'news' => News::class,
+            'post' => Post::class,
+            'broadcast' => Broadcast::class,
         ];
 
         $modelClass = $typeMap[$validated['commentable_type']];
 
-        // Verify the model exists
-        if (!$modelClass::where('id', $validated['commentable_id'])->exists()) {
+        // Hanya konten yang sudah benar-benar tayang yang boleh menerima komentar.
+        if (! $modelClass::query()
+            ->publiclyVisible()
+            ->whereKey($validated['commentable_id'])
+            ->exists()) {
             return back()->withErrors(['error' => 'Konten tidak ditemukan atau sudah dihapus.']);
         }
 

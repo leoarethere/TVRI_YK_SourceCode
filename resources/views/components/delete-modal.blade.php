@@ -11,7 +11,7 @@
                 {{ $label }} <span class="font-medium text-gray-900 dark:text-white" x-text="deleteTitle"></span> akan dihapus permanen.
             </p>
             <div class="flex justify-end gap-3">
-                <button @click="closeDeleteModal()" class="px-4 py-2 text-sm text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition">Batal</button>
+                <button type="button" @click="closeDeleteModal()" class="px-4 py-2 text-sm text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition">Batal</button>
                 <form :action="`{{ $routePrefix }}/${deleteId}`" method="POST">
                     @csrf
                     @method('DELETE')

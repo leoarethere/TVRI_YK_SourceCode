@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\HymneTvri;
+use App\Support\PublicStorageWriter;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
@@ -69,7 +70,7 @@ class DashboardHymneTvriController extends Controller
                 $encoded = $image->toJpeg(quality: 80);
 
                 // Simpan ke storage
-                Storage::disk('public')->put($filename, (string) $encoded);
+                PublicStorageWriter::put($filename, (string) $encoded);
 
                 $validated['poster'] = $filename;
 
@@ -128,7 +129,7 @@ class DashboardHymneTvriController extends Controller
                 $encoded = $image->toJpeg(quality: 80);
 
                 // Simpan gambar baru
-                Storage::disk('public')->put($filename, (string) $encoded);
+                PublicStorageWriter::put($filename, (string) $encoded);
 
                 // B. Update array data
                 $validated['poster'] = $filename;

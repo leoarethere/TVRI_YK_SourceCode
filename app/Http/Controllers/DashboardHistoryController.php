@@ -3,12 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\History;
+use App\Support\PublicStorageWriter;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 use Intervention\Image\Drivers\Gd\Driver;
 use Intervention\Image\ImageManager;
@@ -48,7 +50,7 @@ class DashboardHistoryController extends Controller
                 'image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:5120',
                 'action' => 'required|in:draft,publish',
             ]);
-        } catch (\Illuminate\Validation\ValidationException $e) {
+        } catch (ValidationException $e) {
             return back()->withErrors($e->validator)->withInput();
         }
 
@@ -63,7 +65,7 @@ class DashboardHistoryController extends Controller
                 $image = $manager->read($file);
                 $image->scale(width: 1200);
                 $encodedImage = $image->toJpeg(quality: 75);
-                Storage::disk('public')->put($path, (string) $encodedImage);
+                PublicStorageWriter::put($path, (string) $encodedImage);
 
                 $validated['image'] = $path;
 
@@ -129,7 +131,7 @@ class DashboardHistoryController extends Controller
                 'image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:5120',
                 'action' => 'required|in:draft,publish',
             ]);
-        } catch (\Illuminate\Validation\ValidationException $e) {
+        } catch (ValidationException $e) {
             return back()->withErrors($e->validator)->withInput();
         }
 
@@ -146,7 +148,7 @@ class DashboardHistoryController extends Controller
                 $image = $manager->read($file);
                 $image->scale(width: 1200);
                 $encodedImage = $image->toJpeg(quality: 75);
-                Storage::disk('public')->put($path, (string) $encodedImage);
+                PublicStorageWriter::put($path, (string) $encodedImage);
 
                 $validated['image'] = $path;
 

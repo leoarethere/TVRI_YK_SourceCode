@@ -2,27 +2,27 @@
     <x-slot:title>Kelola Visi & Misi</x-slot:title>
 
     {{-- Data Alpine.js untuk Modal Hapus --}}
-    <div x-data="{ 
-        deleteModal: false, 
-        deleteItemId: null, 
+    <div x-data="{
+        deleteModal: false,
+        deleteItemId: null,
         deleteItemContent: '',
-        
+
         openDeleteModal(itemId, itemContent) {
             this.deleteItemId = itemId;
             this.deleteItemContent = itemContent;
             this.deleteModal = true;
             document.body.style.overflow = 'hidden';
         },
-        
+
         closeDeleteModal() {
             this.deleteModal = false;
             this.deleteItemId = null;
             this.deleteItemContent = '';
             document.body.style.overflow = '';
         }
-    }" 
+    }"
     class="pb-6">
-        
+
         {{-- HEADER HALAMAN --}}
         <div class="flex flex-col md:flex-row md:justify-between md:items-center gap-4 mb-6 pt-2">
             <div>
@@ -33,8 +33,8 @@
                     Kelola visi dan poin-poin misi organisasi.
                 </p>
             </div>
-            
-            <a href="{{ route('dashboard.visi-misi.create') }}" 
+
+            <a href="{{ route('dashboard.visi-misi.create') }}"
                class="w-full md:w-auto inline-flex items-center justify-center px-4 py-2.5 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800 transition-colors whitespace-nowrap shadow-sm hover:shadow-md">
                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
                 Tambah Visi/Misi
@@ -76,7 +76,7 @@
                                 <td class="px-4 py-4 text-center font-medium text-gray-900 dark:text-white">
                                     {{ $loop->iteration }}
                                 </td>
-                                
+
                                 {{-- Urutan --}}
                                 <td class="px-4 py-4 text-center">
                                     <span class="inline-flex items-center justify-center w-8 h-8 text-xs font-bold bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300 rounded-full border border-gray-200 dark:border-gray-600">
@@ -87,8 +87,8 @@
                                 {{-- Gambar --}}
                                 <td class="px-4 py-4 text-center">
                                     @if ($item->image)
-                                        <img src="{{ Storage::url($item->image) }}" 
-                                             alt="Gambar" 
+                                        <img src="{{ Storage::url($item->image) }}"
+                                             alt="Gambar"
                                              class="w-16 h-12 object-cover rounded-lg ring-1 ring-gray-200 dark:ring-gray-700 inline-block">
                                     @else
                                         <div class="w-16 h-12 inline-flex items-center justify-center bg-gray-100 dark:bg-gray-700 rounded-lg ring-1 ring-gray-200 dark:ring-gray-700">
@@ -135,15 +135,15 @@
                                 {{-- Aksi --}}
                                 <td class="px-4 py-4 text-center">
                                     <div class="flex items-center justify-center gap-2">
-                                        <a href="{{ route('dashboard.visi-misi.edit', $item->id) }}" 
+                                        <a href="{{ route('dashboard.visi-misi.edit', $item->id) }}"
                                            class="p-2 text-yellow-600 bg-yellow-50 rounded-lg hover:bg-yellow-100 dark:text-yellow-400 dark:bg-yellow-900/30 dark:hover:bg-yellow-900/50 transition-colors"
-                                           title="Edit">
+                                            title="Edit" aria-label="Edit visi dan misi">
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
                                         </a>
 
-                                        <button @click="openDeleteModal({{ $item->id }}, '{{ addslashes(Str::limit(strip_tags($item->content), 50)) }}')" 
+                                        <button type="button" @click="openDeleteModal({{ $item->id }}, @js(Str::limit(strip_tags($item->content), 50)))"
                                                 class="p-2 text-red-600 bg-red-50 rounded-lg hover:bg-red-100 dark:text-red-400 dark:bg-red-900/30 dark:hover:bg-red-900/50 transition-colors"
-                                                title="Hapus">
+                                            title="Hapus" aria-label="Hapus visi dan misi">
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                                         </button>
                                     </div>
@@ -168,7 +168,7 @@
         </div>
 
         {{-- MODAL HAPUS --}}
-        <div x-show="deleteModal" 
+        <div x-show="deleteModal"
              x-cloak
              x-transition:enter="transition ease-out duration-300"
              x-transition:enter-start="opacity-0 transform scale-95"
@@ -178,10 +178,10 @@
              x-transition:leave-end="opacity-0 transform scale-95"
              class="fixed inset-0 z-50 overflow-y-auto bg-gray-900/75 backdrop-blur-sm flex items-center justify-center p-4"
              @keydown.escape.window="closeDeleteModal()">
-            
-            <div class="relative bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-md w-full overflow-hidden" 
+
+            <div class="relative bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-md w-full overflow-hidden"
                  @click.away="closeDeleteModal()">
-                
+
                 {{-- Modal Header --}}
                 <div class="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
                     <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Konfirmasi Hapus</h3>
@@ -210,8 +210,8 @@
                     <button @click="closeDeleteModal()" type="button" class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:ring-4 focus:outline-none focus:ring-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700 transition-colors">
                         Batal
                     </button>
-                    
-                    <form :action="`{{ route('dashboard.visi-misi.destroy', '') }}/${deleteItemId}`" method="POST">
+
+                    <form :action="@js(route('dashboard.visi-misi.destroy', ':id')).replace(':id', deleteItemId)" method="POST">
                         @csrf
                         @method('DELETE')
                         <button type="submit" class="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-300 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800 transition-colors">

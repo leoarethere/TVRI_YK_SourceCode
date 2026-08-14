@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\VisiMisi;
+use App\Support\PublicStorageWriter;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
@@ -54,7 +55,7 @@ class DashboardVisiMisiController extends Controller
                 $image->scale(width: 800);
                 $encodedImage = $image->toJpeg(quality: 70);
 
-                Storage::disk('public')->put($path, (string) $encodedImage);
+                PublicStorageWriter::put($path, (string) $encodedImage);
                 $validated['image'] = $path;
 
             } catch (\Exception $e) {
@@ -102,7 +103,7 @@ class DashboardVisiMisiController extends Controller
                 $encodedImage = $image->toJpeg(quality: 70);
 
                 // 1. Simpan gambar baru terlebih dahulu
-                Storage::disk('public')->put($path, (string) $encodedImage);
+                PublicStorageWriter::put($path, (string) $encodedImage);
 
                 $validated['image'] = $path;
 

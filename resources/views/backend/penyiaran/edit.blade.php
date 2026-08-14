@@ -3,17 +3,8 @@
 
     <div class="pb-6"
         x-data="{
-            title: '{{ old('title', $broadcast->title) }}',
-            slug: '{{ old('slug', $broadcast->slug) }}',
-            
-            generateSlug() {
-                this.slug = this.title
-                    .toLowerCase()
-                    .replace(/[^a-z0-9\s-]/g, '')
-                    .replace(/\s+/g, '-')
-                    .replace(/-+/g, '-')
-                    .trim();
-            }
+            title: @js(old('title', $broadcast->title)),
+            slug: @js(old('slug', $broadcast->slug))
         }"
     >
         {{-- HEADER --}}
@@ -32,7 +23,7 @@
             <form action="{{ route('dashboard.penyiaran.update', $broadcast) }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 @method('PUT')
-                
+
                 <div class="p-6 space-y-6">
 
                     {{-- Error Summary --}}
@@ -46,13 +37,13 @@
                             </ul>
                         </div>
                     @endif
-                    
+
                     {{-- Judul Penyiaran --}}
                     <div>
                         <label for="title" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                             Nama Siaran / Judul <span class="text-red-500">*</span>
                         </label>
-                        <input type="text" name="title" id="title" x-model="title" @input.debounce.500ms="generateSlug()"
+                        <input type="text" name="title" id="title" x-model="title"
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" required>
                         @error('title') <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p> @enderror
                     </div>
@@ -102,16 +93,16 @@
                         </label>
                         <div class="flex flex-col sm:flex-row gap-3">
                             <div class="flex items-center ps-4 border border-gray-200 rounded dark:border-gray-700 bg-gray-50 dark:bg-gray-700 flex-1">
-                                <input id="active_yes" type="radio" value="1" name="is_active" 
+                                <input id="active_yes" type="radio" value="1" name="is_active"
                                     @checked(old('is_active', $broadcast->is_active) == 1)
                                     class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
                                 <label for="active_yes" class="w-full py-3 ms-2 text-sm font-medium text-gray-900 dark:text-gray-300 cursor-pointer">
                                     Sedang Tayang (On-Going)
                                 </label>
                             </div>
-                            
+
                             <div class="flex items-center ps-4 border border-gray-200 rounded dark:border-gray-700 bg-gray-50 dark:bg-gray-700 flex-1">
-                                <input id="active_no" type="radio" value="0" name="is_active" 
+                                <input id="active_no" type="radio" value="0" name="is_active"
                                     @checked(old('is_active', $broadcast->is_active) == 0)
                                     class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
                                 <label for="active_no" class="w-full py-3 ms-2 text-sm font-medium text-gray-900 dark:text-gray-300 cursor-pointer">
@@ -126,14 +117,14 @@
                         <label for="synopsis" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                             Sinopsis (Opsional)
                         </label>
-                        <textarea name="synopsis" id="synopsis" rows="4" 
+                        <textarea name="synopsis" id="synopsis" rows="4"
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">{{ old('synopsis', $broadcast->synopsis) }}</textarea>
                         @error('synopsis') <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p> @enderror
                     </div>
 
                     {{-- Poster --}}
-                    <div x-data="{ 
-                        preview: '{{ $broadcast->poster ? Storage::url($broadcast->poster) : null }}',
+                    <div x-data="{
+                        preview: @js($broadcast->poster ? Storage::url($broadcast->poster) : null),
                         handleFile(event) {
                             const file = event.target.files[0];
                             if (!file) return;
@@ -148,7 +139,7 @@
                         <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                             Poster (Opsional)
                         </label>
-                        
+
                         <div class="mb-3" x-show="preview">
                             <div class="relative w-32 h-40 rounded-lg overflow-hidden border border-gray-300 dark:border-gray-600">
                                 <img :src="preview" class="w-full h-full object-cover">
@@ -175,7 +166,7 @@
                     </div>
 
                 </div>
-                
+
                 {{-- Action Buttons --}}
                 <div class="dashboard-form-actions flex items-center justify-between gap-3 p-6 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700/50 rounded-b-lg">
                     <a href="{{ route('dashboard.penyiaran.index') }}" class="px-5 py-2.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-600 transition-colors">

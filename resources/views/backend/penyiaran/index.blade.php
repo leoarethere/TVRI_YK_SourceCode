@@ -4,19 +4,19 @@
     </x-slot:title>
 
     {{-- Data Alpine.js --}}
-    <div x-data="{ 
+    <div x-data="{
         // State untuk modal hapus penyiaran
-        deleteModal: false, 
-        deleteBroadcastId: null, 
+        deleteModal: false,
+        deleteBroadcastId: null,
         deleteBroadcastTitle: '',
-        
+
         // State untuk modal kategori
         isCategoryModalOpen: false,
         modalMode: 'create',
         modalTitle: 'Tambah Kategori Baru',
-        modalAction: '{{ route('dashboard.penyiaran-kategori.store') }}',
-        updateUrlTemplate: '{{ route('dashboard.penyiaran-kategori.update', ':id') }}',
-        
+        modalAction: @js(route('dashboard.penyiaran-kategori.store')),
+        updateUrlTemplate: @js(route('dashboard.penyiaran-kategori.update', ':id')),
+
         categoryData: {
             id: null,
             name: '',
@@ -44,7 +44,7 @@
         openCreateModal() {
             this.modalMode = 'create';
             this.modalTitle = 'Tambah Kategori Baru';
-            this.modalAction = '{{ route('dashboard.penyiaran-kategori.store') }}';
+            this.modalAction = @js(route('dashboard.penyiaran-kategori.store'));
             this.categoryData = { id: null, name: '', slug: '', color: 'blue' };
             this.isCategoryModalOpen = true;
             document.body.style.overflow = 'hidden';
@@ -58,7 +58,7 @@
                 id: category.id,
                 name: category.name,
                 slug: category.slug,
-                color: category.color 
+                color: category.color
             };
             this.isCategoryModalOpen = true;
             document.body.style.overflow = 'hidden';
@@ -66,6 +66,10 @@
 
         closeCategoryModal() {
             this.isCategoryModalOpen = false;
+            this.deleteCategoryModal = false;
+            this.deleteCategoryId = null;
+            this.deleteCategoryName = '';
+            this.deleteCategoryError = '';
             document.body.style.overflow = '';
         },
 
@@ -79,8 +83,10 @@
 
         closeDeleteCategoryModal() {
             this.deleteCategoryModal = false;
+            this.deleteCategoryId = null;
+            this.deleteCategoryName = '';
             this.deleteCategoryError = '';
-            document.body.style.overflow = '';
+            document.body.style.overflow = this.isCategoryModalOpen ? 'hidden' : '';
         },
 
         // Modal Functions (Delete Broadcast)
@@ -90,18 +96,18 @@
             this.deleteModal = true;
             document.body.style.overflow = 'hidden';
         },
-        
+
         closeDeleteModal() {
             this.deleteModal = false;
             document.body.style.overflow = '';
         }
-    }" 
+    }"
     class="pb-6"
     @if ($errors->has('name') || $errors->has('slug') || $errors->has('color'))
         x-init="isCategoryModalOpen = true; document.body.style.overflow = 'hidden';"
     @endif
     >
-        
+
         {{-- HEADER HALAMAN --}}
         <div class="flex flex-col md:flex-row md:justify-between md:items-center gap-4 mb-6 pt-2">
             <div>
@@ -112,10 +118,10 @@
                     Kelola program, video, dan informasi siaran TVRI.
                 </p>
             </div>
-            
+
             {{-- Tombol Aksi Header --}}
             <div class="dashboard-header-actions flex flex-wrap items-center gap-3">
-                <button 
+                <button
                     @click="openCreateModal()"
                     type="button"
                     class="inline-flex items-center justify-center px-4 py-2.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-600 transition-colors whitespace-nowrap shadow-sm hover:shadow-md">
@@ -123,7 +129,7 @@
                     Kelola Kategori
                 </button>
 
-                <a href="{{ route('dashboard.penyiaran.create') }}" 
+                <a href="{{ route('dashboard.penyiaran.create') }}"
                     class="inline-flex items-center justify-center px-4 py-2.5 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800 transition-colors whitespace-nowrap shadow-sm hover:shadow-md">
                     <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd"></path></svg>
                     Tambah Program Siaran
@@ -140,14 +146,14 @@
                     </div>
                     <input type="text" name="search" value="{{ request('search') }}" class="block w-full p-3 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" placeholder="Cari penyiaran...">
                 </div>
-                
+
                 <select name="category" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full md:w-48 p-3 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
                     <option value="">Semua Kategori</option>
                     @foreach ($categories as $category)
                         <option value="{{ $category->slug }}" @selected(request('category') == $category->slug)>{{ $category->name }}</option>
                     @endforeach
                 </select>
-                
+
                 <select name="sort" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full md:w-48 p-3 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
                     <option value="latest" @selected(request('sort', 'latest') == 'latest')>Terbaru</option>
                     <option value="oldest" @selected(request('sort') == 'oldest')>Terlama</option>
@@ -205,11 +211,11 @@
                     <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
                         @forelse ($broadcasts as $broadcast)
                             <tr class="bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
-                                
+
                                 <td class="px-4 py-4 align-top text-center font-medium text-gray-900 dark:text-white">
                                     {{ $loop->iteration + $broadcasts->firstItem() - 1 }}
                                 </td>
-                                
+
                                 {{-- Program (Poster + Judul + Kategori) --}}
                                 <td class="px-4 py-4 align-top">
                                     <div class="flex items-start gap-4">
@@ -276,7 +282,8 @@
                                 <td class="px-4 py-4 align-top text-center">
                                     @if ($broadcast->youtube_link)
                                         <a href="{{ $broadcast->youtube_link }}" target="_blank" rel="noopener noreferrer"
-                                            title="Tonton di Youtube"
+                                            title="Tonton di YouTube"
+                                            aria-label="Tonton di YouTube"
                                             class="inline-flex items-center justify-center p-2 text-red-600 bg-red-50 rounded-lg hover:bg-red-100 dark:bg-red-900/20 dark:text-red-400 dark:hover:bg-red-900/50 transition-colors group">
                                             <svg class="w-5 h-5 group-hover:scale-110 transition-transform" fill="currentColor" viewBox="0 0 24 24">
                                                 <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
@@ -290,15 +297,15 @@
                                 {{-- Tombol Aksi --}}
                                 <td class="px-4 py-4 align-top text-center">
                                     <div class="flex items-center justify-center gap-2">
-                                        <a href="{{ route('dashboard.penyiaran.edit', $broadcast) }}" 
+                                        <a href="{{ route('dashboard.penyiaran.edit', $broadcast) }}"
                                            class="p-2 text-yellow-600 bg-yellow-50 rounded-lg hover:bg-yellow-100 dark:text-yellow-400 dark:bg-yellow-900/30 dark:hover:bg-yellow-900/50 transition-colors"
-                                           title="Edit">
+                                           title="Edit" aria-label="Edit program siaran">
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
                                         </a>
 
-                                        <button @click.prevent="openDeleteModal({{ $broadcast->id }}, '{{ addslashes($broadcast->title) }}')" 
+                                        <button type="button" @click.prevent="openDeleteModal({{ $broadcast->id }}, @js($broadcast->title))"
                                                 class="p-2 text-red-600 bg-red-50 rounded-lg hover:bg-red-100 dark:text-red-400 dark:bg-red-900/30 dark:hover:bg-red-900/50 transition-colors"
-                                                title="Hapus">
+                                                title="Hapus" aria-label="Hapus program siaran">
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                                         </button>
                                     </div>
@@ -330,7 +337,7 @@
         </div>
 
         {{-- MODAL HAPUS PENYIARAN --}}
-        <div x-show="deleteModal" 
+        <div x-show="deleteModal"
              x-cloak
              x-transition:enter="transition ease-out duration-300"
              x-transition:enter-start="opacity-0 transform scale-95"
@@ -340,9 +347,9 @@
              x-transition:leave-end="opacity-0 transform scale-95"
              class="fixed inset-0 z-50 overflow-y-auto bg-gray-900/75 backdrop-blur-sm flex items-center justify-center p-4"
              @keydown.escape.window="closeDeleteModal()">
-            
+
             <div class="relative bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-md w-full overflow-hidden" @click.away="closeDeleteModal()">
-                
+
                 {{-- Modal Header --}}
                 <div class="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
                     <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Konfirmasi Hapus</h3>
@@ -371,8 +378,8 @@
                     <button @click="closeDeleteModal()" type="button" class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:ring-4 focus:outline-none focus:ring-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700 transition-colors">
                         Batal
                     </button>
-                    
-                    <form :action="`{{ route('dashboard.penyiaran.destroy', '') }}/${deleteBroadcastId}`" method="POST">
+
+                    <form :action="@js(route('dashboard.penyiaran.destroy', ':id')).replace(':id', deleteBroadcastId)" method="POST">
                         @csrf
                         @method('DELETE')
                         <button type="submit" class="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-300 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800 transition-colors">
@@ -384,7 +391,7 @@
         </div>
 
         {{-- MODAL KELOLA KATEGORI --}}
-        <div x-show="isCategoryModalOpen" 
+        <div x-show="isCategoryModalOpen"
              x-cloak
              x-transition:enter="transition ease-out duration-300"
              x-transition:enter-start="opacity-0 transform scale-95"
@@ -393,10 +400,10 @@
              x-transition:leave-start="opacity-100 transform scale-100"
              x-transition:leave-end="opacity-0 transform scale-95"
              class="fixed inset-0 z-50 overflow-y-auto bg-gray-900/75 backdrop-blur-sm flex items-center justify-center p-4"
-             @keydown.escape.window="closeCategoryModal()">
-            
+             @keydown.escape.window="deleteCategoryModal ? closeDeleteCategoryModal() : closeCategoryModal()">
+
             <div class="relative bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-hidden flex flex-col" @click.away="closeCategoryModal()">
-                
+
                 {{-- Modal Header --}}
                 <div class="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
                     <h3 class="text-lg font-semibold text-gray-900 dark:text-white" x-text="modalTitle"></h3>
@@ -407,12 +414,12 @@
 
                 {{-- Modal Body --}}
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-0 overflow-hidden h-full">
-                    
+
                     {{-- Form Input --}}
                     <form :action="modalAction" method="POST" @submit="if(modalMode === 'edit') { $event.target.querySelector('[name=_method]').value = 'PUT'; }" class="p-6 border-r border-gray-200 dark:border-gray-700 overflow-y-auto">
                         @csrf
                         <input type="hidden" name="_method" value="POST">
-                        
+
                         <h4 class="text-lg font-medium text-gray-900 dark:text-white mb-4" x-text="modalMode === 'edit' ? 'Edit Kategori' : 'Tambah Kategori Baru'"></h4>
 
                         {{-- Nama Kategori --}}
@@ -421,7 +428,7 @@
                                 Nama Kategori <span class="text-red-500">*</span>
                             </label>
                             <input type="text" id="cat-name" name="name" x-model="categoryData.name" @input="generateSlug()"
-                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" 
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
                                 placeholder="Contoh: Rilis Pers" required>
                             @error('name') <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p> @enderror
                         </div>
@@ -454,7 +461,7 @@
                             </select>
                             @error('color') <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p> @enderror
                         </div>
-                        
+
                         <div class="flex items-center gap-3 pt-2">
                             <button type="submit" class="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 transition-colors">
                                 <span x-show="modalMode === 'create'">Simpan</span>
@@ -482,16 +489,17 @@
                                         </span>
                                     </div>
                                     <div class="flex-shrink-0 flex items-center gap-1">
-                                        <button @click="openEditModal({{ $category }})" class="p-1.5 text-gray-500 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400 rounded hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors" title="Edit">
+                                        <button type="button" @click="openEditModal(@js($category))" class="p-1.5 text-gray-500 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400 rounded hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors" title="Edit" aria-label="Edit kategori siaran">
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
                                         </button>
-                                        
-                                        <button type="button" @click="openDeleteCategoryModal({{ $category }})"
+
+                                        <button type="button" @click="openDeleteCategoryModal(@js($category))"
                                             @if($count === 0)
                                                 class="p-1.5 text-gray-500 hover:text-red-600 dark:text-gray-400 dark:hover:text-red-500 rounded hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
                                             @else
                                                 class="p-1.5 text-gray-300 dark:text-gray-600 cursor-not-allowed" disabled
                                             @endif
+                                            aria-label="{{ $count > 0 ? 'Tidak bisa dihapus karena masih digunakan' : 'Hapus Kategori' }}"
                                             title="{{ $count > 0 ? 'Tidak bisa dihapus karena masih digunakan' : 'Hapus Kategori' }}">
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                                         </button>
@@ -515,8 +523,8 @@
                                 Kategori "<span x-text="deleteCategoryName" class="font-medium text-gray-900 dark:text-white"></span>" akan dihapus permanen.
                             </p>
                             <div class="flex justify-center gap-3">
-                                <button @click="closeDeleteCategoryModal()" class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600 transition-colors">Batal</button>
-                                <form :action="`{{ route('dashboard.penyiaran-kategori.destroy', '') }}/${deleteCategoryId}`" method="POST">
+                                <button type="button" @click="closeDeleteCategoryModal()" class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600 transition-colors">Batal</button>
+                                <form :action="@js(route('dashboard.penyiaran-kategori.destroy', ':id')).replace(':id', deleteCategoryId)" method="POST">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 focus:ring-4 focus:ring-red-300 transition-colors">Ya, Hapus</button>

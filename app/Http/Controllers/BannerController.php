@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Banner;
+use App\Support\PublicStorageWriter;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
@@ -65,7 +66,7 @@ class BannerController extends Controller
                 $encoded = $image->toJpeg(quality: 80);
 
                 // 4. Simpan hasil kompresi
-                Storage::disk('public')->put($filename, (string) $encoded);
+                PublicStorageWriter::put($filename, (string) $encoded);
 
                 $validated['image_path'] = $filename;
 
@@ -121,7 +122,7 @@ class BannerController extends Controller
                 $encoded = $image->toJpeg(quality: 80);
 
                 // 2. Simpan Gambar Baru
-                Storage::disk('public')->put($filename, (string) $encoded);
+                PublicStorageWriter::put($filename, (string) $encoded);
 
                 // 3. Update data array
                 $validated['image_path'] = $filename;
@@ -149,12 +150,7 @@ class BannerController extends Controller
      */
     public function destroy(Banner $banner): RedirectResponse
     {
-        $imagePath = $banner->image_path;
         $banner->delete();
-
-        if ($imagePath) {
-            Storage::disk('public')->delete($imagePath);
-        }
 
         return redirect()->route('banners.index')->with('success', 'Banner berhasil dihapus!');
     }

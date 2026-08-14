@@ -1,5 +1,6 @@
 <aside id="dashboard-sidebar"
     x-cloak
+    data-dashboard-critical
     class="fixed left-0 top-0 z-40 h-screen border-r border-gray-200 bg-white transition-all duration-300 ease-in-out will-change-transform dark:border-gray-700 dark:bg-gray-800"
     aria-label="Navigasi dashboard"
     x-data="{ 
@@ -65,6 +66,7 @@
         transform: isSidebarOpen || !isMobile() ? 'translateX(0)' : 'translateX(-100%)'
     }"
     :aria-hidden="!isSidebarOpen && isMobile()"
+    :inert="!isSidebarOpen && isMobile()"
     >
 
     {{-- Sidebar Content --}}
@@ -100,7 +102,11 @@
                 <li class="relative">
                     
                     <button 
+                        type="button"
                         @click.prevent="toggleDropdown('publikasi')"
+                        aria-label="Publikasi"
+                        :aria-expanded="dropdowns.publikasi"
+                        aria-controls="dashboard-sidebar-publikasi"
                         class="flex items-center w-full p-2 text-base font-medium rounded-lg transition-all duration-300 group relative"
                         :class="{ 
                             'justify-center': !isSidebarOpen,
@@ -141,7 +147,7 @@
                     </button>
 
                     {{-- Submenu Publikasi --}}
-                    <ul x-show="dropdowns.publikasi" 
+                    <ul id="dashboard-sidebar-publikasi" x-show="dropdowns.publikasi"
                         x-transition:enter="transition-all ease-out duration-300"
                         x-transition:enter-start="opacity-0 max-h-0"
                         x-transition:enter-end="opacity-100 max-h-96"
@@ -188,7 +194,11 @@
                 <li class="relative">
                     
                     <button 
+                        type="button"
                         @click.prevent="toggleDropdown('layanan')"
+                        aria-label="Layanan"
+                        :aria-expanded="dropdowns.layanan"
+                        aria-controls="dashboard-sidebar-layanan"
                         class="flex items-center w-full p-2 text-base font-medium rounded-lg transition-all duration-300 group relative"
                         :class="{ 
                             'justify-center': !isSidebarOpen,
@@ -224,7 +234,7 @@
                         </svg>
                     </button>
 
-                    <ul x-show="dropdowns.layanan" 
+                    <ul id="dashboard-sidebar-layanan" x-show="dropdowns.layanan"
                         x-transition:enter="transition-all ease-out duration-300"
                         x-transition:enter-start="opacity-0 max-h-0"
                         x-transition:enter-end="opacity-100 max-h-[500px]"
@@ -349,7 +359,11 @@
                 <li class="relative">
                     
                     <button 
+                        type="button"
                         @click.prevent="toggleDropdown('tentang')"
+                        aria-label="Tentang"
+                        :aria-expanded="dropdowns.tentang"
+                        aria-controls="dashboard-sidebar-tentang"
                         class="flex items-center w-full p-2 text-base font-medium rounded-lg transition-all duration-300 group relative"
                         :class="{ 
                             'justify-center': !isSidebarOpen,
@@ -385,7 +399,7 @@
                         </svg>
                     </button>
 
-                    <ul x-show="dropdowns.tentang" 
+                    <ul id="dashboard-sidebar-tentang" x-show="dropdowns.tentang"
                         x-transition:enter="transition-all ease-out duration-300"
                         x-transition:enter-start="opacity-0 max-h-0"
                         x-transition:enter-end="opacity-100 max-h-[500px]"
@@ -549,7 +563,9 @@
         {{-- Sidebar Footer --}}
         <div class="p-3 border-t border-gray-200 dark:border-gray-700 flex-shrink-0">
             <button 
+                type="button"
                 @click="isSidebarOpen = !isSidebarOpen; closeAllDropdowns()"
+                :aria-label="isSidebarOpen ? 'Ciutkan navigasi dashboard' : 'Buka navigasi dashboard'"
                 class="hidden w-full items-center rounded-lg p-3 text-sm font-medium text-gray-500 transition-colors duration-200 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white xl:flex"
                 :class="{ 'justify-center': !isSidebarOpen }">
                 

@@ -3,10 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Ppid;
+use App\Support\PublicStorageWriter;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
 use Intervention\Image\Drivers\Gd\Driver;
 use Intervention\Image\ImageManager;
@@ -42,7 +44,7 @@ class DashboardPpidController extends Controller
         if ($request->hasFile('cover_image')) {
             try {
                 $image = $request->file('cover_image');
-                $imageName = 'ppid-'.\Illuminate\Support\Str::random(20).'.jpg';
+                $imageName = 'ppid-'.Str::random(20).'.jpg';
                 $path = 'ppid-covers/'.$imageName;
 
                 $manager = new ImageManager(new Driver);
@@ -51,7 +53,7 @@ class DashboardPpidController extends Controller
                 $encoded = $imgProcessed->toJpeg(quality: 80);
 
                 // Simpan menggunakan Storage Facade (konsisten dengan update)
-                Storage::disk('public')->put($path, (string) $encoded);
+                PublicStorageWriter::put($path, (string) $encoded);
                 $validated['cover_image'] = $path;
 
             } catch (\Exception $e) {
@@ -90,7 +92,7 @@ class DashboardPpidController extends Controller
         if ($request->hasFile('cover_image')) {
             try {
                 $image = $request->file('cover_image');
-                $imageName = 'ppid-'.\Illuminate\Support\Str::random(20).'.jpg';
+                $imageName = 'ppid-'.Str::random(20).'.jpg';
                 $path = 'ppid-covers/'.$imageName;
 
                 $manager = new ImageManager(new Driver);
@@ -99,7 +101,7 @@ class DashboardPpidController extends Controller
                 $encoded = $imgProcessed->toJpeg(quality: 80);
 
                 // 1. Simpan gambar baru menggunakan Storage Facade
-                Storage::disk('public')->put($path, (string) $encoded);
+                PublicStorageWriter::put($path, (string) $encoded);
 
                 $validated['cover_image'] = $path;
 

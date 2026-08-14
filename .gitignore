@@ -2,6 +2,8 @@
 /vendor
 /node_modules
 /public/storage
+/public/*.zip
+/resources/views/*.zip
 /storage/*.key
 /.env
 /.env.backup
@@ -19,6 +21,9 @@ storage/framework/views/*
 # IDE & editor files
 /.idea
 /.vscode
+/_ide_helper.php
+/_ide_helper_models.php
+/.phpstorm.meta.php
 *.sublime-project
 *.sublime-workspace
 
@@ -26,9 +31,8 @@ storage/framework/views/*
 .DS_Store
 Thumbs.db
 
-# Composer & npm
-composer.lock
-package-lock.json
+# Dependency locks are committed for reproducible application deployments.
+# Ignore only lockfiles for package managers that are not used by this project.
 yarn.lock
 
 # PHPUnit & testing

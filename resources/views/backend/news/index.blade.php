@@ -2,19 +2,19 @@
     <x-slot:title>Kelola Berita</x-slot:title>
 
     {{-- Data Alpine.js Lengkap (Gabungan Hapus Berita & CRUD Kategori) --}}
-    <div x-data="{ 
+    <div x-data="{
         // --- Logic Hapus Berita ---
-        deleteModal: false, 
-        deleteId: null, 
+        deleteModal: false,
+        deleteId: null,
         deleteTitle: '',
 
         // --- Logic Modal Kategori ---
         isCategoryModalOpen: false,
         modalMode: 'create',
         modalTitle: 'Tambah Kategori Berita',
-        modalAction: '{{ route('dashboard.kategori-berita.store') }}',
-        updateUrlTemplate: '{{ route('dashboard.kategori-berita.update', ':id') }}',
-        
+        modalAction: @js(route('dashboard.kategori-berita.store')),
+        updateUrlTemplate: @js(route('dashboard.kategori-berita.update', ':id')),
+
         categoryData: {
             id: null,
             name: '',
@@ -36,7 +36,7 @@
                 .replace(/-+/g, '-')
                 .trim();
         },
-        
+
         // Functions Berita
         openDeleteModal(id, title) {
             this.deleteId = id;
@@ -53,7 +53,7 @@
         openCreateCategoryModal() {
             this.modalMode = 'create';
             this.modalTitle = 'Tambah Kategori Berita';
-            this.modalAction = '{{ route('dashboard.kategori-berita.store') }}';
+            this.modalAction = @js(route('dashboard.kategori-berita.store'));
             this.categoryData = { id: null, name: '', slug: '', color: 'blue' };
             this.isCategoryModalOpen = true;
             document.body.style.overflow = 'hidden';
@@ -68,7 +68,7 @@
                 id: category.id,
                 name: category.name,
                 slug: category.slug,
-                color: category.color || 'blue' 
+                color: category.color || 'blue'
             };
             this.isCategoryModalOpen = true;
             document.body.style.overflow = 'hidden';
@@ -76,6 +76,9 @@
 
         closeCategoryModal() {
             this.isCategoryModalOpen = false;
+            this.deleteCategoryModal = false;
+            this.deleteCategoryId = null;
+            this.deleteCategoryName = '';
             document.body.style.overflow = '';
         },
 
@@ -88,16 +91,18 @@
 
         closeDeleteCategoryModal() {
             this.deleteCategoryModal = false;
-            document.body.style.overflow = '';
+            this.deleteCategoryId = null;
+            this.deleteCategoryName = '';
+            document.body.style.overflow = this.isCategoryModalOpen ? 'hidden' : '';
         }
-    }" 
+    }"
     class="pb-6"
     {{-- Buka modal otomatis jika ada error validasi kategori --}}
     @if ($errors->has('name') || $errors->has('slug'))
         x-init="isCategoryModalOpen = true; document.body.style.overflow = 'hidden';"
     @endif
     >
-        
+
         {{-- HEADER HALAMAN --}}
         <div class="flex flex-col md:flex-row md:justify-between md:items-center gap-4 mb-6 pt-2">
             <div>
@@ -108,11 +113,11 @@
                     Kelola berita terkini dan kategori berita.
                 </p>
             </div>
-            
+
             <div class="dashboard-header-actions flex flex-wrap items-center gap-3">
                 {{-- Tombol Kelola Kategori (Sekarang Aktif) --}}
-                <button @click="openCreateCategoryModal()" 
-                        type="button" 
+                <button @click="openCreateCategoryModal()"
+                        type="button"
                         class="inline-flex items-center justify-center px-4 py-2.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-600 transition-colors whitespace-nowrap shadow-sm hover:shadow-md">
                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7A2 2 0 0121 12v5a2 2 0 01-2 2H7a2 2 0 01-2-2V5a2 2 0 012-2h3m0 0l-3 3m0 0l3 3m-3-3h5"></path>
@@ -121,7 +126,7 @@
                 </button>
 
                 {{-- Tombol Buat Berita --}}
-                <a href="{{ route('dashboard.berita.create') }}" 
+                <a href="{{ route('dashboard.berita.create') }}"
                    class="inline-flex items-center justify-center px-4 py-2.5 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 transition-colors whitespace-nowrap shadow-sm hover:shadow-md">
                     <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd"></path>
@@ -144,7 +149,7 @@
                 </div>
             </div>
         @endif --}}
-        
+
         {{-- ALERT ERROR --}}
         @if(session('error'))
             <div class="mb-6 p-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-red-900/30 dark:text-red-400 border border-red-200 dark:border-red-800" role="alert">
@@ -161,19 +166,19 @@
                     </div>
                     <input type="text" name="search" value="{{ request('search') }}" class="block w-full p-3 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" placeholder="Cari berita...">
                 </div>
-                
+
                 <select name="category" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full md:w-48 p-3 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
                     <option value="">Semua Kategori</option>
                     @foreach ($categories as $category)
                         <option value="{{ $category->slug }}" @selected(request('category') == $category->slug)>{{ $category->name }}</option>
                     @endforeach
                 </select>
-                
+
                 <select name="sort" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full md:w-48 p-3 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
                     <option value="latest" @selected(request('sort', 'latest') == 'latest')>Terbaru</option>
                     <option value="oldest" @selected(request('sort') == 'oldest')>Terlama</option>
                 </select>
-                
+
                 <div class="flex gap-2">
                     <button type="submit" class="w-full md:w-auto px-5 py-3 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 transition-colors">Cari</button>
                     @if(request()->hasAny(['search', 'category', 'sort']))
@@ -199,12 +204,12 @@
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
-                        @forelse ($posts as $item) 
+                        @forelse ($posts as $item)
                             <tr class="bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
                                 <td class="px-4 py-4 align-top text-center font-medium text-gray-900 dark:text-white">
                                     {{ $loop->iteration + $posts->firstItem() - 1 }}
                                 </td>
-                                
+
                                 <td class="px-4 py-4 align-top">
                                     <div class="space-y-2">
                                         <p class="font-semibold text-gray-900 dark:text-white line-clamp-2 leading-tight">{{ $item->title }}</p>
@@ -260,18 +265,18 @@
 
                                 <td class="px-4 py-4 align-top text-center">
                                     <div class="flex items-center justify-center gap-2">
-                                        <a href="{{ route('berita.show', $item->slug) }}" target="_blank" 
-                                           class="p-2 text-blue-600 bg-blue-50 rounded-lg hover:bg-blue-100 dark:text-blue-400 dark:bg-blue-900/20 dark:hover:bg-blue-900/50 transition-colors" title="Lihat">
+                                        <a href="{{ route('berita.show', $item->slug) }}" target="_blank" rel="noopener noreferrer"
+                                           class="p-2 text-blue-600 bg-blue-50 rounded-lg hover:bg-blue-100 dark:text-blue-400 dark:bg-blue-900/20 dark:hover:bg-blue-900/50 transition-colors" title="Lihat" aria-label="Lihat berita di situs publik">
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
                                         </a>
 
-                                        <a href="{{ route('dashboard.berita.edit', $item) }}" 
-                                           class="p-2 text-yellow-600 bg-yellow-50 rounded-lg hover:bg-yellow-100 dark:text-yellow-400 dark:bg-yellow-900/30 dark:hover:bg-yellow-900/50 transition-colors" title="Edit">
+                                        <a href="{{ route('dashboard.berita.edit', $item) }}"
+                                           class="p-2 text-yellow-600 bg-yellow-50 rounded-lg hover:bg-yellow-100 dark:text-yellow-400 dark:bg-yellow-900/30 dark:hover:bg-yellow-900/50 transition-colors" title="Edit" aria-label="Edit berita">
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
                                         </a>
 
-                                        <button @click.prevent="openDeleteModal({{ $item->id }}, '{{ addslashes($item->title) }}')" 
-                                                class="p-2 text-red-600 bg-red-50 rounded-lg hover:bg-red-100 dark:text-red-400 dark:bg-red-900/30 dark:hover:bg-red-900/50 transition-colors" title="Hapus">
+                                        <button type="button" @click.prevent="openDeleteModal({{ $item->id }}, @js($item->title))"
+                                                class="p-2 text-red-600 bg-red-50 rounded-lg hover:bg-red-100 dark:text-red-400 dark:bg-red-900/30 dark:hover:bg-red-900/50 transition-colors" title="Hapus" aria-label="Hapus berita">
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                                         </button>
                                     </div>
@@ -301,12 +306,13 @@
         </div>
 
         {{-- MODAL HAPUS BERITA --}}
-        <div x-show="deleteModal" 
+        <div x-show="deleteModal"
              x-cloak
              x-transition:enter="transition ease-out duration-300"
              x-transition:enter-start="opacity-0 transform scale-95"
              x-transition:enter-end="opacity-100 transform scale-100"
-             class="fixed inset-0 z-50 overflow-y-auto bg-gray-900/75 backdrop-blur-sm flex items-center justify-center p-4">
+             class="fixed inset-0 z-50 overflow-y-auto bg-gray-900/75 backdrop-blur-sm flex items-center justify-center p-4"
+             @keydown.escape.window="closeDeleteModal()">
             <div class="relative bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-md w-full overflow-hidden" @click.away="closeDeleteModal()">
                 <div class="p-6">
                     <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">Konfirmasi Hapus</h3>
@@ -314,8 +320,8 @@
                         Berita <span class="font-medium text-gray-900 dark:text-white" x-text="deleteTitle"></span> akan dihapus permanen.
                     </p>
                     <div class="flex justify-end gap-3">
-                        <button @click="closeDeleteModal()" class="px-4 py-2 text-sm text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition">Batal</button>
-                        <form :action="`{{ route('dashboard.berita.destroy', '') }}/${deleteId}`" method="POST">
+                        <button type="button" @click="closeDeleteModal()" class="px-4 py-2 text-sm text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition">Batal</button>
+                        <form :action="@js(route('dashboard.berita.destroy', ':id')).replace(':id', deleteId)" method="POST">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="px-4 py-2 text-sm text-white bg-red-600 rounded-lg hover:bg-red-700 transition">Ya, Hapus</button>
@@ -326,16 +332,16 @@
         </div>
 
         {{-- MODAL KELOLA KATEGORI (CREATE/EDIT) --}}
-        <div x-show="isCategoryModalOpen" 
+        <div x-show="isCategoryModalOpen"
              x-cloak
              x-transition:enter="transition ease-out duration-300"
              x-transition:enter-start="opacity-0 transform scale-95"
              x-transition:enter-end="opacity-100 transform scale-100"
              class="fixed inset-0 z-50 overflow-y-auto bg-gray-900/75 backdrop-blur-sm flex items-center justify-center p-4"
-             @keydown.escape.window="closeCategoryModal()">
-            
+             @keydown.escape.window="deleteCategoryModal ? closeDeleteCategoryModal() : closeCategoryModal()">
+
             <div class="relative bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-hidden flex flex-col" @click.away="closeCategoryModal()">
-                
+
                 {{-- Header --}}
                 <div class="flex items-center justify-between p-4 border-b dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
                     <h3 class="text-lg font-semibold text-gray-900 dark:text-white" x-text="modalTitle"></h3>
@@ -345,12 +351,12 @@
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-0 overflow-hidden h-full">
-                    
+
                     {{-- Form --}}
                     <form :action="modalAction" method="POST" @submit="if(modalMode === 'edit') { $event.target.querySelector('[name=_method]').value = 'PUT'; }" class="p-6 border-r border-gray-200 dark:border-gray-700 overflow-y-auto">
                         @csrf
                         <input type="hidden" name="_method" value="POST">
-                        
+
                         <h4 class="text-lg font-medium text-gray-900 dark:text-white mb-4" x-text="modalMode === 'edit' ? 'Edit Kategori' : 'Tambah Kategori Baru'"></h4>
 
                         {{-- Nama Kategori --}}
@@ -359,7 +365,7 @@
                                 Nama Kategori <span class="text-red-500">*</span>
                             </label>
                             <input type="text" id="cat-name" name="name" x-model="categoryData.name" @input="generateSlug()"
-                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" 
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
                                 placeholder="Contoh: Politik" required>
                             @error('name') <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p> @enderror
                         </div>
@@ -389,7 +395,7 @@
                                 <option value="gray">Abu-abu</option>
                             </select>
                         </div>
-                        
+
                         <div class="flex items-center gap-3 pt-2">
                             <button type="submit" class="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 transition-colors">
                                 <span x-show="modalMode === 'create'">Simpan</span>
@@ -417,16 +423,17 @@
                                         </span>
                                     </div>
                                     <div class="flex-shrink-0 flex items-center gap-1">
-                                        <button @click="openEditCategoryModal({{ $category }})" class="p-1.5 text-gray-500 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400 rounded hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors" title="Edit">
+                                        <button type="button" @click="openEditCategoryModal(@js($category))" class="p-1.5 text-gray-500 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400 rounded hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors" title="Edit" aria-label="Edit kategori berita">
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
                                         </button>
-                                        
-                                        <button type="button" @click="openDeleteCategoryModal({{ $category }})"
+
+                                        <button type="button" @click="openDeleteCategoryModal(@js($category))"
                                             @if($count === 0)
                                                 class="p-1.5 text-gray-500 hover:text-red-600 dark:text-gray-400 dark:hover:text-red-500 rounded hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
                                             @else
                                                 class="p-1.5 text-gray-300 dark:text-gray-600 cursor-not-allowed" disabled
                                             @endif
+                                            aria-label="{{ $count > 0 ? 'Tidak bisa dihapus karena masih digunakan' : 'Hapus Kategori' }}"
                                             title="{{ $count > 0 ? 'Tidak bisa dihapus karena masih digunakan' : 'Hapus Kategori' }}">
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                                         </button>
@@ -450,8 +457,8 @@
                                 Kategori "<span x-text="deleteCategoryName" class="font-medium text-gray-900 dark:text-white"></span>" akan dihapus permanen.
                             </p>
                             <div class="flex justify-center gap-3">
-                                <button @click="closeDeleteCategoryModal()" class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600 transition-colors">Batal</button>
-                                <form :action="`{{ route('dashboard.kategori-berita.destroy', '') }}/${deleteCategoryId}`" method="POST">
+                                <button type="button" @click="closeDeleteCategoryModal()" class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600 transition-colors">Batal</button>
+                                <form :action="@js(route('dashboard.kategori-berita.destroy', ':id')).replace(':id', deleteCategoryId)" method="POST">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 focus:ring-4 focus:ring-red-300 transition-colors">Ya, Hapus</button>

@@ -1,5 +1,10 @@
 <?php
 
+use App\Http\Middleware\AddSecurityHeaders;
+use App\Http\Middleware\IsAdmin;
+use App\Http\Middleware\IsDashboardUser;
+use App\Http\Middleware\IsPegawai;
+use App\Http\Middleware\TrackVisitor;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -13,14 +18,15 @@ return Application::configure(basePath: dirname(__DIR__))
 
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->alias([
-            'isAdmin' => \App\Http\Middleware\IsAdmin::class,
-            'dashboardUser' => \App\Http\Middleware\IsDashboardUser::class,
-            'isPegawai' => \App\Http\Middleware\IsPegawai::class,
+            'isAdmin' => IsAdmin::class,
+            'dashboardUser' => IsDashboardUser::class,
+            'isPegawai' => IsPegawai::class,
         ]);
 
         // Daftarkan TrackVisitor sebagai middleware web global
         $middleware->web(append: [
-            \App\Http\Middleware\TrackVisitor::class,
+            AddSecurityHeaders::class,
+            TrackVisitor::class,
         ]);
     })
 

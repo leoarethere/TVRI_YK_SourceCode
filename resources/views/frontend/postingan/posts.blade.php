@@ -93,9 +93,12 @@
                             {{-- Image Thumbnail --}}
                             <a href="{{ route('postingan.show', $post->slug) }}" class="relative w-full aspect-video overflow-hidden block bg-gray-100 dark:bg-gray-900">
                                 @if ($post->featured_image && Storage::exists($post->featured_image))
+                                    {{-- Blurred Background --}}
+                                    <img src="{{ Storage::url($post->featured_image) }}" class="absolute inset-0 w-full h-full object-cover blur-xl opacity-60 scale-110" aria-hidden="true">
+                                    {{-- Main Image --}}
                                     <img src="{{ Storage::url($post->featured_image) }}" 
                                          alt="{{ $post->title }}" 
-                                         class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                                         class="relative w-full h-full object-contain transition-transform duration-500 group-hover:scale-105"
                                          loading="lazy">
                                 @else
                                     {{-- Placeholder Pattern --}}

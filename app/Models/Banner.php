@@ -11,6 +11,8 @@ class Banner extends Model
 {
     use HasFactory;
 
+    private const HOMEPAGE_CACHE_KEY = 'homepage.slides';
+
     /**
      * Atribut yang dapat diisi secara massal.
      */
@@ -34,20 +36,15 @@ class Banner extends Model
     /**
      * Model events untuk membersihkan cache secara otomatis.
      */
-    protected static function booted()
+    protected static function booted(): void
     {
-        // Fungsi ini akan berjalan setiap kali banner disimpan (dibuat atau diupdate)
-        static::saved(function () {
-            // Hapus kunci cache yang benar untuk slider di beranda
-            Cache::forget('homepage.slides');
+        static::saved(function (): void {
+            Cache::forget(self::HOMEPAGE_CACHE_KEY);
         });
-        
-        // Fungsi ini akan berjalan setiap kali banner dihapus
-        static::deleted(function ($banner) {
-            // Hapus kunci cache yang benar
-            Cache::forget('homepage.slides');
-            
-            // Hapus juga file gambar dari storage
+
+        static::deleted(function (Banner $banner): void {
+            Cache::forget(self::HOMEPAGE_CACHE_KEY);
+
             if ($banner->image_path && Storage::disk('public')->exists($banner->image_path)) {
                 Storage::disk('public')->delete($banner->image_path);
             }

@@ -5,10 +5,11 @@ namespace App\Http\Controllers;
 use App\Models\Ppid;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use Illuminate\View\View;
 
 class PpidController extends Controller
 {
-    public function index(Request $request)
+    public function index(Request $request): View
     {
         // Query dasar: hanya yang aktif
         $query = Ppid::where('is_active', true);

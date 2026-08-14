@@ -1,16 +1,12 @@
 {
-  "node_modules/owl.carousel/dist/assets/owl.video.play.png": {
-    "file": "assets/owl.video.play-BJo37keB.png",
-    "src": "node_modules/owl.carousel/dist/assets/owl.video.play.png"
-  },
-  "node_modules/owl.carousel/dist/owl.carousel.js": {
-    "file": "assets/owl.carousel-B3ad9mzp.js",
-    "name": "owl.carousel",
-    "src": "node_modules/owl.carousel/dist/owl.carousel.js",
+  "node_modules/apexcharts/dist/apexcharts.esm.js": {
+    "file": "assets/apexcharts.esm-CzFgh7Xk.js",
+    "name": "apexcharts.esm",
+    "src": "node_modules/apexcharts/dist/apexcharts.esm.js",
     "isDynamicEntry": true
   },
   "resources/css/app.css": {
-    "file": "assets/app-Cu11-5Th.css",
+    "file": "assets/app-CZxMaNo_.css",
     "src": "resources/css/app.css",
     "isEntry": true,
     "name": "app",
@@ -19,24 +15,18 @@
     ]
   },
   "resources/js/app.js": {
-    "file": "assets/app-DaIV7KkO.js",
+    "file": "assets/app-CgqbxwDk.js",
     "name": "app",
     "src": "resources/js/app.js",
-    "isEntry": true,
-    "dynamicImports": [
-      "node_modules/owl.carousel/dist/owl.carousel.js"
-    ],
-    "css": [
-      "assets/app-BEK0jJ3e.css"
-    ],
-    "assets": [
-      "assets/owl.video.play-BJo37keB.png"
-    ]
+    "isEntry": true
   },
   "resources/js/dashboard.js": {
-    "file": "assets/dashboard-DKsE3wsq.js",
+    "file": "assets/dashboard-GcQOIk46.js",
     "name": "dashboard",
     "src": "resources/js/dashboard.js",
-    "isEntry": true
+    "isEntry": true,
+    "dynamicImports": [
+      "node_modules/apexcharts/dist/apexcharts.esm.js"
+    ]
   }
 }

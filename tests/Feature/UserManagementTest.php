@@ -2,8 +2,14 @@
 
 namespace Tests\Feature;
 
+use App\Models\Broadcast;
+use App\Models\Category;
+use App\Models\Post;
 use App\Models\User;
+use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Tests\TestCase;
 
 class UserManagementTest extends TestCase
@@ -103,14 +109,93 @@ class UserManagementTest extends TestCase
     public function test_user_with_content_cannot_be_deleted(): void
     {
         $author = User::factory()->create(['role' => 'secondary']);
-        \App\Models\Post::factory()->create([
+        Post::factory()->create([
             'user_id' => $author->id,
-            'category_id' => \App\Models\Category::factory()->create()->id,
+            'category_id' => Category::factory()->create()->id,
         ]);
 
         $response = $this->actingAs($this->admin)->delete(route('dashboard.users.destroy', $author));
         $response->assertSessionHasErrors('error');
         $this->assertDatabaseHas('users', ['id' => $author->id]);
+    }
+
+    public function test_user_with_broadcast_cannot_be_deleted(): void
+    {
+        $author = User::factory()->create(['role' => 'secondary']);
+        Broadcast::factory()->create(['user_id' => $author->id]);
+
+        $response = $this->actingAs($this->admin)->delete(route('dashboard.users.destroy', $author));
+
+        $response->assertSessionHasErrors('error');
+        $this->assertDatabaseHas('users', ['id' => $author->id]);
+        $this->assertSame(1, $author->broadcasts()->count());
+    }
+
+    public function test_database_restricts_deleting_an_author_with_broadcasts(): void
+    {
+        $author = User::factory()->create(['role' => 'secondary']);
+        $broadcast = Broadcast::factory()->create(['user_id' => $author->id]);
+
+        try {
+            $author->delete();
+            $this->fail('Database seharusnya menolak penghapusan pemilik penyiaran.');
+        } catch (QueryException) {
+            $this->assertDatabaseHas('users', ['id' => $author->id]);
+            $this->assertDatabaseHas('broadcasts', ['id' => $broadcast->id]);
+        }
+    }
+
+    public function test_password_change_rotates_remember_token_and_revokes_target_database_sessions(): void
+    {
+        config(['session.driver' => 'database']);
+
+        $target = User::factory()->create([
+            'role' => 'secondary',
+            'remember_token' => 'remember-token-lama',
+        ]);
+        $otherUser = User::factory()->create(['role' => 'secondary']);
+
+        $this->insertSession('target-session', $target);
+        $this->insertSession('other-session', $otherUser);
+
+        $response = $this->actingAs($this->admin)->put(route('dashboard.users.update', $target), [
+            'name' => $target->name,
+            'username' => $target->username,
+            'email' => $target->email,
+            'role' => $target->role,
+            'password' => 'Password-Baru-123!',
+            'password_confirmation' => 'Password-Baru-123!',
+        ]);
+
+        $response->assertRedirect(route('dashboard.users.index'));
+
+        $target->refresh();
+        $this->assertTrue(Hash::check('Password-Baru-123!', $target->password));
+        $this->assertNotSame('remember-token-lama', $target->remember_token);
+        $this->assertDatabaseMissing('sessions', ['id' => 'target-session']);
+        $this->assertDatabaseHas('sessions', ['id' => 'other-session']);
+    }
+
+    public function test_changing_own_password_logs_the_admin_out(): void
+    {
+        config(['session.driver' => 'database']);
+
+        $this->admin->forceFill(['remember_token' => 'remember-token-lama'])->save();
+        $this->insertSession('current-admin-session', $this->admin);
+
+        $response = $this->actingAs($this->admin)->put(route('dashboard.users.update', $this->admin), [
+            'name' => $this->admin->name,
+            'username' => $this->admin->username,
+            'email' => $this->admin->email,
+            'role' => 'admin',
+            'password' => 'Password-Baru-123!',
+            'password_confirmation' => 'Password-Baru-123!',
+        ]);
+
+        $response->assertRedirect(route('login'));
+        $this->assertGuest();
+        $this->assertDatabaseMissing('sessions', ['id' => 'current-admin-session']);
+        $this->assertNotSame('remember-token-lama', $this->admin->fresh()->remember_token);
     }
 
     public function test_user_cannot_edit_their_own_admin_status_if_last_admin(): void
@@ -125,6 +210,37 @@ class UserManagementTest extends TestCase
         $this->assertDatabaseHas('users', [
             'id' => $this->admin->id,
             'role' => 'admin',
+        ]);
+    }
+
+    public function test_admin_cannot_demote_their_own_account_even_when_another_admin_exists(): void
+    {
+        User::factory()->create([
+            'role' => 'admin',
+            'username' => 'admin-kedua',
+            'email' => 'admin-kedua@example.com',
+        ]);
+
+        $this->actingAs($this->admin)->put(route('dashboard.users.update', $this->admin), [
+            'name' => $this->admin->name,
+            'username' => $this->admin->username,
+            'email' => $this->admin->email,
+            'role' => 'secondary',
+        ])->assertSessionHasErrors('error');
+
+        $this->assertSame('admin', $this->admin->fresh()->role);
+        $this->assertAuthenticatedAs($this->admin);
+    }
+
+    private function insertSession(string $id, User $user): void
+    {
+        DB::table('sessions')->insert([
+            'id' => $id,
+            'user_id' => $user->id,
+            'ip_address' => '127.0.0.1',
+            'user_agent' => 'PHPUnit',
+            'payload' => '',
+            'last_activity' => now()->timestamp,
         ]);
     }
 }

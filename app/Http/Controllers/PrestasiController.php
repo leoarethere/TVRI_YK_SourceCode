@@ -3,12 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Prestasi;
-use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use Illuminate\View\View;
 
 class PrestasiController extends Controller
 {
-    public function index()
+    public function index(): View
     {
         // Ambil data prestasi yang AKTIF, urutkan dari tahun terbaru
         $prestasis = Prestasi::where('is_active', true)

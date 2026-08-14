@@ -128,7 +128,12 @@
                             {{-- THUMBNAIL IMAGE --}}
                             <a href="{{ route('berita.show', $item->slug) }}" class="relative w-full aspect-video overflow-hidden block bg-gray-100 dark:bg-gray-900">
                                 @if($item->featured_image && Storage::exists($item->featured_image))
-                                    <img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" 
+                                    {{-- Blurred Background --}}
+                                    <img src="{{ Storage::url($item->featured_image) }}" 
+                                         class="absolute inset-0 w-full h-full object-cover blur-xl opacity-60 scale-110"
+                                         aria-hidden="true">
+                                    {{-- Main Image --}}
+                                    <img class="relative w-full h-full object-contain transition-transform duration-500 group-hover:scale-105" 
                                          src="{{ Storage::url($item->featured_image) }}" 
                                          alt="{{ $item->title }}"
                                          loading="lazy"

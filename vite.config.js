@@ -4,17 +4,15 @@ import laravel from 'laravel-vite-plugin';
 export default defineConfig({
     plugins: [
         laravel({
-            // Tambahkan dashboard.js ke input
             input: [
-                'resources/css/app.css', 
+                'resources/css/app.css',
                 'resources/js/app.js',
-                'resources/js/dashboard.js' // File baru
+                'resources/js/dashboard.js',
             ],
             refresh: true,
         }),
     ],
     build: {
-        // ubah sesuai kebutuhan, misalnya 1000 KB
-        chunkSizeWarningLimit: 1000
-    }
+        chunkSizeWarningLimit: 600,
+    },
 });

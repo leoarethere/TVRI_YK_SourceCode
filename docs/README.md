@@ -1,6 +1,6 @@
 # 📚 Dokumentasi Website TVRI Stasiun D.I. Yogyakarta
 
-**Versi:** 1.1 | **Tanggal:** 8 Agustus 2026 | **Laravel 11 · PHP 8.2 · MySQL**
+**Versi:** 1.1 | **Tanggal:** 14 Agustus 2026 | **Laravel 12 · PHP 8.2 · MySQL**
 
 ---
 
@@ -18,7 +18,7 @@
 ## Ringkasan Cepat
 
 ### Stack Teknologi
-- **Backend:** Laravel 11 (PHP 8.2), MySQL 8
+- **Backend:** Laravel 12 (PHP 8.2), MySQL 8
 - **Frontend:** Blade, TailwindCSS, Alpine.js
 - **Image:** Intervention Image v3
 - **Security:** HTMLPurifier (mews/purifier), Bcrypt 12 rounds

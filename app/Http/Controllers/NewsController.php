@@ -5,13 +5,19 @@ namespace App\Http\Controllers;
 use App\Models\News;
 use App\Models\NewsCategory;
 use App\Models\User;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use Illuminate\View\View;
 
 class NewsController extends Controller
 {
-    public function index(Request $request)
+    public function index(Request $request): View
     {
+        $request->validate([
+            'search' => ['nullable', 'string', 'max:100'],
+        ]);
+
         $title = 'Semua Berita';
 
         // Logika Judul Dinamis
@@ -36,7 +42,7 @@ class NewsController extends Controller
         // Query Utama
         $query = News::query()
             ->with(['user', 'newsCategory'])
-            ->where('status', 'published')
+            ->publiclyVisible()
             ->filter($request->only(['search', 'category', 'author']));
 
         // Sorting
@@ -55,11 +61,11 @@ class NewsController extends Controller
 
         // Menggunakan paginate 9 sama seperti posts
         $news = $query->paginate(9)->withQueryString();
-        $categories = NewsCategory::whereHas('news', fn ($query) => $query->where('status', 'published'))
+        $categories = NewsCategory::whereHas('news', fn ($query) => $query->publiclyVisible())
             ->orderBy('name')
             ->get();
 
-        $authors = User::whereHas('news', fn ($query) => $query->where('status', 'published'))
+        $authors = User::whereHas('news', fn ($query) => $query->publiclyVisible())
             ->orderBy('name')
             ->get();
 
@@ -67,10 +73,10 @@ class NewsController extends Controller
         return view('frontend.news.index', compact('title', 'news', 'categories', 'authors'));
     }
 
-    public function show(News $news)
+    public function show(News $news): View
     {
         // Prevent access to unpublished news
-        if ($news->status !== 'published') {
+        if (! $news->isPubliclyVisible()) {
             abort(404);
         }
 
@@ -90,13 +96,13 @@ class NewsController extends Controller
     }
 
     // Redirect helper untuk kategori
-    public function category(NewsCategory $category)
+    public function category(NewsCategory $category): RedirectResponse
     {
         return redirect()->route('berita.index', ['category' => $category->slug]);
     }
 
     // Redirect helper untuk author
-    public function author(User $user)
+    public function author(User $user): RedirectResponse
     {
         return redirect()->route('berita.index', ['author' => $user->username]);
     }

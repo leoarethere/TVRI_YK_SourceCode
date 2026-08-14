@@ -12,8 +12,11 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DashboardHistoryController;
 use App\Http\Controllers\DashboardHymneTvriController;
 use App\Http\Controllers\DashboardInfoKunjunganController;
+use App\Http\Controllers\DashboardInfoKunjunganFaqController;
 use App\Http\Controllers\DashboardInfoMagangController;
+use App\Http\Controllers\DashboardInfoMagangFaqController;
 use App\Http\Controllers\DashboardJadwalAcaraController;
+use App\Http\Controllers\DashboardJadwalCategoryController;
 use App\Http\Controllers\DashboardNewsCategoryController;
 use App\Http\Controllers\DashboardNewsController;
 use App\Http\Controllers\DashboardPostCategoryController;
@@ -41,7 +44,6 @@ use App\Http\Controllers\PpidController;
 use App\Http\Controllers\PrestasiController;
 use App\Http\Controllers\ReformasiRbController;
 use App\Http\Controllers\StreamingController;
-use App\Http\Controllers\ThemeController;
 use App\Http\Controllers\TugasFungsiController;
 use App\Http\Controllers\VisiMisiController;
 use Illuminate\Support\Facades\Route;
@@ -121,16 +123,23 @@ Route::middleware('auth')->prefix('pegawai')->group(function () {
 });
 
 // ================= DASHBOARD =================
-Route::middleware(['auth', 'dashboardUser'])->prefix('dashboard')->group(function () {
+Route::middleware([
+    'auth',
+    'dashboardUser',
+    'cache.headers:no_store;no_cache;must_revalidate;private',
+])->prefix('dashboard')->group(function () {
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/visitor-chart', [DashboardController::class, 'visitorChartData'])->name('dashboard.visitor-chart');
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
-    Route::resource('/penyiaran', DashboardBroadcastController::class)->names('dashboard.penyiaran');
+    Route::resource('/penyiaran', DashboardBroadcastController::class)
+        ->except(['show'])
+        ->names('dashboard.penyiaran')
+        ->parameters(['penyiaran' => 'broadcast']);
     Route::resource('/banners', BannerController::class)->except(['show']);
-    Route::resource('/postingan', DashboardPostController::class)->names('dashboard.postingan')->parameters(['postingan' => 'post']);
-    Route::resource('/visi-misi', DashboardVisiMisiController::class)->names('dashboard.visi-misi');
-    Route::resource('/sejarah', DashboardHistoryController::class)->names('dashboard.sejarah')->parameters(['sejarah' => 'history']);
+    Route::resource('/postingan', DashboardPostController::class)->except(['show'])->names('dashboard.postingan')->parameters(['postingan' => 'post']);
+    Route::resource('/visi-misi', DashboardVisiMisiController::class)->except(['show'])->names('dashboard.visi-misi');
+    Route::resource('/sejarah', DashboardHistoryController::class)->except(['show'])->names('dashboard.sejarah')->parameters(['sejarah' => 'history']);
 
     // Kategori Penyiaran
     Route::post('/penyiaran-kategori', [DashboardBroadcastCategoryController::class, 'store'])->name('dashboard.penyiaran-kategori.store');
@@ -142,27 +151,27 @@ Route::middleware(['auth', 'dashboardUser'])->prefix('dashboard')->group(functio
     Route::put('/kategori-postingan/{category}', [DashboardPostCategoryController::class, 'update'])->name('dashboard.kategori-postingan.update');
     Route::delete('/kategori-postingan/{category}', [DashboardPostCategoryController::class, 'destroy'])->name('dashboard.kategori-postingan.destroy');
 
-    Route::resource('/tugas-fungsi', DashboardTugasFungsiController::class)->names('dashboard.tugas-fungsi')->parameters(['tugas-fungsi' => 'tugasFungsi']);
-    Route::resource('/ppid', DashboardPpidController::class)->names('dashboard.ppid')->parameters(['ppid' => 'ppid']);
-    Route::resource('/jadwal-acara', DashboardJadwalAcaraController::class)->names('dashboard.jadwal-acara')->parameters(['jadwal-acara' => 'jadwalAcara']);
-    Route::resource('/prestasi', DashboardPrestasiController::class)->names('dashboard.prestasi')->parameters(['prestasi' => 'prestasi']);
-    Route::resource('/himne-tvri', DashboardHymneTvriController::class)->names('dashboard.hymne-tvri')->parameters(['himne-tvri' => 'hymneTvri']);
-    Route::resource('/info-rb', DashboardReformasiRbController::class)->names('dashboard.reformasi-rb')->parameters(['info-rb' => 'reformasiRb']);
-    Route::resource('/info-magang', DashboardInfoMagangController::class)->names('dashboard.info-magang')->parameters(['info-magang' => 'infoMagang']);
-    Route::resource('/info-kunjungan', DashboardInfoKunjunganController::class)->names('dashboard.info-kunjungan')->parameters(['info-kunjungan' => 'infoKunjungan']);
+    Route::resource('/tugas-fungsi', DashboardTugasFungsiController::class)->except(['show'])->names('dashboard.tugas-fungsi')->parameters(['tugas-fungsi' => 'tugasFungsi']);
+    Route::resource('/ppid', DashboardPpidController::class)->except(['show'])->names('dashboard.ppid')->parameters(['ppid' => 'ppid']);
+    Route::resource('/jadwal-acara', DashboardJadwalAcaraController::class)->except(['show'])->names('dashboard.jadwal-acara')->parameters(['jadwal-acara' => 'jadwalAcara']);
+    Route::resource('/prestasi', DashboardPrestasiController::class)->except(['show'])->names('dashboard.prestasi')->parameters(['prestasi' => 'prestasi']);
+    Route::resource('/himne-tvri', DashboardHymneTvriController::class)->except(['show'])->names('dashboard.hymne-tvri')->parameters(['himne-tvri' => 'hymneTvri']);
+    Route::resource('/info-rb', DashboardReformasiRbController::class)->except(['show'])->names('dashboard.reformasi-rb')->parameters(['info-rb' => 'reformasiRb']);
+    Route::resource('/info-magang', DashboardInfoMagangController::class)->except(['show'])->names('dashboard.info-magang')->parameters(['info-magang' => 'infoMagang']);
+    Route::resource('/info-kunjungan', DashboardInfoKunjunganController::class)->except(['show'])->names('dashboard.info-kunjungan')->parameters(['info-kunjungan' => 'infoKunjungan']);
     // Kategori Jadwal
-    Route::post('/jadwal-categories', [\App\Http\Controllers\DashboardJadwalCategoryController::class, 'store'])->name('dashboard.jadwal-categories.store');
-    Route::put('/jadwal-categories/{jadwalCategory}', [\App\Http\Controllers\DashboardJadwalCategoryController::class, 'update'])->name('dashboard.jadwal-categories.update');
-    Route::delete('/jadwal-categories/{jadwalCategory}', [\App\Http\Controllers\DashboardJadwalCategoryController::class, 'destroy'])->name('dashboard.jadwal-categories.destroy');
+    Route::post('/jadwal-categories', [DashboardJadwalCategoryController::class, 'store'])->name('dashboard.jadwal-categories.store');
+    Route::put('/jadwal-categories/{jadwalCategory}', [DashboardJadwalCategoryController::class, 'update'])->name('dashboard.jadwal-categories.update');
+    Route::delete('/jadwal-categories/{jadwalCategory}', [DashboardJadwalCategoryController::class, 'destroy'])->name('dashboard.jadwal-categories.destroy');
 
     // FAQ Info Magang
-    Route::resource('/info-magang-faq', \App\Http\Controllers\DashboardInfoMagangFaqController::class)->names('dashboard.info-magang-faq')->parameters(['info-magang-faq' => 'id']);
+    Route::resource('/info-magang-faq', DashboardInfoMagangFaqController::class)->except(['show'])->names('dashboard.info-magang-faq')->parameters(['info-magang-faq' => 'infoMagangFaq']);
 
     // FAQ Info Kunjungan
-    Route::resource('/info-kunjungan-faq', \App\Http\Controllers\DashboardInfoKunjunganFaqController::class)->names('dashboard.info-kunjungan-faq')->parameters(['info-kunjungan-faq' => 'id']);
+    Route::resource('/info-kunjungan-faq', DashboardInfoKunjunganFaqController::class)->except(['show'])->names('dashboard.info-kunjungan-faq')->parameters(['info-kunjungan-faq' => 'infoKunjunganFaq']);
 
     // [BARU] Resource Berita
-    Route::resource('/berita', DashboardNewsController::class)->names('dashboard.berita')->parameters(['berita' => 'news']);
+    Route::resource('/berita', DashboardNewsController::class)->except(['show'])->names('dashboard.berita')->parameters(['berita' => 'news']);
 
     // [BARU] Kategori Berita
     Route::post('/kategori-berita', [DashboardNewsCategoryController::class, 'store'])->name('dashboard.kategori-berita.store');
@@ -176,15 +185,12 @@ Route::middleware(['auth', 'dashboardUser'])->prefix('dashboard')->group(functio
     Route::delete('/komentar/{comment}', [DashboardCommentController::class, 'destroy'])->name('dashboard.komentar.destroy');
 
     Route::middleware('isAdmin')->group(function () {
-        Route::resource('/users', DashboardUserController::class)->names('dashboard.users')->parameters(['users' => 'user']);
+        Route::resource('/users', DashboardUserController::class)->except(['show'])->names('dashboard.users')->parameters(['users' => 'user']);
 
-        Route::resource('social-media', DashboardSocialMediaController::class)->names('dashboard.social-media')->parameters(['social-media' => 'id'])->only(['index', 'edit', 'update']);
-        Route::resource('contact-info', DashboardContactInfoController::class)->names('dashboard.contact-info')->parameters(['contact-info' => 'id'])->only(['index', 'edit', 'update']);
+        Route::resource('social-media', DashboardSocialMediaController::class)->names('dashboard.social-media')->parameters(['social-media' => 'socialMedia'])->only(['index', 'edit', 'update']);
+        Route::resource('contact-info', DashboardContactInfoController::class)->names('dashboard.contact-info')->parameters(['contact-info' => 'contactInfo'])->only(['index', 'edit', 'update']);
 
         Route::get('/akses-informasi', [DashboardAksesInformasiController::class, 'index'])->name('dashboard.akses-informasi.index');
         Route::put('/akses-informasi/{aksesInformasi}', [DashboardAksesInformasiController::class, 'update'])->name('dashboard.akses-informasi.update');
     });
 });
-
-// ================= UTILITAS =================
-Route::post('/theme/toggle', [ThemeController::class, 'toggle'])->name('theme.toggle');

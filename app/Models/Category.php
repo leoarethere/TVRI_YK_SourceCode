@@ -2,15 +2,15 @@
 
 namespace App\Models;
 
-use App\Models\Post;
-use Illuminate\Database\Eloquent\Model;
+use App\Models\Concerns\InvalidatesHomepageDataCache;
 use Illuminate\Database\Eloquent\Casts\Attribute;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Category extends Model
 {
-    use HasFactory;
+    use HasFactory, InvalidatesHomepageDataCache;
 
     protected $fillable = [
         'name',
@@ -22,7 +22,7 @@ class Category extends Model
     {
         return $this->hasMany(Post::class);
     }
-    
+
     protected function colorClasses(): Attribute
     {
         return Attribute::make(
@@ -30,14 +30,14 @@ class Category extends Model
                 $colorName = $this->color ?? 'gray';
 
                 $colorMap = [
-                    'blue'   => 'bg-blue-100 text-gray-800 dark:bg-blue-700/80 dark:text-gray-800',
-                    'pink'   => 'bg-pink-100 text-gray-800 dark:bg-pink-700/80 dark:text-gray-800',
-                    'green'  => 'bg-green-100 text-gray-800 dark:bg-green-700/80 dark:text-gray-800',
+                    'blue' => 'bg-blue-100 text-gray-800 dark:bg-blue-700/80 dark:text-gray-800',
+                    'pink' => 'bg-pink-100 text-gray-800 dark:bg-pink-700/80 dark:text-gray-800',
+                    'green' => 'bg-green-100 text-gray-800 dark:bg-green-700/80 dark:text-gray-800',
                     'yellow' => 'bg-yellow-100 text-gray-800 dark:bg-yellow-700/80 dark:text-gray-800',
                     'indigo' => 'bg-indigo-100 text-gray-800 dark:bg-indigo-700/80 dark:text-gray-800',
                     'purple' => 'bg-purple-100 text-gray-800 dark:bg-purple-700/80 dark:text-gray-800',
-                    'red'    => 'bg-red-100 text-gray-800 dark:bg-red-700/80 dark:text-gray-800',
-                    'gray'   => 'bg-gray-100 text-gray-800 dark:bg-gray-600/80 dark:text-gray-800',
+                    'red' => 'bg-red-100 text-gray-800 dark:bg-red-700/80 dark:text-gray-800',
+                    'gray' => 'bg-gray-100 text-gray-800 dark:bg-gray-600/80 dark:text-gray-800',
                 ];
 
                 return $colorMap[$colorName] ?? $colorMap['gray'];

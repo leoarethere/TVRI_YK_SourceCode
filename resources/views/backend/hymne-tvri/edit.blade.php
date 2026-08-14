@@ -33,9 +33,9 @@
             <form action="{{ route('dashboard.hymne-tvri.update', $hymneTvri->id) }}" method="POST" enctype="multipart/form-data" novalidate>
                 @csrf
                 @method('PUT')
-                
+
                 <div class="p-6 space-y-6">
-                    
+
                     {{-- Error Summary --}}
                     @if ($errors->any())
                         <div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-red-900/30 dark:text-red-400 border border-red-200 dark:border-red-800" role="alert">
@@ -54,7 +54,7 @@
                             <label for="title" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                                 Judul Lagu <span class="text-red-500">*</span>
                             </label>
-                            <input type="text" name="title" id="title" value="{{ old('title', $hymneTvri->title) }}" 
+                            <input type="text" name="title" id="title" value="{{ old('title', $hymneTvri->title) }}"
                                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" required>
                             @error('title') <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p> @enderror
                         </div>
@@ -64,7 +64,7 @@
                             <label for="info" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                                 Info Tambahan (Pencipta/Tahun)
                             </label>
-                            <input type="text" name="info" id="info" value="{{ old('info', $hymneTvri->info) }}" 
+                            <input type="text" name="info" id="info" value="{{ old('info', $hymneTvri->info) }}"
                                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
                             @error('info') <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p> @enderror
                         </div>
@@ -74,7 +74,7 @@
                             <label for="link" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                                 Link Video/Audio (URL) <span class="text-red-500">*</span>
                             </label>
-                            <input type="url" name="link" id="link" value="{{ old('link', $hymneTvri->link) }}" 
+                            <input type="url" name="link" id="link" value="{{ old('link', $hymneTvri->link) }}"
                                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
                             @error('link') <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p> @enderror
                         </div>
@@ -91,8 +91,8 @@
                     </div>
 
                     {{-- Poster (dengan Alpine Preview) --}}
-                    <div x-data="{ 
-                        preview: '{{ $hymneTvri->poster ? Storage::url($hymneTvri->poster) : null }}',
+                    <div x-data="{
+                        preview: @js($hymneTvri->poster ? Storage::url($hymneTvri->poster) : null),
                         handleFile(event) {
                             const file = event.target.files[0];
                             if (!file) return;
@@ -107,7 +107,7 @@
                         <label for="poster" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                             Poster / Cover (Opsional)
                         </label>
-                        
+
                         {{-- Preview Box --}}
                         <div class="mb-3" x-show="preview">
                             <div class="relative w-32 h-40 rounded-lg overflow-hidden border border-gray-300 dark:border-gray-600">
@@ -118,8 +118,8 @@
                             </div>
                         </div>
 
-                        <input type="file" name="poster" id="poster" @change="handleFile($event)" 
-                            class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400" 
+                        <input type="file" name="poster" id="poster" @change="handleFile($event)"
+                            class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
                             accept="image/png, image/jpeg, image/jpg, image/webp">
                         <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Biarkan kosong jika tidak ingin mengubah poster.</p>
                         @error('poster') <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p> @enderror

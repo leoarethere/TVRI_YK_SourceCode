@@ -1,6 +1,6 @@
 # 🧩 Class Diagram — Website TVRI D.I. Yogyakarta
 
-**Framework:** Laravel 11 (PHP 8.2)  
+**Framework:** Laravel 12 (PHP 8.2)
 **Pattern:** MVC + Eloquent ORM
 
 ---

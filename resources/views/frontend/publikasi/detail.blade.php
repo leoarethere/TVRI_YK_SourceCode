@@ -11,39 +11,47 @@
 
     {{-- SEO Structured Data --}}
     @if($broadcast)
-    <script type="application/ld+json">
-    {
-        "@context": "https://schema.org",
-        "@type": "{{ $broadcast->youtubeEmbedUrl ? 'VideoObject' : 'BroadcastEvent' }}",
-        "name": "{{ addslashes($broadcast->title) }}",
-        "description": "{{ addslashes($broadcast->synopsis ?? 'Program siaran') }}",
-        @if($broadcast->youtubeEmbedUrl)
-        "embedUrl": "{{ $broadcast->youtubeEmbedUrl }}",
-        "thumbnailUrl": "{{ $broadcast->poster ? Storage::url($broadcast->poster) : '' }}",
-        @endif
-        "datePublished": "{{ $broadcast->published_at?->toIso8601String() ?? $broadcast->created_at->toIso8601String() }}",
-        @if($broadcast->broadcastCategory)
-        "genre": "{{ $broadcast->broadcastCategory->name }}",
-        @endif
-        "publisher": {
-            "@type": "Organization",
-            "name": "{{ config('app.name', 'Laravel') }}"
-        },
-        "eventStatus": "{{ $broadcast->is_active ? 'https://schema.org/EventScheduled' : 'https://schema.org/EventMovedOnline' }}" 
-    }
-    </script>
+    @php
+        $broadcastSchema = [
+            '@context' => 'https://schema.org',
+            '@type' => $broadcast->youtubeEmbedUrl ? 'VideoObject' : 'BroadcastEvent',
+            'name' => $broadcast->title,
+            'description' => $broadcast->synopsis ?? 'Program siaran',
+            'datePublished' => ($broadcast->published_at ?? $broadcast->created_at)->toIso8601String(),
+            'publisher' => [
+                '@type' => 'Organization',
+                'name' => config('app.name', 'Laravel'),
+            ],
+            'eventStatus' => $broadcast->is_active
+                ? 'https://schema.org/EventScheduled'
+                : 'https://schema.org/EventMovedOnline',
+        ];
+
+        if ($broadcast->youtubeEmbedUrl) {
+            $broadcastSchema['embedUrl'] = $broadcast->youtubeEmbedUrl;
+            $broadcastSchema['thumbnailUrl'] = $broadcast->poster ? Storage::url($broadcast->poster) : '';
+        }
+
+        if ($broadcast->broadcastCategory) {
+            $broadcastSchema['genre'] = $broadcast->broadcastCategory->name;
+        }
+
+        $jsonLdOptions = JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE
+            | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT;
+    @endphp
+    <script type="application/ld+json">{!! json_encode($broadcastSchema, $jsonLdOptions) !!}</script>
     @endif
 
     {{-- WRAPPER UTAMA --}}
     <div class="min-h-screen px-4 sm:px-6 lg:px-8">
-        
+
         <article class="mx-auto w-full bg-white dark:bg-gray-800 rounded-2xl sm:rounded-3xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden transition-colors duration-300">
-            
+
             {{-- 1. BREADCRUMB (Scrollable on Mobile) --}}
             <div class="px-5 sm:px-8 lg:px-10 pt-6 sm:pt-8 pb-2">
                 <nav class="flex text-sm text-gray-500 dark:text-gray-400 overflow-x-auto scrollbar-hide">
                     <ol class="inline-flex items-center space-x-1 md:space-x-2 whitespace-nowrap">
-                        
+
                         {{-- Beranda --}}
                         <li>
                             <a href="{{ route('home') }}" class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors flex items-center gap-1">
@@ -84,7 +92,7 @@
 
                 {{-- Meta Info Wrapper --}}
                 <div class="mt-6 flex flex-wrap items-center gap-4 sm:gap-6 py-4 border-t border-gray-100 dark:border-gray-700">
-                    
+
                     {{-- Status Badge --}}
                     <div class="flex items-center gap-3">
                         <div class="flex items-center justify-center w-10 h-10 rounded-full {{ $broadcast->is_active ? 'bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-400' : 'bg-gray-100 text-gray-500 dark:bg-gray-700 dark:text-gray-400' }}">
@@ -118,7 +126,7 @@
 
             {{-- 3. MEDIA (HERO SECTION) --}}
             @php
-                $url = $broadcast->youtube_link ?? $broadcast->youtubeEmbedUrl; 
+                $url = $broadcast->youtube_link ?? $broadcast->youtubeEmbedUrl;
                 $videoId = null;
                 if ($url) {
                     $pattern = '/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/';
@@ -132,45 +140,48 @@
                 {{-- Video Player Responsive 16:9 --}}
                 <div class="w-full bg-black">
                     <figure class="relative w-full aspect-video mx-auto max-w-5xl">
-                        <iframe class="absolute top-0 left-0 w-full h-full" 
-                                src="https://www.youtube.com/embed/{{ $videoId }}?rel=0" 
-                                title="YouTube video player" 
-                                frameborder="0" 
-                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                        <iframe class="absolute top-0 left-0 w-full h-full"
+                                src="https://www.youtube.com/embed/{{ $videoId }}?rel=0"
+                                title="YouTube video player"
+                                frameborder="0"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                                 allowfullscreen>
                         </iframe>
                     </figure>
                 </div>
             @elseif ($broadcast->poster)
                 {{-- Poster Image Responsive --}}
-                <div class="w-full px-5 sm:px-8 lg:px-10 pb-6 sm:pb-8 rounded-lg">
-                    <figure class="relative w-full overflow-hidden">
-                        {{-- Background Blur untuk efek visual --}}
-                        <div class="absolute inset-0">
-                            <img src="{{ Storage::url($broadcast->poster) }}" class="w-full h-full object-cover blur-xl opacity-50 dark:opacity-30 scale-110">
-                        </div>
-                        {{-- Gambar Poster Asli (Contain) --}}
-                        <img src="{{ Storage::url($broadcast->poster) }}" 
-                             alt="{{ $broadcast->title }}" 
-                             class="relative h-full w-auto mx-auto object-contain shadow-2xl z-10 transition-transform duration-500 group-hover:scale-105">
+                <div class="w-full px-5 sm:px-8 lg:px-10 pb-6 sm:pb-8">
+                    <figure class="relative w-full aspect-[2/1] lg:max-h-[400px] xl:max-h-[450px] overflow-hidden rounded-xl shadow-lg bg-gray-900 dark:bg-black">
+                        {{-- Blurred Background Layer --}}
+                        <img src="{{ Storage::url($broadcast->poster) }}"
+                             alt=""
+                             class="absolute inset-0 w-full h-full object-cover blur-2xl opacity-60 scale-110"
+                             aria-hidden="true">
+
+                        {{-- Main Image Layer (Fit without stretching) --}}
+                        <img src="{{ Storage::url($broadcast->poster) }}"
+                             alt="{{ $broadcast->title }}"
+                             class="absolute inset-0 w-full h-full object-contain transition-transform duration-700 hover:scale-[1.02] z-10"
+                             loading="lazy">
                     </figure>
                 </div>
             @endif
 
             {{-- 4. KONTEN (SINOPSIS) --}}
             <div class="px-5 sm:px-8 lg:px-10 py-8 sm:py-10">
-                <div class="prose prose-base md:prose-lg max-w-none 
+                <div class="prose prose-base md:prose-lg max-w-none
                             text-gray-700 dark:text-gray-300 leading-relaxed
                             prose-headings:font-bold prose-headings:text-gray-900 dark:prose-headings:text-white prose-headings:tracking-tight
                             prose-p:text-gray-700 dark:prose-p:text-gray-300">
-                    
+
                     <h2 class="text-xl font-bold mb-4 flex items-center gap-2">
                         <svg class="w-6 h-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" />
                         </svg>
                         Sinopsis Program
                     </h2>
-                    
+
                     @if ($broadcast->synopsis)
                         {!! nl2br(e($broadcast->synopsis)) !!}
                     @else
@@ -183,9 +194,9 @@
 
             {{-- 5. FOOTER & SHARE --}}
             <div class="px-5 sm:px-8 lg:px-10 py-6 sm:py-8 bg-gray-50 dark:bg-gray-900/50 border-t border-gray-100 dark:border-gray-700 flex flex-col sm:flex-row justify-between items-center gap-6">
-                
+
                 {{-- Tombol Kembali --}}
-                <a href="{{ route('penyiaran.index') }}" 
+                <a href="{{ route('penyiaran.index') }}"
                    class="w-full sm:w-auto inline-flex justify-center items-center gap-2 px-5 py-2.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-xl hover:bg-gray-50 hover:text-blue-600 hover:border-blue-300 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-700 transition-all shadow-sm">
                     <svg class="w-4 h-4 transition-transform group-hover:-translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
                     Semua Program Siaran
@@ -195,23 +206,23 @@
                 <div class="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
                     <span class="text-sm font-medium text-gray-500 dark:text-gray-400 hidden sm:block">Bagikan:</span>
                     <div class="flex items-center justify-center gap-2 w-full sm:w-auto">
-                        
+
                         {{-- Facebook --}}
-                        <a href="https://www.facebook.com/sharer/sharer.php?u={{ urlencode(request()->url()) }}" target="_blank" 
+                        <a href="https://www.facebook.com/sharer/sharer.php?u={{ urlencode(request()->url()) }}" target="_blank" rel="noopener noreferrer"
                            class="flex-1 sm:flex-none flex justify-center items-center p-2.5 rounded-lg sm:rounded-full bg-blue-600 text-white hover:bg-blue-700 transition-colors shadow-sm" aria-label="Bagikan di Facebook">
                              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"></path></svg>
                         </a>
 
                         {{-- Twitter / X --}}
-                        <a href="https://twitter.com/intent/tweet?url={{ urlencode(request()->url()) }}&text={{ urlencode($broadcast->title) }}" target="_blank" 
+                        <a href="https://twitter.com/intent/tweet?url={{ urlencode(request()->url()) }}&text={{ urlencode($broadcast->title) }}" target="_blank" rel="noopener noreferrer"
                            class="flex-1 sm:flex-none flex justify-center items-center p-2.5 rounded-lg sm:rounded-full bg-black dark:bg-gray-700 text-white hover:bg-gray-800 dark:hover:bg-gray-600 transition-colors shadow-sm" aria-label="Bagikan di X">
                              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
                         </a>
 
                         {{-- WhatsApp --}}
-                        <a href="https://wa.me/?text={{ urlencode($broadcast->title . ' ' . request()->url()) }}" target="_blank" 
+                        <a href="https://wa.me/?text={{ urlencode($broadcast->title . ' ' . request()->url()) }}" target="_blank" rel="noopener noreferrer"
                            class="flex-1 sm:flex-none flex justify-center items-center p-2.5 rounded-lg sm:rounded-full bg-green-500 text-white hover:bg-green-600 transition-colors shadow-sm" aria-label="Bagikan di WhatsApp">
-                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"></path></svg>
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.885-9.884 9.885m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"></path></svg>
                         </a>
                     </div>
                 </div>

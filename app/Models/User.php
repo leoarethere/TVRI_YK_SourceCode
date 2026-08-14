@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\InvalidatesHomepageDataCache;
 use App\Notifications\ResetPasswordNotification;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -10,7 +11,7 @@ use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable;
+    use HasFactory, InvalidatesHomepageDataCache, Notifiable;
 
     /**
      * The attributes that are mass assignable.
@@ -56,6 +57,11 @@ class User extends Authenticatable
     public function news(): HasMany
     {
         return $this->hasMany(News::class);
+    }
+
+    public function broadcasts(): HasMany
+    {
+        return $this->hasMany(Broadcast::class);
     }
 
     public function isAdmin(): bool

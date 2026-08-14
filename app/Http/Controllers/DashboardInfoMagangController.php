@@ -3,16 +3,19 @@
 namespace App\Http\Controllers;
 
 use App\Models\InfoMagang;
+use App\Support\PublicStorageWriter;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Intervention\Image\Drivers\Gd\Driver;
 use Intervention\Image\ImageManager;
+use Illuminate\View\View;
 
 class DashboardInfoMagangController extends Controller
 {
-    public function index(Request $request)
+    public function index(Request $request): View
     {
         $query = InfoMagang::query();
 
@@ -33,12 +36,12 @@ class DashboardInfoMagangController extends Controller
         return view('backend.info-magang.index', compact('items'));
     }
 
-    public function create()
+    public function create(): View
     {
         return view('backend.info-magang.create');
     }
 
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
         $validated = $request->validate([
             'title' => 'required|string|max:255',
@@ -62,7 +65,7 @@ class DashboardInfoMagangController extends Controller
                 $image->scale(width: 800);
                 $encoded = $image->toJpeg(quality: 80);
 
-                Storage::disk('public')->put($filename, (string) $encoded);
+                PublicStorageWriter::put($filename, (string) $encoded);
                 $data['cover_image'] = $filename;
             } catch (\Exception $e) {
                 report($e);
@@ -77,12 +80,12 @@ class DashboardInfoMagangController extends Controller
             ->with('success', 'Informasi Magang berhasil ditambahkan!');
     }
 
-    public function edit(InfoMagang $infoMagang)
+    public function edit(InfoMagang $infoMagang): View
     {
         return view('backend.info-magang.edit', compact('infoMagang'));
     }
 
-    public function update(Request $request, InfoMagang $infoMagang)
+    public function update(Request $request, InfoMagang $infoMagang): RedirectResponse
     {
         $validated = $request->validate([
             'title' => 'required|string|max:255',
@@ -111,7 +114,7 @@ class DashboardInfoMagangController extends Controller
                 $encoded = $image->toJpeg(quality: 80);
 
                 // 1. Simpan gambar baru
-                Storage::disk('public')->put($filename, (string) $encoded);
+                PublicStorageWriter::put($filename, (string) $encoded);
 
                 $data['cover_image'] = $filename;
             } catch (\Exception $e) {
@@ -131,7 +134,7 @@ class DashboardInfoMagangController extends Controller
             ->with('success', 'Informasi Magang berhasil diperbarui!');
     }
 
-    public function destroy(InfoMagang $infoMagang)
+    public function destroy(InfoMagang $infoMagang): RedirectResponse
     {
         $coverPath = $infoMagang->cover_image;
         $infoMagang->delete();

@@ -2,16 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\InfoKunjunganFaq;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use Illuminate\View\View;
 
 class DashboardInfoKunjunganFaqController extends Controller
 {
     /**
      * Menampilkan daftar FAQ Kunjungan (Backend).
      */
-    public function index()
+    public function index(): View
     {
         // Ambil data diurutkan berdasarkan 'order' (terkecil ke terbesar)
         $faqs = InfoKunjunganFaq::orderBy('order', 'asc')->paginate(10);
@@ -22,7 +24,7 @@ class DashboardInfoKunjunganFaqController extends Controller
     /**
      * Menampilkan form tambah FAQ baru.
      */
-    public function create()
+    public function create(): View
     {
         return view('backend.info-kunjungan-faq.create');
     }
@@ -30,7 +32,7 @@ class DashboardInfoKunjunganFaqController extends Controller
     /**
      * Menyimpan data FAQ baru ke database.
      */
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
         $validated = $request->validate([
             'question'  => 'required|string|max:255',
@@ -50,16 +52,17 @@ class DashboardInfoKunjunganFaqController extends Controller
     /**
      * Menampilkan form edit FAQ.
      */
-    public function edit($id)
+    public function edit(InfoKunjunganFaq $infoKunjunganFaq): View
     {
-        $faq = InfoKunjunganFaq::findOrFail($id);
+        $faq = $infoKunjunganFaq;
+
         return view('backend.info-kunjungan-faq.edit', compact('faq'));
     }
 
     /**
      * Memperbarui data FAQ.
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, InfoKunjunganFaq $infoKunjunganFaq): RedirectResponse
     {
         $validated = $request->validate([
             'question'  => 'required|string|max:255',
@@ -67,11 +70,9 @@ class DashboardInfoKunjunganFaqController extends Controller
             'order'     => 'required|integer|min:0',
         ]);
 
-        $faq = InfoKunjunganFaq::findOrFail($id);
-
         $validated['is_active'] = $request->has('is_active');
 
-        $faq->update($validated);
+        $infoKunjunganFaq->update($validated);
 
         return redirect()->route('dashboard.info-kunjungan-faq.index')
             ->with('success', 'FAQ Kunjungan berhasil diperbarui!');
@@ -80,10 +81,9 @@ class DashboardInfoKunjunganFaqController extends Controller
     /**
      * Menghapus FAQ.
      */
-    public function destroy($id)
+    public function destroy(InfoKunjunganFaq $infoKunjunganFaq): RedirectResponse
     {
-        $faq = InfoKunjunganFaq::findOrFail($id);
-        $faq->delete();
+        $infoKunjunganFaq->delete();
 
         return redirect()->route('dashboard.info-kunjungan-faq.index')
             ->with('success', 'FAQ Kunjungan berhasil dihapus!');

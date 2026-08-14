@@ -2,8 +2,8 @@
     <x-slot:title>Tambah Jadwal Acara</x-slot:title>
 
     <div class="pb-6" x-data="{
-        title: '{{ old('title') }}',
-        slug: '{{ old('slug') }}',
+        title: @js(old('title', '')),
+        slug: @js(old('slug', '')),
         generateSlug() {
             this.slug = this.title.toLowerCase()
                 .replace(/[^a-z0-9\s-]/g, '')
@@ -27,7 +27,7 @@
         <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 overflow-hidden">
             <form action="{{ route('dashboard.jadwal-acara.store') }}" method="POST">
                 @csrf
-                
+
                 <div class="p-6 space-y-6">
 
                     {{-- Error Summary --}}
@@ -43,19 +43,19 @@
                     @endif
 
                     <div class="grid gap-6 md:grid-cols-2">
-                        
+
                         {{-- Nama Acara --}}
                         <div class="md:col-span-2">
                             <label for="title" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                                 Nama Acara <span class="text-red-500">*</span>
                             </label>
-                            <input type="text" 
-                                   name="title" 
-                                   id="title" 
+                            <input type="text"
+                                   name="title"
+                                   id="title"
                                    x-model="title"
                                    @input.debounce.500ms="generateSlug()"
-                                   class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" 
-                                   placeholder="Contoh: Berita Pagi" 
+                                   class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
+                                   placeholder="Contoh: Berita Pagi"
                                    required
                                    autofocus>
                             @error('title')
@@ -68,21 +68,21 @@
                             <label for="slug" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                                 Slug URL <span class="text-red-500">*</span>
                             </label>
-                            <input type="text" 
-                                   name="slug" 
+                            <input type="text"
+                                   name="slug"
                                    id="slug"
                                    x-model="slug"
-                                   class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white font-mono text-xs" 
+                                   class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white font-mono text-xs"
                                    required>
                             @error('slug')
                                 <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p>
                             @enderror
                         </div>
 
-                        {{-- Pukul Penayangan --}}
+                        {{-- Pukul Mulai --}}
                         <div>
                             <label for="start_time" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                                Pukul Penayangan <span class="text-red-500">*</span>
+                                Pukul Mulai <span class="text-red-500">*</span>
                             </label>
                             <div class="relative">
                                 <div class="absolute inset-y-0 end-0 top-0 flex items-center pe-3.5 pointer-events-none">
@@ -90,14 +90,33 @@
                                         <path fill-rule="evenodd" d="M2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10S2 17.523 2 12Zm11-4a1 1 0 1 0-2 0v4a1 1 0 0 0 .293.707l3 3a1 1 0 0 0 1.414-1.414L13 11.586V8Z" clip-rule="evenodd"/>
                                     </svg>
                                 </div>
-                                <input type="time" 
-                                       name="start_time" 
+                                <input type="time"
+                                       name="start_time"
                                        id="start_time"
-                                       class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white" 
-                                       required 
+                                       class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                                       required
                                        value="{{ old('start_time') }}">
                             </div>
                             @error('start_time')
+                                <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        {{-- Pukul Selesai --}}
+                        <div>
+                            <label for="end_time" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                                Pukul Selesai
+                            </label>
+                            <input type="time"
+                                   name="end_time"
+                                   id="end_time"
+                                   class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                                   value="{{ old('end_time') }}"
+                                   aria-describedby="end_time_help">
+                            <p id="end_time_help" class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                                Opsional. Jika kosong, durasi tayang dianggap satu jam.
+                            </p>
+                            @error('end_time')
                                 <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p>
                             @enderror
                         </div>
@@ -107,9 +126,9 @@
                             <label for="jadwal_category_id" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                                 Hari Penayangan <span class="text-red-500">*</span>
                             </label>
-                            <select name="jadwal_category_id" 
+                            <select name="jadwal_category_id"
                                     id="jadwal_category_id"
-                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" 
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
                                     required>
                                 <option value="">Pilih Hari...</option>
                                 @foreach($jadwalCategories as $day)
@@ -128,9 +147,9 @@
                             <label for="broadcast_category_id" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                                 Kategori Acara <span class="text-red-500">*</span>
                             </label>
-                            <select name="broadcast_category_id" 
+                            <select name="broadcast_category_id"
                                     id="broadcast_category_id"
-                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" 
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
                                     required>
                                 <option value="">Pilih Kategori...</option>
                                 @foreach($categories as $category)
@@ -152,23 +171,23 @@
                             <div class="flex flex-col sm:flex-row gap-3">
                                 {{-- Radio Aktif --}}
                                 <div class="flex items-center ps-4 border border-gray-200 rounded dark:border-gray-700 bg-gray-50 dark:bg-gray-700 flex-1">
-                                    <input id="active_yes" 
-                                           type="radio" 
-                                           value="1" 
-                                           name="is_active" 
+                                    <input id="active_yes"
+                                           type="radio"
+                                           value="1"
+                                           name="is_active"
                                            {{ old('is_active', '1') == '1' ? 'checked' : '' }}
                                            class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
                                     <label for="active_yes" class="w-full py-3 ms-2 text-sm font-medium text-gray-900 dark:text-gray-300 cursor-pointer">
                                         Aktif (Tayang)
                                     </label>
                                 </div>
-                                
+
                                 {{-- Radio Non-Aktif --}}
                                 <div class="flex items-center ps-4 border border-gray-200 rounded dark:border-gray-700 bg-gray-50 dark:bg-gray-700 flex-1">
-                                    <input id="active_no" 
-                                           type="radio" 
-                                           value="0" 
-                                           name="is_active" 
+                                    <input id="active_no"
+                                           type="radio"
+                                           value="0"
+                                           name="is_active"
                                            {{ old('is_active') == '0' ? 'checked' : '' }}
                                            class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
                                     <label for="active_no" class="w-full py-3 ms-2 text-sm font-medium text-gray-900 dark:text-gray-300 cursor-pointer">
@@ -186,11 +205,11 @@
 
                 {{-- Action Buttons --}}
                 <div class="dashboard-form-actions flex items-center justify-between gap-3 p-6 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700/50 rounded-b-lg">
-                    <a href="{{ route('dashboard.jadwal-acara.index') }}" 
+                    <a href="{{ route('dashboard.jadwal-acara.index') }}"
                        class="px-5 py-2.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-600 transition-colors">
                         Batal
                     </a>
-                    <button type="submit" 
+                    <button type="submit"
                             class="px-5 py-2.5 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 transition-colors">
                         Simpan
                     </button>

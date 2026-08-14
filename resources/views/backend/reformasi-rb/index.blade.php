@@ -2,27 +2,27 @@
     <x-slot:title>Kelola Reformasi Birokrasi</x-slot:title>
 
     {{-- Data Alpine.js --}}
-    <div x-data="{ 
-        deleteModal: false, 
-        deleteItemId: null, 
+    <div x-data="{
+        deleteModal: false,
+        deleteItemId: null,
         deleteItemTitle: '',
-        
+
         openDeleteModal(itemId, itemTitle) {
             this.deleteItemId = itemId;
             this.deleteItemTitle = itemTitle;
             this.deleteModal = true;
             document.body.style.overflow = 'hidden';
         },
-        
+
         closeDeleteModal() {
             this.deleteModal = false;
             this.deleteItemId = null;
             this.deleteItemTitle = '';
             document.body.style.overflow = '';
         }
-    }" 
+    }"
     class="pb-6">
-        
+
         {{-- HEADER HALAMAN --}}
         <div class="flex flex-col md:flex-row md:justify-between md:items-center gap-4 mb-6 pt-2">
             <div>
@@ -33,9 +33,9 @@
                     Kelola data dan dokumen terkait Reformasi Birokrasi.
                 </p>
             </div>
-            
+
             {{-- Tombol Aksi Header --}}
-            <a href="{{ route('dashboard.reformasi-rb.create') }}" 
+            <a href="{{ route('dashboard.reformasi-rb.create') }}"
                class="w-full md:w-auto inline-flex items-center justify-center px-4 py-2.5 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800 transition-colors whitespace-nowrap shadow-sm hover:shadow-md">
                 <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd"></path></svg>
                 Tambah Dokumen
@@ -50,8 +50,8 @@
                     <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                         <svg class="w-5 h-5 text-gray-500 dark:text-gray-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"></path></svg>
                     </div>
-                    <input type="text" name="search" value="{{ request('search') }}" 
-                           class="block w-full p-3 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" 
+                    <input type="text" name="search" value="{{ request('search') }}"
+                           class="block w-full p-3 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
                            placeholder="Cari data RB...">
                 </div>
 
@@ -113,11 +113,11 @@
                         @forelse ($items as $item)
                             <tr class="bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
                                 <td class="px-4 py-4 align-top text-center font-medium text-gray-900 dark:text-white">{{ $loop->iteration + $items->firstItem() - 1 }}</td>
-                                
+
                                 {{-- Cover --}}
                                 <td class="px-4 py-4 align-top text-center">
                                     @if ($item->cover_image)
-                                        <img src="{{ Storage::url($item->cover_image) }}" alt="Cover" 
+                                        <img src="{{ Storage::url($item->cover_image) }}" alt="Cover"
                                              class="w-16 h-12 object-cover rounded-lg ring-1 ring-gray-200 dark:ring-gray-700 inline-block">
                                     @else
                                         <div class="w-16 h-12 inline-flex items-center justify-center bg-gray-100 dark:bg-gray-700 rounded-lg ring-1 ring-gray-200 dark:ring-gray-700">
@@ -133,7 +133,7 @@
                                     <div class="space-y-1">
                                         <p class="font-semibold text-gray-900 dark:text-white line-clamp-2 leading-tight">{{ $item->title }}</p>
                                         @if($item->file_link)
-                                            <a href="{{ $item->file_link }}" target="_blank" rel="noopener noreferrer" 
+                                            <a href="{{ $item->file_link }}" target="_blank" rel="noopener noreferrer"
                                                class="inline-flex items-center gap-1 text-xs font-medium text-blue-600 dark:text-blue-400 hover:underline">
                                                 <svg class="w-3 h-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>
                                                 Buka File/Link
@@ -165,15 +165,15 @@
                                 {{-- Aksi --}}
                                 <td class="px-4 py-4 align-top text-center">
                                     <div class="flex items-center justify-center gap-2">
-                                        <a href="{{ route('dashboard.reformasi-rb.edit', $item->id) }}" 
+                                        <a href="{{ route('dashboard.reformasi-rb.edit', $item->id) }}"
                                            class="p-2 text-yellow-600 bg-yellow-50 rounded-lg hover:bg-yellow-100 dark:text-yellow-400 dark:bg-yellow-900/30 dark:hover:bg-yellow-900/50 transition-colors"
-                                           title="Edit Data">
+                                            title="Edit Data" aria-label="Edit Data">
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
                                         </a>
 
-                                        <button @click="openDeleteModal({{ $item->id }}, '{{ addslashes($item->title) }}')"
+                                        <button type="button" @click="openDeleteModal({{ $item->id }}, @js($item->title))"
                                             class="p-2 text-red-600 bg-red-50 rounded-lg hover:bg-red-100 dark:text-red-400 dark:bg-red-900/30 dark:hover:bg-red-900/50 transition-colors"
-                                            title="Hapus Data">
+                                            title="Hapus Data" aria-label="Hapus Data">
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                                         </button>
                                     </div>
@@ -205,7 +205,7 @@
         </div>
 
         {{-- MODAL HAPUS --}}
-        <div x-show="deleteModal" 
+        <div x-show="deleteModal"
              x-cloak
              x-transition:enter="transition ease-out duration-300"
              x-transition:enter-start="opacity-0 transform scale-95"
@@ -215,9 +215,9 @@
              x-transition:leave-end="opacity-0 transform scale-95"
              class="fixed inset-0 z-50 overflow-y-auto bg-gray-900/75 backdrop-blur-sm flex items-center justify-center p-4"
              @keydown.escape.window="closeDeleteModal()">
-            
+
             <div class="relative bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-md w-full overflow-hidden" @click.away="closeDeleteModal()">
-                
+
                 {{-- Modal Header --}}
                 <div class="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
                     <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Konfirmasi Hapus</h3>
@@ -246,8 +246,8 @@
                     <button @click="closeDeleteModal()" type="button" class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:ring-4 focus:outline-none focus:ring-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700 transition-colors">
                         Batal
                     </button>
-                    
-                    <form :action="`{{ route('dashboard.reformasi-rb.destroy', '') }}/${deleteItemId}`" method="POST">
+
+                    <form :action="@js(route('dashboard.reformasi-rb.destroy', ':id')).replace(':id', deleteItemId)" method="POST">
                         @csrf
                         @method('DELETE')
                         <button type="submit" class="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-300 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800 transition-colors">

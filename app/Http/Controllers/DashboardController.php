@@ -11,13 +11,16 @@ use App\Models\JadwalAcara;
 use App\Models\Post;
 use App\Models\User;
 use App\Models\Visitor;
+use Carbon\Carbon;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Collection;
+use Illuminate\View\View;
 
 class DashboardController extends Controller
 {
-    public function index()
+    public function index(): View
     {
         // 1. Mengambil Statistik Data untuk Grid Kartu
         // withoutEagerLoads() mencegah eager loading relasi yang tidak perlu untuk count()
@@ -51,7 +54,7 @@ class DashboardController extends Controller
     /**
      * Get data for visitor chart based on the selected filter.
      */
-    public function visitorChartData(Request $request)
+    public function visitorChartData(Request $request): JsonResponse
     {
         $filter = $request->query('filter', 'week');
 
@@ -74,7 +77,7 @@ class DashboardController extends Controller
 
             for ($i = 0; $i < 7; $i++) {
                 $date = $startDate->copy()->addDays($i)->format('Y-m-d');
-                $labels[] = \Carbon\Carbon::parse($date)->translatedFormat('d M');
+                $labels[] = Carbon::parse($date)->translatedFormat('d M');
                 $series[] = $dailyHits->get($date, 0);
             }
         } elseif ($filter === 'month') {
@@ -84,7 +87,7 @@ class DashboardController extends Controller
 
             for ($i = 0; $i < 30; $i++) {
                 $date = $startDate->copy()->addDays($i)->format('Y-m-d');
-                $labels[] = \Carbon\Carbon::parse($date)->translatedFormat('d M');
+                $labels[] = Carbon::parse($date)->translatedFormat('d M');
                 $series[] = $dailyHits->get($date, 0);
             }
         } elseif ($filter === 'year') {
@@ -107,14 +110,15 @@ class DashboardController extends Controller
         ]);
     }
 
-    private function dailyHits($startDate, $endDate): Collection
+    private function dailyHits(Carbon $startDate, Carbon $endDate): Collection
     {
         return Visitor::query()
-            ->whereDate('date', '>=', $startDate->toDateString())
-            ->whereDate('date', '<=', $endDate->toDateString())
-            ->orderBy('date')
-            ->get()
-            ->groupBy(fn (Visitor $visitor) => $visitor->date->format('Y-m-d'))
-            ->map(fn (Collection $visitors) => (int) $visitors->sum('hits'));
+            ->where('date', '>=', $startDate->toDateString())
+            ->where('date', '<', $endDate->copy()->addDay()->toDateString())
+            ->selectRaw('DATE(date) as visit_date, SUM(hits) as total_hits')
+            ->groupByRaw('DATE(date)')
+            ->orderByRaw('DATE(date)')
+            ->pluck('total_hits', 'visit_date')
+            ->map(fn ($hits) => (int) $hits);
     }
 }

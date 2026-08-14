@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use App\Models\Concerns\InvalidatesHomepageDataCache;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
 class ContactInfo extends Model
 {
-    use HasFactory;
+    use HasFactory, InvalidatesHomepageDataCache;
 
     /**
      * The attributes that are mass assignable.
@@ -15,11 +16,11 @@ class ContactInfo extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'admin_phone', 
-        'partnership_phone', 
-        'hotline_phone', 
-        'address', 
-        'email', 
+        'admin_phone',
+        'partnership_phone',
+        'hotline_phone',
+        'address',
+        'email',
         'is_active',
         'google_maps_embed', // <--- Tambahkan ini
     ];

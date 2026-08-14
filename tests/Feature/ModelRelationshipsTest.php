@@ -13,13 +13,14 @@ use App\Models\NewsCategory;
 use App\Models\Post;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class ModelRelationshipsTest extends TestCase
 {
     use RefreshDatabase;
 
-    /** @test */
+    #[Test]
     public function it_can_create_a_post_with_user_and_category()
     {
         $user = User::factory()->create();
@@ -43,7 +44,7 @@ class ModelRelationshipsTest extends TestCase
         $this->assertEquals('Tech', $post->category->name);
     }
 
-    /** @test */
+    #[Test]
     public function it_can_create_news_with_user_and_news_category()
     {
         $user = User::factory()->create();
@@ -65,7 +66,7 @@ class ModelRelationshipsTest extends TestCase
         $this->assertEquals($user->name, $news->user->name);
     }
 
-    /** @test */
+    #[Test]
     public function it_can_create_broadcast_with_user_and_broadcast_category()
     {
         $user = User::factory()->create();
@@ -85,7 +86,7 @@ class ModelRelationshipsTest extends TestCase
         $this->assertEquals('Talkshow', $broadcast->broadcastCategory->name);
     }
 
-    /** @test */
+    #[Test]
     public function it_can_create_jadwal_acara_with_correct_relations()
     {
         $bcCategory = BroadcastCategory::create(['name' => 'Berita', 'slug' => 'berita', 'color' => 'blue']);
@@ -108,7 +109,7 @@ class ModelRelationshipsTest extends TestCase
         $this->assertEquals('Berita', $jadwal->broadcastCategory->name);
     }
 
-    /** @test */
+    #[Test]
     public function it_can_create_info_magang_and_casts_boolean_correctly()
     {
         $magang = InfoMagang::create([

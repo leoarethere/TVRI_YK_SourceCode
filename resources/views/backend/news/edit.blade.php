@@ -17,10 +17,7 @@
 
     <div class="pb-6" x-data="{
         title: @js(old('title', $news->title)),
-        slug: @js(old('slug', $news->slug)),
-        generateSlug() {
-            this.slug = this.title.toLowerCase().replace(/[^a-z0-9\s-]/g, '').replace(/\s+/g, '-').replace(/-+/g, '-').trim();
-        }
+        slug: @js(old('slug', $news->slug))
     }">
         <div class="mb-8 pt-2">
             <h1 class="text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white">Edit Berita</h1>
@@ -36,7 +33,7 @@
                     {{-- Judul --}}
                     <div>
                         <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Judul Berita <span class="text-red-500">*</span></label>
-                        <input type="text" name="title" x-model="title" @input.debounce.500ms="generateSlug()" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white" required>
+                        <input type="text" name="title" x-model="title" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white" required>
                     </div>
 
                     {{-- Slug --}}

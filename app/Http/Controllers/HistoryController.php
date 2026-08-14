@@ -3,22 +3,22 @@
 namespace App\Http\Controllers;
 
 use App\Models\History;
-use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use Illuminate\View\View;
 
 class HistoryController extends Controller
 {
     /**
      * Menampilkan halaman Sejarah publik.
      */
-    public function index()
+    public function index(): View
     {
         // Mengambil data history yang sudah dipublikasikan, diurutkan kronologis
-        $histories = History::where('status', 'published')->oldest()->get(); 
+        $histories = History::publiclyVisible()->oldest()->get();
 
         return view('frontend.tentang.sejarah', [
-            'title'     => 'Sejarah TVRI Stasiun D.I. Yogyakarta',
-            'histories' => $histories
+            'title' => 'Sejarah TVRI Stasiun D.I. Yogyakarta',
+            'histories' => $histories,
         ]);
     }
 }

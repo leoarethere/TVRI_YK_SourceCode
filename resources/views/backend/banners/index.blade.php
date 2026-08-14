@@ -2,27 +2,27 @@
     <x-slot:title>Kelola Banner Beranda</x-slot:title>
 
     {{-- Data Alpine.js untuk Modal Hapus --}}
-    <div x-data="{ 
-        deleteModal: false, 
-        deleteItemId: null, 
+    <div x-data="{
+        deleteModal: false,
+        deleteItemId: null,
         deleteItemTitle: '',
-        
+
         openDeleteModal(itemId, itemTitle) {
             this.deleteItemId = itemId;
             this.deleteItemTitle = itemTitle;
             this.deleteModal = true;
             document.body.style.overflow = 'hidden';
         },
-        
+
         closeDeleteModal() {
             this.deleteModal = false;
             this.deleteItemId = null;
             this.deleteItemTitle = '';
             document.body.style.overflow = '';
         }
-    }" 
+    }"
     class="pb-6">
-        
+
         {{-- HEADER HALAMAN --}}
         <div class="flex flex-col md:flex-row md:justify-between md:items-center gap-4 mb-6 pt-2">
             <div>
@@ -33,8 +33,8 @@
                     Kelola banner yang tampil di halaman beranda website.
                 </p>
             </div>
-            
-            <a href="{{ route('banners.create') }}" 
+
+            <a href="{{ route('banners.create') }}"
                class="w-full md:w-auto inline-flex items-center justify-center px-4 py-2.5 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800 transition-colors whitespace-nowrap shadow-sm hover:shadow-md">
                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
                 Tambah Banner
@@ -61,12 +61,12 @@
             @forelse ($banners as $banner)
                 {{-- Card Item --}}
                 <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden hover:shadow-lg transition-shadow duration-300 flex flex-col h-full group">
-                    
+
                     {{-- Gambar --}}
                     <div class="relative aspect-video bg-gray-100 dark:bg-gray-700 overflow-hidden">
                         @if($banner->image_path)
-                            <img src="{{ Storage::url($banner->image_path) }}" 
-                                 alt="{{ $banner->title }}" 
+                            <img src="{{ Storage::url($banner->image_path) }}"
+                                 alt="{{ $banner->title }}"
                                  class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
                         @else
                             <div class="w-full h-full flex items-center justify-center text-gray-400">
@@ -109,19 +109,19 @@
                             <div class="text-xs text-gray-400 dark:text-gray-500">
                                 {{ $banner->updated_at->diffForHumans() }}
                             </div>
-                            
+
                             <div class="flex items-center gap-2">
                                 {{-- Tombol Edit --}}
-                                <a href="{{ route('banners.edit', $banner) }}" 
+                                <a href="{{ route('banners.edit', $banner) }}"
                                    class="p-2 text-yellow-600 bg-yellow-50 rounded-lg hover:bg-yellow-100 dark:text-yellow-400 dark:bg-yellow-900/30 dark:hover:bg-yellow-900/50 transition-colors"
-                                   title="Edit Banner">
+                                        title="Edit Banner" aria-label="Edit Banner">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
                                 </a>
 
                                 {{-- Tombol Hapus --}}
-                                <button @click="openDeleteModal({{ $banner->id }}, '{{ addslashes($banner->title) }}')"
+                                <button type="button" @click="openDeleteModal({{ $banner->id }}, @js($banner->title))"
                                         class="p-2 text-red-600 bg-red-50 rounded-lg hover:bg-red-100 dark:text-red-400 dark:bg-red-900/30 dark:hover:bg-red-900/50 transition-colors"
-                                        title="Hapus Banner">
+                                            title="Hapus Banner" aria-label="Hapus Banner">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                                 </button>
                             </div>
@@ -154,7 +154,7 @@
         @endif
 
         {{-- MODAL HAPUS --}}
-        <div x-show="deleteModal" 
+        <div x-show="deleteModal"
              x-cloak
              x-transition:enter="transition ease-out duration-300"
              x-transition:enter-start="opacity-0 transform scale-95"
@@ -164,9 +164,9 @@
              x-transition:leave-end="opacity-0 transform scale-95"
              class="fixed inset-0 z-50 overflow-y-auto bg-gray-900/75 backdrop-blur-sm flex items-center justify-center p-4"
              @keydown.escape.window="closeDeleteModal()">
-            
+
             <div class="relative bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-md w-full overflow-hidden" @click.away="closeDeleteModal()">
-                
+
                 {{-- Header Modal --}}
                 <div class="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
                     <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Konfirmasi Hapus</h3>
@@ -195,7 +195,7 @@
                     <button @click="closeDeleteModal()" type="button" class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:ring-4 focus:outline-none focus:ring-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700 transition-colors">
                         Batal
                     </button>
-                    
+
                     <form :action="`{{ url('dashboard/banners') }}/${deleteItemId}`" method="POST">
                         @csrf
                         @method('DELETE')

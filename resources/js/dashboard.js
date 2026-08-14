@@ -1,8 +1,14 @@
-// resources/js/dashboard.js
-import ApexCharts from 'apexcharts';
-import Cropper from 'cropperjs';
+let apexChartsPromise = null;
 
-window.ApexCharts = ApexCharts;
-window.Cropper = Cropper;
+window.loadApexCharts = () => {
+    if (!apexChartsPromise) {
+        apexChartsPromise = import('apexcharts')
+            .then(({ default: ApexCharts }) => ApexCharts)
+            .catch((error) => {
+                apexChartsPromise = null;
+                throw error;
+            });
+    }
 
-console.log('Dashboard scripts loaded');
+    return apexChartsPromise;
+};

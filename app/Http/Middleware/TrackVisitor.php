@@ -2,18 +2,20 @@
 
 namespace App\Http\Middleware;
 
-use App\Models\Visitor;
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpFoundation\Response;
+
+use function Illuminate\Support\defer;
 
 class TrackVisitor
 {
     /**
      * Handle an incoming request.
      *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
+     * @param  Closure(Request): (Response)  $next
      */
     public function handle(Request $request, Closure $next): Response
     {
@@ -27,29 +29,31 @@ class TrackVisitor
             ! $request->is('livewire*') &&
             ! $request->ajax()) {
 
-            try {
-                $ip = $request->ip();
-                $date = now()->toDateString();
+            $date = now()->toDateString();
+            $anonymizedIp = hash('sha256', $request->ip().config('app.key'));
 
-                // Anonimisasi IP menggunakan Hashing (SHA-256) + Salt dari App Key
-                // Ini memastikan IP asli tidak bisa dibaca balik (irreversible) demi kepatuhan Privasi Data
-                $anonymizedIp = hash('sha256', $ip.config('app.key'));
+            defer(function () use ($anonymizedIp, $date): void {
+                try {
+                    $timestamp = now();
 
-                Visitor::query()->insertOrIgnore([
-                    'ip_address' => $anonymizedIp,
-                    'date' => $date,
-                    'hits' => 0,
-                    'created_at' => now(),
-                    'updated_at' => now(),
-                ]);
-
-                Visitor::query()
-                    ->where('ip_address', $anonymizedIp)
-                    ->where('date', $date)
-                    ->increment('hits');
-            } catch (\Exception $e) {
-                Log::error('Visitor tracking failed: '.$e->getMessage());
-            }
+                    DB::table('visitors')->upsert(
+                        [[
+                            'ip_address' => $anonymizedIp,
+                            'date' => $date,
+                            'hits' => 1,
+                            'created_at' => $timestamp,
+                            'updated_at' => $timestamp,
+                        ]],
+                        ['ip_address', 'date'],
+                        [
+                            'hits' => DB::raw('hits + 1'),
+                            'updated_at' => $timestamp,
+                        ],
+                    );
+                } catch (\Throwable $exception) {
+                    Log::error('Visitor tracking failed: '.$exception->getMessage());
+                }
+            })->always();
         }
 
         return $next($request);

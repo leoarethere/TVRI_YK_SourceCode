@@ -1,315 +1,282 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-# ╔══════════════════════════════════════════════════════════════════════════════╗
-# ║           LARAVEL OPTIMIZATION SCRIPT - Production Ready                     ║
-# ║           Optimizes your Laravel application for maximum performance         ║
-# ╚══════════════════════════════════════════════════════════════════════════════╝
+# Optimasi release Laravel untuk struktur cPanel TVRI Yogyakarta.
+# Semua perintah Artisan menggunakan PHP CLI cPanel yang ditentukan eksplisit.
 
-set -e # Exit on error
+set -Eeuo pipefail
 
-echo "🚀 Starting Laravel Optimization Process..."
-echo "=================================================="
+APP_ROOT="${APP_ROOT:-/home/yogz7392/publik}"
+PUBLIC_ROOT="${PUBLIC_ROOT:-/home/yogz7392/public_html}"
+PHP_BIN="${PHP_BIN:-/opt/cpanel/ea-php82/root/usr/bin/php}"
+RUN_MIGRATIONS="${RUN_MIGRATIONS:-0}"
+RESTART_QUEUE="${RESTART_QUEUE:-1}"
+REPLACE_STORAGE_LINK="${REPLACE_STORAGE_LINK:-0}"
+VERIFY_SCRIPT="$APP_ROOT/deploy/cpanel/verify-deployment.php"
 
-# Colors for output
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-NC='\033[0m' # No Color
+maintenance_owned=0
 
-# Function to print colored messages
-print_success() {
-    echo -e "${GREEN}✓ $1${NC}"
+log() {
+    printf '[%s] %s\n' "$1" "$2"
 }
 
-print_warning() {
-    echo -e "${YELLOW}⚠ $1${NC}"
-}
-
-print_error() {
-    echo -e "${RED}✗ $1${NC}"
-}
-
-# Check if we're in a Laravel project
-if [ ! -f "artisan" ]; then
-    print_error "Error: artisan file not found. Are you in a Laravel project directory?"
+fail() {
+    log 'GAGAL' "$1" >&2
     exit 1
-fi
+}
 
-print_success "Laravel project detected"
+check_safe_path() {
+    case "$1" in
+        ''|/|/home|/home/)
+            fail "$2 tidak aman atau terlalu luas: $1"
+            ;;
+        /*)
+            ;;
+        *)
+            fail "$2 harus berupa absolute path: $1"
+            ;;
+    esac
+}
 
-# ============================================
-# STEP 1: Clear All Caches
-# ============================================
-echo ""
-echo "📦 Step 1: Clearing all existing caches..."
+artisan() {
+    (cd "$APP_ROOT" && "$PHP_BIN" artisan "$@")
+}
 
-php artisan cache:clear && print_success "Application cache cleared" || print_warning "Failed to clear application cache"
-php artisan config:clear && print_success "Config cache cleared" || print_warning "Failed to clear config cache"
-php artisan route:clear && print_success "Route cache cleared" || print_warning "Failed to clear route cache"
-php artisan view:clear && print_success "View cache cleared" || print_warning "Failed to clear view cache"
-php artisan event:clear && print_success "Event cache cleared" || print_warning "Failed to clear event cache"
+env_value() {
+    key="$1"
+    sed -n "s/^${key}=//p" "$APP_ROOT/.env" | tail -n 1 | tr -d '\r\"'
+}
 
-# ============================================
-# STEP 2: Optimize Composer Autoloader
-# ============================================
-echo ""
-echo "📚 Step 2: Optimizing Composer autoloader..."
+release_maintenance() {
+    status=$?
+    trap - EXIT HUP INT TERM
 
-if command -v composer &> /dev/null; then
-    composer dump-autoload --optimize && print_success "Composer autoloader optimized"
-else
-    print_warning "Composer not found, skipping autoloader optimization"
-fi
+    if [ "$maintenance_owned" -eq 1 ]; then
+        log 'INFO' 'Melepas maintenance mode...'
 
-# ============================================
-# STEP 3: Cache Configuration
-# ============================================
-echo ""
-echo "⚙️  Step 3: Caching configuration..."
+        if ! artisan up; then
+            log 'GAGAL' 'Maintenance mode tidak dapat dilepas; jalankan PHP_BIN artisan up secara manual.' >&2
 
-php artisan config:cache && print_success "Configuration cached" || print_error "Failed to cache configuration"
-
-# ============================================
-# STEP 4: Cache Routes
-# ============================================
-echo ""
-echo "🛣️  Step 4: Caching routes..."
-
-php artisan route:cache && print_success "Routes cached" || print_warning "Failed to cache routes (check for closures in routes)"
-
-# ============================================
-# STEP 5: Cache Views
-# ============================================
-echo ""
-echo "👁️  Step 5: Caching views..."
-
-php artisan view:cache && print_success "Views cached" || print_warning "Failed to cache views (check for syntax errors)"
-
-# ============================================
-# STEP 6: Cache Events
-# ============================================
-echo ""
-echo "📡 Step 6: Caching events..."
-
-php artisan event:cache && print_success "Events cached" || print_warning "Failed to cache events"
-
-# ============================================
-# STEP 7: Optimize Assets (if Vite/Mix exists)
-# ============================================
-echo ""
-echo "🎨 Step 7: Optimizing assets..."
-
-if [ -f "vite.config.js" ]; then
-    if command -v npm &> /dev/null; then
-        npm run build && print_success "Vite assets built and optimized"
-    else
-        print_warning "npm not found, skipping asset optimization"
+            if [ "$status" -eq 0 ]; then
+                status=1
+            fi
+        fi
     fi
-elif [ -f "webpack.mix.js" ]; then
-    if command -v npm &> /dev/null; then
-        npm run production && print_success "Mix assets built and optimized"
-    else
-        print_warning "npm not found, skipping asset optimization"
+
+    exit "$status"
+}
+
+trap release_maintenance EXIT
+trap 'exit 129' HUP
+trap 'exit 130' INT
+trap 'exit 143' TERM
+
+check_safe_path "$APP_ROOT" 'APP_ROOT'
+check_safe_path "$PUBLIC_ROOT" 'PUBLIC_ROOT'
+
+case "$RUN_MIGRATIONS" in
+    0|1) ;;
+    *) fail 'RUN_MIGRATIONS harus 0 atau 1.' ;;
+esac
+
+case "$RESTART_QUEUE" in
+    0|1) ;;
+    *) fail 'RESTART_QUEUE harus 0 atau 1.' ;;
+esac
+
+case "$REPLACE_STORAGE_LINK" in
+    0|1) ;;
+    *) fail 'REPLACE_STORAGE_LINK harus 0 atau 1.' ;;
+esac
+
+if [ ! -x "$PHP_BIN" ]; then
+    fail "PHP_BIN tidak executable: $PHP_BIN"
+fi
+
+php_version_id="$("$PHP_BIN" -r 'echo PHP_VERSION_ID;' 2>/dev/null || true)"
+
+if [ -z "$php_version_id" ] || [ "$php_version_id" -lt 80200 ]; then
+    fail "PHP CLI harus 8.2+; PHP_VERSION_ID=${php_version_id:-tidak diketahui}"
+fi
+
+for required in artisan composer.json composer.lock bootstrap/app.php vendor/autoload.php deploy/cpanel/verify-deployment.php .env; do
+    if [ ! -f "$APP_ROOT/$required" ]; then
+        fail "Berkas wajib tidak ditemukan: $APP_ROOT/$required"
     fi
+done
+
+if [ ! -d "$PUBLIC_ROOT" ] || [ ! -w "$PUBLIC_ROOT" ]; then
+    fail "PUBLIC_ROOT tidak tersedia atau tidak writable: $PUBLIC_ROOT"
+fi
+
+app_key="$(env_value APP_KEY)"
+
+if [ -z "$app_key" ]; then
+    fail 'APP_KEY production kosong. Script tidak akan membuat key baru secara otomatis.'
+fi
+
+app_env="$(env_value APP_ENV)"
+app_debug="$(env_value APP_DEBUG | tr '[:upper:]' '[:lower:]')"
+app_url="$(env_value APP_URL)"
+app_timezone="$(env_value APP_TIMEZONE)"
+db_connection="$(env_value DB_CONNECTION)"
+db_database="$(env_value DB_DATABASE)"
+db_username="$(env_value DB_USERNAME)"
+db_password="$(env_value DB_PASSWORD)"
+filesystem_disk="$(env_value FILESYSTEM_DISK)"
+session_secure="$(env_value SESSION_SECURE_COOKIE | tr '[:upper:]' '[:lower:]')"
+log_channel="$(env_value LOG_CHANNEL)"
+log_stack="$(env_value LOG_STACK)"
+mail_mailer="$(env_value MAIL_MAILER)"
+mail_host="$(env_value MAIL_HOST)"
+mail_from="$(env_value MAIL_FROM_ADDRESS)"
+
+[ "$app_env" = 'production' ] || fail 'APP_ENV harus production sebelum optimasi live.'
+[ "$app_debug" = 'false' ] || fail 'APP_DEBUG harus false sebelum optimasi live.'
+[ "$app_timezone" = 'Asia/Jakarta' ] || fail 'APP_TIMEZONE production harus Asia/Jakarta.'
+
+case "$app_key" in
+    BASE64_KEY_DARI_ENV_LIVE_LAMA|BASE64_KEY_*|CHANGE_ME*|changeme*)
+        fail 'APP_KEY masih berupa placeholder; pertahankan key live yang valid.'
+        ;;
+esac
+
+if ! printf '%s' "$app_key" | "$PHP_BIN" -r '$key = stream_get_contents(STDIN); if (str_starts_with($key, "base64:")) { $key = base64_decode(substr($key, 7), true); } exit(is_string($key) && strlen($key) === 32 ? 0 : 1);'; then
+    fail 'APP_KEY tidak valid untuk cipher AES-256-CBC; jangan generate ulang key live.'
+fi
+
+case "$app_url" in
+    https://*) ;;
+    *) fail 'APP_URL production harus menggunakan HTTPS.' ;;
+esac
+
+case "$db_connection" in
+    mysql|mariadb) ;;
+    *) fail 'DB_CONNECTION production harus mysql atau mariadb.' ;;
+esac
+
+case "$db_database" in
+    ''|NAMA_DATABASE*) fail 'DB_DATABASE belum diisi dengan database production.' ;;
+esac
+
+case "$db_username" in
+    ''|USER_DATABASE*) fail 'DB_USERNAME belum diisi dengan user production.' ;;
+esac
+
+case "$db_password" in
+    ''|PASSWORD_DATABASE*) fail 'DB_PASSWORD production kosong atau masih placeholder.' ;;
+esac
+
+[ "$filesystem_disk" = 'public' ] || fail 'FILESYSTEM_DISK production harus public.'
+[ "$session_secure" = 'true' ] || fail 'SESSION_SECURE_COOKIE production harus true.'
+
+if [ "$log_channel" != 'daily' ]; then
+    case ",$log_stack," in
+        *,daily,*) ;;
+        *) fail 'Logging production harus memakai channel daily agar log berotasi.' ;;
+    esac
+fi
+
+case "$mail_mailer" in
+    log|array|'') fail 'MAIL_MAILER production harus memakai transport pengiriman nyata.' ;;
+esac
+
+if [ "$mail_mailer" = 'smtp' ]; then
+    case "$mail_host" in
+        ''|HOST_MAIL_PROVIDER*) fail 'MAIL_HOST belum diisi dengan mail provider production.' ;;
+    esac
+fi
+
+case "$mail_from" in
+    *@*.*)
+        case "$mail_from" in
+            *DOMAIN_YANG_TERVERIFIKASI*) fail 'MAIL_FROM_ADDRESS masih berupa placeholder.' ;;
+        esac
+        ;;
+    *) fail 'MAIL_FROM_ADDRESS production tidak valid.' ;;
+esac
+
+extension_output="$("$PHP_BIN" -r '$required = ["gd", "pdo_mysql"]; $missing = array_values(array_filter($required, static fn ($extension) => ! extension_loaded($extension))); if ($missing !== []) { fwrite(STDERR, implode(", ", $missing)); exit(1); }' 2>&1)" || fail "Ekstensi PHP production belum lengkap: $extension_output"
+
+log 'INFO' "APP_ROOT=$APP_ROOT"
+log 'INFO' "PUBLIC_ROOT=$PUBLIC_ROOT"
+log 'INFO' "PHP_BIN=$PHP_BIN"
+
+log 'INFO' 'Mengaktifkan maintenance mode...'
+artisan down --retry=60
+maintenance_owned=1
+
+umask 0002
+mkdir -p \
+    "$APP_ROOT/storage/app/public" \
+    "$APP_ROOT/storage/framework/cache" \
+    "$APP_ROOT/storage/framework/sessions" \
+    "$APP_ROOT/storage/framework/views" \
+    "$APP_ROOT/storage/logs" \
+    "$APP_ROOT/bootstrap/cache"
+
+# Runtime harus writable oleh user dan group web server; jangan gunakan 777.
+chmod -R ug+rwX "$APP_ROOT/storage" "$APP_ROOT/bootstrap/cache"
+log 'OK' 'Permission storage dan bootstrap/cache dibuat group-writable.'
+
+storage_target="$APP_ROOT/storage/app/public"
+storage_link="$PUBLIC_ROOT/storage"
+resolved_target="$(readlink -f "$storage_target")"
+
+if [ -L "$storage_link" ]; then
+    resolved_link="$(readlink -f "$storage_link" 2>/dev/null || true)"
+
+    if [ "$resolved_link" = "$resolved_target" ]; then
+        log 'OK' "Storage link sudah benar: $storage_link -> $resolved_target"
+    elif [ "$REPLACE_STORAGE_LINK" -eq 1 ]; then
+        unlink "$storage_link"
+        ln -s "$storage_target" "$storage_link"
+        log 'OK' "Storage link yang salah diganti: $storage_link -> $storage_target"
+    else
+        fail "Storage link menuju ${resolved_link:-target tidak valid}. Periksa dahulu, lalu ulangi dengan REPLACE_STORAGE_LINK=1 jika aman."
+    fi
+elif [ -e "$storage_link" ]; then
+    fail "$storage_link adalah file/folder biasa. Backup dan pindahkan secara manual sebelum membuat symlink."
 else
-    print_warning "No asset bundler detected (Vite/Mix), skipping"
+    ln -s "$storage_target" "$storage_link"
+    log 'OK' "Storage link dibuat: $storage_link -> $storage_target"
 fi
 
-# ============================================
-# STEP 8: Database Optimization (Optional)
-# ============================================
-echo ""
-echo "🗄️  Step 8: Database optimization..."
+log 'INFO' 'Membersihkan cache file release lama tanpa mengakses cache database...'
+artisan config:clear
+artisan route:clear
+artisan view:clear
+artisan event:clear
+artisan clear-compiled
 
-read -p "Run database migrations? (y/n): " -n 1 -r
-echo
-if [[ $REPLY =~ ^[Yy]$ ]]; then
-    php artisan migrate --force && print_success "Migrations completed"
-fi
-
-read -p "Optimize database tables? (y/n): " -n 1 -r
-echo
-if [[ $REPLY =~ ^[Yy]$ ]]; then
-    php artisan db:optimize && print_success "Database optimized" || print_warning "Database optimization not available"
-fi
-
-# ============================================
-# STEP 9: Queue Workers (Optional)
-# ============================================
-echo ""
-echo "⚡ Step 9: Queue management..."
-
-read -p "Restart queue workers? (y/n): " -n 1 -r
-echo
-if [[ $REPLY =~ ^[Yy]$ ]]; then
-    php artisan queue:restart && print_success "Queue workers restarted"
-fi
-
-# ============================================
-# STEP 10: Create Symlink for Storage
-# ============================================
-echo ""
-echo "🔗 Step 10: Creating storage symlink..."
-
-if [ ! -L "public/storage" ]; then
-    php artisan storage:link && print_success "Storage symlink created"
+if [ "$RUN_MIGRATIONS" -eq 1 ]; then
+    log 'INFO' 'Menjalankan migration production...'
+    artisan migrate --force
+    log 'INFO' 'Mengaudit relasi kategori penyiaran legacy...'
+    artisan broadcasts:audit-categories
 else
-    print_warning "Storage symlink already exists"
+    log 'INFO' 'Migration dilewati. Gunakan RUN_MIGRATIONS=1 setelah backup database tersedia.'
 fi
 
-# ============================================
-# STEP 11: File Permissions
-# ============================================
-echo ""
-echo "🔐 Step 11: Setting file permissions..."
+# cache:clear dijalankan setelah migration agar fresh install tidak gagal karena
+# tabel cache database belum dibuat.
+artisan cache:clear
 
-chmod -R 755 storage bootstrap/cache && print_success "Permissions set for storage and bootstrap/cache"
+log 'INFO' 'Membangun cache production...'
+artisan optimize
 
-# ============================================
-# STEP 12: Generate Application Key (if not set)
-# ============================================
-echo ""
-echo "🔑 Step 12: Checking application key..."
-
-if grep -q "APP_KEY=$" .env 2>/dev/null; then
-    print_warning "Application key not set, generating..."
-    php artisan key:generate && print_success "Application key generated"
+if config_check="$("$PHP_BIN" "$VERIFY_SCRIPT" config "$APP_ROOT/bootstrap/cache/config.php" 2>&1)"; then
+    log 'OK' "Cache konfigurasi lolos $config_check kebijakan production."
 else
-    print_success "Application key already set"
+    fail "Cache konfigurasi production tidak aman: $config_check"
 fi
 
-# ============================================
-# SUMMARY & RECOMMENDATIONS
-# ============================================
-echo ""
-echo "=================================================="
-echo "✨ Optimization Complete! ✨"
-echo "=================================================="
-echo ""
-echo "📊 Summary:"
-echo "  ✓ All caches cleared and rebuilt"
-echo "  ✓ Composer autoloader optimized"
-echo "  ✓ Assets built (if applicable)"
-echo "  ✓ Permissions configured"
-echo ""
-echo "🎯 Additional Recommendations:"
-echo ""
-echo "1. Enable OPcache in php.ini:"
-echo "   opcache.enable=1"
-echo "   opcache.memory_consumption=256"
-echo "   opcache.interned_strings_buffer=16"
-echo "   opcache.max_accelerated_files=10000"
-echo ""
-echo "2. Use Redis for caching (update .env):"
-echo "   CACHE_DRIVER=redis"
-echo "   SESSION_DRIVER=redis"
-echo "   QUEUE_CONNECTION=redis"
-echo ""
-echo "3. Configure your web server (Nginx/Apache):"
-echo "   - Enable Gzip compression"
-echo "   - Set cache headers for static assets"
-echo "   - Use HTTP/2"
-echo ""
-echo "4. Monitor performance with:"
-echo "   - Laravel Telescope (dev/staging)"
-echo "   - Laravel Debugbar (dev only)"
-echo "   - APM tools (production)"
-echo ""
-echo "5. Database optimization:"
-echo "   - Add indexes to frequently queried columns"
-echo "   - Use query caching"
-echo "   - Implement eager loading"
-echo ""
-echo "6. Test your site speed:"
-echo "   - Google PageSpeed Insights"
-echo "   - GTmetrix"
-echo "   - Pingdom"
-echo ""
-echo "📝 Next Steps:"
-echo "  1. Test your application: php artisan serve"
-echo "  2. Check for errors in storage/logs/laravel.log"
-echo "  3. Monitor performance improvements"
-echo "  4. Set up a cron job for scheduled tasks"
-echo ""
-echo "🔄 To run this optimization again:"
-echo "  chmod +x optimize-laravel.sh"
-echo "  ./optimize-laravel.sh"
-echo ""
-echo "=================================================="
-echo "Happy coding! 🚀"
-echo "=================================================="
-
-# ============================================
-# OPTIONAL: Create systemd service for queue
-# ============================================
-echo ""
-read -p "Create queue worker systemd service? (y/n): " -n 1 -r
-echo
-if [[ $REPLY =~ ^[Yy]$ ]]; then
-    cat > /tmp/laravel-worker.service << EOF
-[Unit]
-Description=Laravel Queue Worker
-After=network.target
-
-[Service]
-User=www-data
-Group=www-data
-Restart=always
-ExecStart=/usr/bin/php $(pwd)/artisan queue:work --sleep=3 --tries=3 --max-time=3600
-
-[Install]
-WantedBy=multi-user.target
-EOF
-    
-    print_success "Service file created at /tmp/laravel-worker.service"
-    echo "To install:"
-    echo "  sudo mv /tmp/laravel-worker.service /etc/systemd/system/"
-    echo "  sudo systemctl daemon-reload"
-    echo "  sudo systemctl enable laravel-worker"
-    echo "  sudo systemctl start laravel-worker"
+if [ "$RESTART_QUEUE" -eq 1 ]; then
+    artisan queue:restart
+    log 'OK' 'Sinyal restart queue berhasil dikirim.'
 fi
 
-# ============================================
-# OPTIONAL: Create deployment script
-# ============================================
-echo ""
-read -p "Create deployment script? (y/n): " -n 1 -r
-echo
-if [[ $REPLY =~ ^[Yy]$ ]]; then
-    cat > deploy.sh << 'EOF'
-#!/bin/bash
-# Laravel Deployment Script
+log 'INFO' 'Melepas maintenance mode...'
+artisan up
+maintenance_owned=0
 
-set -e
-
-echo "🚀 Deploying Laravel Application..."
-
-# Pull latest changes
-git pull origin main
-
-# Install/update dependencies
-composer install --no-dev --optimize-autoloader --no-interaction
-
-# Run optimizations
-php artisan down
-php artisan migrate --force
-php artisan cache:clear
-php artisan config:cache
-php artisan route:cache
-php artisan view:cache
-php artisan queue:restart
-php artisan up
-
-# Build assets
-npm ci
-npm run build
-
-echo "✅ Deployment complete!"
-EOF
-    
-    chmod +x deploy.sh
-    print_success "Deployment script created: deploy.sh"
-fi
-
-echo ""
-print_success "All done! Your Laravel application is now optimized! 🎉"
+log 'OK' 'Optimasi Laravel selesai. Jalankan deploy/cpanel/preflight.sh untuk verifikasi akhir.'

@@ -9,7 +9,7 @@
             {{-- Background Pattern --}}
             <div class="absolute inset-0 bg-grid-white/[0.05] bg-[size:24px_24px]"></div>
             <div class="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent"></div>
-            
+
             <div class="relative px-6 py-12 lg:px-12 lg:py-20 text-center z-10">
                 <div class="max-w-3xl mx-auto">
                     <h1 class="text-2xl sm:text-3xl lg:text-4xl font-bold text-white mb-4 drop-shadow-sm">
@@ -26,7 +26,7 @@
         <div class="mb-6">
             <form method="GET" action="{{ route('info-kunjungan.index') }}" class="mx-auto">
                 <div class="flex flex-col md:flex-row justify-between items-center gap-4 p-4 bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700">
-                    
+
                     {{-- Judul Seksi --}}
                     <div class="w-full md:w-auto">
                         <h2 class="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
@@ -37,7 +37,7 @@
 
                     {{-- Group Filter --}}
                     <div class="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
-                        
+
                         {{-- Search Input --}}
                         <div class="relative w-full sm:w-64">
                             <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
@@ -45,10 +45,10 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                                 </svg>
                             </div>
-                            <input type="text" 
-                                   name="search" 
+                            <input type="text"
+                                   name="search"
                                    value="{{ request('search') }}"
-                                   class="block w-full py-2.5 pl-10 pr-4 text-sm text-gray-900 bg-gray-50 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" 
+                                   class="block w-full py-2.5 pl-10 pr-4 text-sm text-gray-900 bg-gray-50 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
                                    placeholder="Cari info kunjungan...">
                         </div>
 
@@ -59,7 +59,7 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4h13M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12"></path>
                                 </svg>
                             </div>
-                            <select name="sort" onchange="this.form.submit()" 
+                            <select name="sort" onchange="this.form.submit()"
                                     class="block w-full py-2.5 pl-10 pr-8 text-sm text-gray-900 bg-gray-50 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white cursor-pointer">
                                 <option value="latest" @selected(request('sort', 'latest') == 'latest')>Terbaru</option>
                                 <option value="oldest" @selected(request('sort') == 'oldest')>Terlama</option>
@@ -81,7 +81,7 @@
                             untuk "<strong>{{ request('search') }}</strong>"
                         @endif
                     </div>
-                    
+
                     <a href="{{ route('info-kunjungan.index') }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-red-700 bg-red-100 rounded-full hover:bg-red-200 dark:bg-red-900/30 dark:text-red-300 dark:hover:bg-red-900/50 transition-colors">
                         <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                         Reset Filter
@@ -96,20 +96,20 @@
                 {{-- Grid: 1 kolom mobile, 2 kolom large screen (Card Horizontal) --}}
                 <div class="grid gap-6 grid-cols-1 lg:grid-cols-2">
                     @foreach($items as $item)
-                        
+
                         {{-- CARD ITEM (HORIZONTAL LAYOUT) --}}
                         <div class="group relative flex flex-col md:flex-row bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
-                            
+
                             {{-- 1. GAMBAR / ICON (KIRI) --}}
                             {{-- Mobile: Aspect Video, Desktop: Fixed Width --}}
-                            <a href="{{ $item->source_link }}" target="_blank" class="relative w-full md:w-48 md:min-w-[12rem] aspect-video md:aspect-auto shrink-0 bg-gray-100 dark:bg-gray-700 block overflow-hidden">
+                            <a href="{{ $item->source_link }}" target="_blank" rel="noopener noreferrer" class="relative w-full md:w-48 md:min-w-[12rem] aspect-video md:aspect-auto shrink-0 bg-gray-100 dark:bg-gray-700 block overflow-hidden">
                                 @if($item->cover_image)
-                                    <img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" 
-                                         src="{{ Storage::url($item->cover_image) }}" 
+                                    <img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                                         src="{{ Storage::url($item->cover_image) }}"
                                          alt="{{ $item->title }}"
                                          loading="lazy"
                                          onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                                    
+
                                     {{-- Fallback jika error load gambar --}}
                                     <div class="hidden w-full h-full items-center justify-center bg-gray-100 dark:bg-gray-700">
                                         <svg class="w-10 h-10 text-gray-300 dark:text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -125,7 +125,7 @@
                                         </svg>
                                     </div>
                                 @endif
-                                
+
                                 {{-- Overlay Hover --}}
                                 <div class="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors duration-300"></div>
                             </a>
@@ -146,7 +146,7 @@
 
                                     {{-- Judul --}}
                                     <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-2 leading-tight group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
-                                        <a href="{{ $item->source_link }}" target="_blank">
+                                        <a href="{{ $item->source_link }}" target="_blank" rel="noopener noreferrer">
                                             {{ $item->title }}
                                         </a>
                                     </h3>
@@ -159,47 +159,70 @@
 
                                 {{-- Action Buttons --}}
                                 <div class="pt-4 border-t border-gray-100 dark:border-gray-700 flex items-center gap-3">
-                                    
+
                                     {{-- Tombol Lihat Informasi --}}
-                                    <a href="{{ $item->source_link }}" target="_blank" 
+                                    <a href="{{ $item->source_link }}" target="_blank" rel="noopener noreferrer"
                                        class="flex-1 inline-flex justify-center items-center gap-2 px-4 py-2 text-sm font-semibold text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 dark:focus:ring-blue-800 transition-all shadow-sm">
                                         <span>Lihat Informasi</span>
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
                                     </a>
 
                                     {{-- Tombol Salin Link (Alpine.js) --}}
-                                    <div x-data="{ 
+                                    <div x-data="{
                                         copied: false,
-                                        copyToClipboard() {
-                                            const text = '{{ $item->source_link }}';
-                                            if (navigator.clipboard) {
-                                                navigator.clipboard.writeText(text);
-                                            } else {
-                                                const textArea = document.createElement('textarea');
+                                        copyFailed: false,
+                                        copyUsingFallback(text) {
+                                            const textArea = document.createElement('textarea');
+                                            try {
                                                 textArea.value = text;
                                                 document.body.appendChild(textArea);
                                                 textArea.select();
-                                                document.execCommand('copy');
-                                                document.body.removeChild(textArea);
+                                                if (!document.execCommand('copy')) {
+                                                    throw new Error('Browser menolak perintah salin.');
+                                                }
+                                            } finally {
+                                                textArea.remove();
                                             }
-                                            this.copied = true;
-                                            setTimeout(() => this.copied = false, 2000);
+                                        },
+                                        async copyToClipboard() {
+                                            const text = @js($item->source_link);
+                                            this.copied = false;
+                                            this.copyFailed = false;
+
+                                            try {
+                                                if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
+                                                    await navigator.clipboard.writeText(text);
+                                                } else {
+                                                    this.copyUsingFallback(text);
+                                                }
+                                                this.copied = true;
+                                            } catch (error) {
+                                                this.copyFailed = true;
+                                            }
+
+                                            setTimeout(() => {
+                                                this.copied = false;
+                                                this.copyFailed = false;
+                                            }, 2000);
                                         }
                                     }">
-                                        <button @click="copyToClipboard()" 
+                                        <button type="button" @click="copyToClipboard()"
                                                 class="p-2 text-gray-500 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-400 dark:hover:bg-gray-600 rounded-lg transition-colors border border-gray-200 dark:border-gray-600 relative group/tooltip"
-                                                :class="{'text-green-600 bg-green-50 border-green-200 dark:bg-green-900/30 dark:border-green-800 dark:text-green-400': copied}"
-                                                title="Salin Link">
-                                            
+                                                :class="{
+                                                    'text-green-600 bg-green-50 border-green-200 dark:bg-green-900/30 dark:border-green-800 dark:text-green-400': copied,
+                                                    'text-red-600 bg-red-50 border-red-200 dark:bg-red-900/30 dark:border-red-800 dark:text-red-400': copyFailed
+                                                }"
+                                            title="Salin tautan" aria-label="Salin tautan">
+
                                             {{-- Ikon Default --}}
                                             <svg x-show="!copied" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg>
-                                            
+
                                             {{-- Ikon Sukses --}}
                                             <svg x-show="copied" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="display: none;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
 
                                             {{-- Tooltip --}}
                                             <span class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 text-xs text-white bg-gray-900 rounded opacity-0 group-hover/tooltip:opacity-100 transition-opacity whitespace-nowrap pointer-events-none"
-                                                  x-text="copied ? 'Tersalin!' : 'Salin Link'">
+                                                  x-text="copied ? 'Tersalin!' : (copyFailed ? 'Gagal menyalin' : 'Salin Link')">
                                             </span>
                                         </button>
                                     </div>
@@ -262,10 +285,13 @@
                 <div class="space-y-4" x-data="{ activeAccordion: null }">
                     @foreach($faqs as $faq)
                         <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden transition-all duration-300 hover:shadow-md">
-                            <button 
+                            <button
+                                type="button"
                                 @click="activeAccordion = (activeAccordion === {{ $faq->id }} ? null : {{ $faq->id }})"
+                                :aria-expanded="activeAccordion === {{ $faq->id }}"
+                                aria-controls="kunjungan-faq-{{ $faq->id }}"
                                 class="flex items-center justify-between w-full p-5 text-left bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors focus:outline-none">
-                                
+
                                 <span class="text-lg font-semibold text-gray-900 dark:text-white pr-4">
                                     {{ $faq->question }}
                                 </span>
@@ -279,7 +305,7 @@
                             </button>
 
                             {{-- Konten Jawaban (Slide Down) --}}
-                            <div x-show="activeAccordion === {{ $faq->id }}" 
+                            <div id="kunjungan-faq-{{ $faq->id }}" x-show="activeAccordion === {{ $faq->id }}"
                                  x-collapse
                                  x-cloak
                                  class="border-t border-gray-100 dark:border-gray-700 dark:bg-gray-900/30">

@@ -91,4 +91,45 @@ class LoginTest extends TestCase
         $response = $this->post(route('login'), []);
         $response->assertSessionHasErrors(['email', 'password']);
     }
+
+    public function test_employee_rejected_from_dashboard_portal_gets_a_fresh_session(): void
+    {
+        $employee = User::factory()->create([
+            'role' => 'pegawai',
+            'email' => 'pegawai@example.com',
+            'password' => bcrypt('password123'),
+        ]);
+
+        $this->withSession([
+            'url.intended' => '/dashboard/users',
+            'sensitive-residual' => 'must-be-cleared',
+        ])->post(route('login'), [
+            'email' => $employee->email,
+            'password' => 'password123',
+        ])->assertSessionHasErrors('email')
+            ->assertSessionMissing('url.intended')
+            ->assertSessionMissing('sensitive-residual');
+
+        $this->assertGuest();
+    }
+
+    public function test_dashboard_user_rejected_from_employee_portal_gets_a_fresh_session(): void
+    {
+        $admin = User::factory()->admin()->create([
+            'email' => 'root-portal@example.com',
+            'password' => bcrypt('password123'),
+        ]);
+
+        $this->withSession([
+            'url.intended' => '/pegawai/private',
+            'sensitive-residual' => 'must-be-cleared',
+        ])->post('/pegawai/login', [
+            'email' => $admin->email,
+            'password' => 'password123',
+        ])->assertSessionHasErrors('email')
+            ->assertSessionMissing('url.intended')
+            ->assertSessionMissing('sensitive-residual');
+
+        $this->assertGuest();
+    }
 }

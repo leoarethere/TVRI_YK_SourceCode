@@ -3,12 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\HymneTvri;
-use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use Illuminate\View\View;
 
 class HymneTvriController extends Controller
 {
-    public function index()
+    public function index(): View
     {
         // Only show active hymne records to public visitors
         $hymnes = HymneTvri::where('is_active', true)->latest()->paginate(5);

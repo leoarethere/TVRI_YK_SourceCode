@@ -12,10 +12,11 @@
     </div>
 
     {{-- GRAFIK PENGUNJUNG (Paling Atas) --}}
-    <div x-data="visitorChart()" x-init="init()" class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm p-5 sm:p-6 mb-8">
+    <div x-data="visitorChart()" class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm p-5 sm:p-6 mb-8">
         <div class="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <h4 class="text-lg font-bold text-gray-900 dark:text-white">Statistik Tayangan</h4>
-            <select x-model="filter" @change="fetchData" class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-indigo-500 focus:ring-indigo-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-indigo-500 dark:focus:ring-indigo-500 sm:w-auto">
+            <label for="visitor-chart-filter" class="sr-only">Rentang waktu statistik tayangan</label>
+            <select id="visitor-chart-filter" x-model="filter" @change="fetchData" class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-indigo-500 focus:ring-indigo-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-indigo-500 dark:focus:ring-indigo-500 sm:w-auto">
                 <option value="today">Hari Ini</option>
                 <option value="week">7 Hari Terakhir</option>
                 <option value="month">30 Hari Terakhir</option>
@@ -29,7 +30,7 @@
                     <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                 </svg>
             </div>
-            <div id="apex-visitor-chart" class="w-full h-full"></div>
+            <div x-ref="chart" id="apex-visitor-chart" class="w-full h-full"></div>
         </div>
     </div>
 
@@ -232,20 +233,33 @@
                 filter: 'week',
                 loading: false,
                 chart: null,
-                init() {
-                    // Coba render chart jika ApexCharts sudah tersedia
-                    this.checkAndRender();
-                },
-                checkAndRender() {
-                    if (window.ApexCharts) {
-                        this.renderChart();
+                themeObserver: null,
+                requestController: null,
+                initialized: false,
+                destroyed: false,
+                async init() {
+                    if (this.initialized) {
+                        return;
+                    }
+
+                    this.initialized = true;
+                    try {
+                        const ApexCharts = await window.loadApexCharts();
+                        if (this.destroyed) {
+                            return;
+                        }
+
+                        this.renderChart(ApexCharts);
                         this.fetchData();
-                    } else {
-                        // Jika belum ter-load (Vite async load), tunggu sebentar
-                        setTimeout(() => this.checkAndRender(), 100);
+                    } catch (error) {
+                        console.error('Gagal memuat grafik statistik:', error);
                     }
                 },
-                renderChart() {
+                renderChart(ApexCharts) {
+                    if (this.chart || !this.$refs.chart) {
+                        return;
+                    }
+
                     const options = {
                         series: [{
                             name: 'Tayangan',
@@ -323,13 +337,13 @@
                         }]
                     };
 
-                    this.chart = new window.ApexCharts(document.querySelector("#apex-visitor-chart"), options);
+                    this.chart = new ApexCharts(this.$refs.chart, options);
                     this.chart.render();
 
                     // Observer untuk theme dark/light mode toggle
-                    const observer = new MutationObserver((mutations) => {
+                    this.themeObserver = new MutationObserver((mutations) => {
                         mutations.forEach((mutation) => {
-                            if (mutation.attributeName === 'class') {
+                            if (mutation.attributeName === 'class' && this.chart) {
                                 const isDark = document.documentElement.classList.contains('dark');
                                 this.chart.updateOptions({
                                     theme: { mode: isDark ? 'dark' : 'light' },
@@ -339,14 +353,26 @@
                             }
                         });
                     });
-                    observer.observe(document.documentElement, { attributes: true });
+                    this.themeObserver.observe(document.documentElement, { attributes: true });
                 },
                 fetchData() {
+                    this.requestController?.abort();
+                    const controller = new AbortController();
+                    this.requestController = controller;
                     this.loading = true;
-                    fetch(`/dashboard/visitor-chart?filter=${this.filter}`)
-                        .then(res => res.json())
+                    const url = new URL(@js(route('dashboard.visitor-chart')), window.location.origin);
+                    url.searchParams.set('filter', this.filter);
+
+                    fetch(url, { signal: controller.signal })
+                        .then(res => {
+                            if (!res.ok) {
+                                throw new Error(`HTTP ${res.status}`);
+                            }
+
+                            return res.json();
+                        })
                         .then(data => {
-                            if (this.chart) {
+                            if (this.chart && this.requestController === controller) {
                                 this.chart.updateSeries([{
                                     name: 'Tayangan',
                                     data: data.series
@@ -356,10 +382,26 @@
                                 });
                             }
                         })
-                        .catch(err => console.error("Error fetching chart data:", err))
+                        .catch(err => {
+                            if (err.name !== 'AbortError') {
+                                console.error("Error fetching chart data:", err);
+                            }
+                        })
                         .finally(() => {
-                            this.loading = false;
+                            if (this.requestController === controller) {
+                                this.requestController = null;
+                                this.loading = false;
+                            }
                         });
+                },
+                destroy() {
+                    this.destroyed = true;
+                    this.requestController?.abort();
+                    this.themeObserver?.disconnect();
+                    this.chart?.destroy();
+                    this.requestController = null;
+                    this.themeObserver = null;
+                    this.chart = null;
                 }
             }));
         });

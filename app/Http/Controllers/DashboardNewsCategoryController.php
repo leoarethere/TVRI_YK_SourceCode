@@ -3,24 +3,22 @@
 namespace App\Http\Controllers;
 
 use App\Models\NewsCategory;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
 use Illuminate\Routing\Controller;
+use Illuminate\Validation\Rule;
 
 class DashboardNewsCategoryController extends Controller
 {
     /**
      * Simpan kategori berita baru.
      */
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'slug' => 'required|string|max:255|unique:news_categories,slug',
-            // Kita asumsikan ada kolom color seperti di kategori postingan, 
-            // jika di migrasi NewsCategory belum ada kolom color, hapus baris ini atau tambahkan kolomnya.
-            // Untuk aman, kita bisa simpan name & slug saja dulu jika ragu.
-            'color' => 'nullable|string|max:20', 
+            'color' => 'nullable|string|in:blue,red,green,yellow,purple,gray',
         ]);
 
         NewsCategory::create($validated);
@@ -31,17 +29,17 @@ class DashboardNewsCategoryController extends Controller
     /**
      * Update kategori berita.
      */
-    public function update(Request $request, NewsCategory $newsCategory)
+    public function update(Request $request, NewsCategory $newsCategory): RedirectResponse
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'slug' => [
-                'required', 
-                'string', 
-                'max:255', 
-                Rule::unique('news_categories')->ignore($newsCategory->id)
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('news_categories')->ignore($newsCategory),
             ],
-            'color' => 'nullable|string|max:20',
+            'color' => 'nullable|string|in:blue,red,green,yellow,purple,gray',
         ]);
 
         $newsCategory->update($validated);
@@ -52,11 +50,11 @@ class DashboardNewsCategoryController extends Controller
     /**
      * Hapus kategori berita.
      */
-    public function destroy(NewsCategory $newsCategory)
+    public function destroy(NewsCategory $newsCategory): RedirectResponse
     {
         // Cek apakah kategori masih dipakai di berita
         if ($newsCategory->news()->count() > 0) {
-            return back()->with('error', 'Gagal hapus! Kategori ini masih digunakan oleh beberapa berita.');
+            return back()->with('error', 'Kategori ini masih digunakan oleh beberapa berita.');
         }
 
         $newsCategory->delete();

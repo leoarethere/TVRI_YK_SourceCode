@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Models\Category;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class DashboardFeatureTest extends TestCase
@@ -23,7 +24,7 @@ class DashboardFeatureTest extends TestCase
         $this->nonAdmin = User::factory()->create(['role' => 'pegawai']);
     }
 
-    /** @test */
+    #[Test]
     public function non_admin_cannot_access_dashboard()
     {
         // Mencoba mengakses rute dasbor postingan sebagai pengguna biasa
@@ -34,7 +35,7 @@ class DashboardFeatureTest extends TestCase
         $this->assertTrue(in_array($response->status(), [302, 403, 404]));
     }
 
-    /** @test */
+    #[Test]
     public function admin_can_access_dashboard()
     {
         $response = $this->actingAs($this->admin)->get('/dashboard/postingan');
@@ -42,7 +43,7 @@ class DashboardFeatureTest extends TestCase
         $response->assertStatus(200);
     }
 
-    /** @test */
+    #[Test]
     public function creating_post_requires_valid_data()
     {
         // Kirim form kosong (tanpa judul, kategori, dll)
@@ -52,7 +53,7 @@ class DashboardFeatureTest extends TestCase
         $response->assertSessionHasErrors(['title', 'category_id', 'body']);
     }
 
-    /** @test */
+    #[Test]
     public function admin_can_create_a_post()
     {
         $category = Category::create(['name' => 'Berita', 'slug' => 'berita', 'color' => 'blue']);

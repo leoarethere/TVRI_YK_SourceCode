@@ -1,6 +1,6 @@
 # Deployment Laravel ke cPanel TVRI Yogyakarta
 
-Panduan ini ditujukan untuk project Laravel 11 TVRI Yogyakarta. Targetnya adalah
+Panduan ini ditujukan untuk project Laravel 12 TVRI Yogyakarta. Targetnya adalah
 deployment production yang dapat dipulihkan, tidak membocorkan `.env`, dan tetap
 memisahkan source Laravel dari web root.
 
@@ -8,25 +8,24 @@ memisahkan source Laravel dari web root.
 
 ```text
 /home/yogz7392/
-├── publik/
-│   └── app/                    # APP_ROOT: project Laravel lengkap
-│       ├── app/
-│       ├── bootstrap/
-│       ├── public/
-│       ├── storage/
-│       ├── vendor/
-│       ├── .env
-│       └── artisan
+├── publik/                     # APP_ROOT: project Laravel lengkap
+│   ├── app/
+│   ├── bootstrap/
+│   ├── public/
+│   ├── storage/
+│   ├── vendor/
+│   ├── .env
+│   └── artisan
 └── public_html/                # PUBLIC_ROOT: hanya berkas dari app/public
     ├── build/
-    ├── storage -> ../publik/app/storage/app/public
+    ├── storage -> ../publik/storage/app/public
     ├── index.php
     └── .htaccess
 ```
 
 Folder `storage` Laravel tidak dipindahkan ke `public_html`. Data asli tetap di
-`publik/app/storage`. `public_html/storage` hanya symbolic link menuju
-`publik/app/storage/app/public`.
+`publik/storage`. `public_html/storage` hanya symbolic link menuju
+`publik/storage/app/public`.
 
 Arsip server sebelumnya memperlihatkan kemungkinan susunan `publik/publik`.
 Sebelum deployment, cari lokasi sebenarnya dari `artisan`:
@@ -35,21 +34,23 @@ Sebelum deployment, cari lokasi sebenarnya dari `artisan`:
 find /home/yogz7392/publik -maxdepth 3 -name artisan -type f
 ```
 
-Jika hasilnya bukan `/home/yogz7392/publik/app/artisan`, sesuaikan `APP_ROOT` pada
-semua perintah. Jangan menebak jalurnya.
+Hasil server live yang dipakai panduan ini harus
+`/home/yogz7392/publik/artisan`. Jika berbeda, hentikan deployment dan pastikan
+struktur release terlebih dahulu; jangan menambah folder `app` atau `publik`
+berdasarkan tebakan.
 
 ## 2. Jalur dan versi PHP
 
 Definisikan variabel berikut setiap membuka sesi Terminal cPanel:
 
 ```bash
-APP_ROOT=/home/yogz7392/publik/app
+APP_ROOT=/home/yogz7392/publik
 PUBLIC_ROOT=/home/yogz7392/public_html
 PHP_BIN=/opt/cpanel/ea-php82/root/usr/bin/php
 "$PHP_BIN" -v
 ```
 
-Laravel 11 memerlukan PHP 8.2+. Atur domain `yogyakarta.tvri.go.id` ke PHP 8.2
+Laravel 12 memerlukan PHP 8.2+. Atur domain `yogyakarta.tvri.go.id` ke PHP 8.2
 melalui **cPanel > MultiPHP Manager**. Jangan mempertahankan handler `ea-php74`
 di `.htaccess`.
 
@@ -61,12 +62,17 @@ di `.htaccess`.
 4. Build aset dan tes di komputer lokal:
 
    ```powershell
+   node --version
    npm.cmd ci
    npm.cmd run build
    php artisan test
    ```
 
-5. Pastikan `public/build/manifest.json` ada.
+   Vite 7 memerlukan Node.js minimal 20.19 atau 22.12. Gunakan `npm ci`, bukan
+   `npm install`, agar versi dependency persis mengikuti `package-lock.json`.
+
+5. Pastikan `composer.lock`, `package-lock.json`, dan
+   `public/build/manifest.json` ada di paket release.
 6. Jangan masukkan `.env`, `.git`, `node_modules`, dump SQL, backup ZIP, log, atau
    cache lokal ke paket release.
 7. Dump hasil migrasi lokal siap pakai berada di
@@ -91,14 +97,34 @@ shell. Simpan semua backup di luar `public_html`.
 ### 4.2 Maintenance, upload, dan dependency
 
 ```bash
+set -Ee -o pipefail
 cd "$APP_ROOT"
+MAINTENANCE_ACTIVE=0
+release_maintenance() {
+    STATUS=$?
+    trap - EXIT HUP INT TERM
+    if [ "$MAINTENANCE_ACTIVE" -eq 1 ]; then
+        "$PHP_BIN" "$APP_ROOT/artisan" up || true
+    fi
+    exit "$STATUS"
+}
+trap release_maintenance EXIT
+trap 'exit 129' HUP
+trap 'exit 130' INT
+trap 'exit 143' TERM
 "$PHP_BIN" artisan down --retry=60
+MAINTENANCE_ACTIVE=1
 ```
+
+Biarkan trap tersebut aktif selama deployment. Jika perintah gagal atau sesi
+terputus dengan signal, shell tetap mencoba menjalankan `artisan up`. Script
+`optimize-laravel.sh` pada langkah 4.8 juga memiliki trap internal yang sama.
 
 Upload release ZIP ke `/home/yogz7392/publik/`, ekstrak, lalu pastikan `artisan`,
 `composer.json`, `app`, `bootstrap`, `public`, `resources`, dan `routes` berada
-langsung di `APP_ROOT`. Jangan sampai terbentuk `/publik/app/Yogyakarta/...` atau
-`/publik/publik/...`.
+langsung di `APP_ROOT`. Lokasi akhirnya harus tepat
+`/home/yogz7392/publik/artisan`; jangan sampai terbentuk
+`/publik/Yogyakarta/...`, `/publik/app/...`, atau `/publik/publik/...`.
 
 Pertahankan `.env` dan media production; jangan timpa dengan versi lokal:
 
@@ -124,15 +150,25 @@ APP_ENV=production
 APP_DEBUG=false
 APP_URL=https://yogyakarta.tvri.go.id
 LOG_LEVEL=warning
+LOG_CHANNEL=daily
+LOG_DAILY_DAYS=14
 SESSION_DRIVER=database
+SESSION_SECURE_COOKIE=true
+SESSION_HTTP_ONLY=true
+SESSION_SAME_SITE=lax
 CACHE_STORE=database
 QUEUE_CONNECTION=database
+FILESYSTEM_DISK=public
 ```
 
 Simpan `APP_KEY`, database, dan kredensial mail hanya di `.env` server. Jangan
 menjalankan `key:generate` jika app lama sudah memiliki `APP_KEY`; data
 terenkripsi/cookie lama dapat menjadi tidak valid. Jika tidak ada queue worker,
 gunakan `QUEUE_CONNECTION=sync`.
+
+`optimize-laravel.sh` berhenti sebelum maintenance jika `APP_KEY`, database,
+mail, timezone, cookie HTTPS, filesystem, atau rotasi log masih kosong/tidak aman.
+Nilai placeholder dari template tidak pernah dianggap sebagai konfigurasi live.
 
 ### 4.4 Database
 
@@ -142,7 +178,12 @@ Upload dump ke folder private, misalnya `/home/yogz7392/backups/import.sql`:
 mysql -u NAMA_USER_DB -p NAMA_DATABASE < /home/yogz7392/backups/import.sql
 cd "$APP_ROOT"
 "$PHP_BIN" artisan migrate --force
+"$PHP_BIN" artisan broadcasts:audit-categories
 ```
+
+Command audit tersebut bersifat read-only dan wajib dijalankan setelah migration.
+Jika menemukan relasi kategori legacy yang hilang atau ambigu, hentikan go-live
+dan petakan datanya secara manual sebelum aplikasi dibuka kembali.
 
 Alternatifnya gunakan phpMyAdmin: backup/export database live, pilih database
 tujuan secara teliti, kosongkan tabel testing yang akan diganti, lalu **Import**.
@@ -160,18 +201,37 @@ umumnya cukup `755` untuk direktori dan `644` untuk file.
 
 ### 4.6 Berkas public
 
-Salin isi `APP_ROOT/public`, tetapi pertahankan `index.php`, `.htaccess`, dan
-symlink `storage` khusus cPanel:
+Publikasikan isi `APP_ROOT/public` dengan script project. Script ini
+mempertahankan `index.php`, `.htaccess`, dan symlink `storage` khusus cPanel,
+memvalidasi seluruh file yang dirujuk manifest, serta tidak menghapus asset hash
+lama:
 
 ```bash
-mv "$PUBLIC_ROOT/build" "/home/yogz7392/backups/$STAMP/build" 2>/dev/null || true
-rsync -a --exclude=index.php --exclude=.htaccess --exclude=storage/ --exclude=build/ "$APP_ROOT/public/" "$PUBLIC_ROOT/"
-cp -a "$APP_ROOT/public/build" "$PUBLIC_ROOT/build"
+cd "$APP_ROOT"
+APP_ROOT="$APP_ROOT" PUBLIC_ROOT="$PUBLIC_ROOT" PHP_BIN="$PHP_BIN" \
+    BACKUP_DIR="/home/yogz7392/backups/$STAMP" \
+    bash deploy/cpanel/publish-public.sh
 ```
+
+Jangan memindahkan atau menghapus folder `public_html/build` sebelum publish.
+`publish-public.sh` menyalin asset baru dengan mode merge tanpa `--delete`, lalu
+mengganti `manifest.json` paling akhir menggunakan rename atomik. Dengan begitu,
+HTML atau cache browser yang masih meminta hash lama tetap dapat dilayani dan
+manifest baru tidak pernah aktif sebelum seluruh asset barunya tersedia.
+Manifest live sebelumnya juga disimpan sebagai
+`/home/yogz7392/backups/$STAMP/build-manifest.json`. Jika publish terputus setelah
+manifest baru aktif, script memulihkan manifest lama secara otomatis.
+
+Jika harus memakai File Manager, terapkan urutan yang sama: upload seluruh file
+`build/assets` baru ke folder live tanpa menghapus isi lama, verifikasi nama dan
+ukuran file, lalu upload `manifest.json` terakhir. Jangan mengekstrak arsip build
+lama setelah langkah ini karena manifest lama akan mengaktifkan kembali UI lama.
 
 Gunakan `deploy/cpanel/public-index.php.example` sebagai `public_html/index.php`
 dan sesuaikan hanya `$appRoot`. Gunakan `public-htaccess.example` untuk rewrite.
-PHP domain tetap dipilih melalui MultiPHP Manager.
+Template `.htaccess` juga mengaktifkan kompresi bila modul Apache tersedia dan
+cache immutable hanya untuk asset Vite ber-hash; file statis non-hash tidak
+dipaksa immutable. PHP domain tetap dipilih melalui MultiPHP Manager.
 
 Template nilai production tanpa secret tersedia di
 `deploy/cpanel/env.production.example`. Salin nilainya secara selektif ke `.env`
@@ -208,14 +268,29 @@ Hasilnya harus `$APP_ROOT/storage/app/public`.
 
 ```bash
 cd "$APP_ROOT"
-"$PHP_BIN" artisan optimize:clear
-"$PHP_BIN" artisan migrate:status
-"$PHP_BIN" artisan optimize
-"$PHP_BIN" artisan queue:restart
-"$PHP_BIN" artisan up
+APP_ROOT="$APP_ROOT" PUBLIC_ROOT="$PUBLIC_ROOT" PHP_BIN="$PHP_BIN" \
+    RUN_MIGRATIONS=0 bash optimize-laravel.sh
+OPTIMIZE_STATUS=$?
+if [ "$OPTIMIZE_STATUS" -ne 0 ]; then
+    exit "$OPTIMIZE_STATUS"
+fi
+MAINTENANCE_ACTIVE=0
+trap - EXIT HUP INT TERM
 ```
 
-`artisan optimize` membuat cache konfigurasi, event, route, dan view di
+Gunakan `RUN_MIGRATIONS=1` hanya jika migration belum dijalankan pada langkah
+4.4 dan backup database sudah terverifikasi. Dalam mode tersebut, audit kategori
+penyiaran dijalankan tepat setelah migration. Script menggunakan `PHP_BIN` cPanel
+untuk semua Artisan, membuat runtime group-writable, memastikan storage link
+berada di `public_html`, lalu membangun cache. Maintenance mode selalu dilepas
+oleh trap, termasuk saat migration, audit, atau cache gagal. Jika symlink lama salah,
+periksa targetnya dahulu; gunakan `REPLACE_STORAGE_LINK=1` hanya setelah yakin
+symlink tersebut aman diganti. Folder biasa tidak pernah dihapus otomatis.
+
+Script membersihkan cache file lebih dahulu, menjalankan migration, lalu baru
+membersihkan cache database. Urutan ini mencegah fresh install gagal hanya karena
+tabel `cache` belum dibuat. `artisan optimize` kemudian membuat cache konfigurasi,
+event, route, dan view di
 `bootstrap/cache`/`storage`. Tidak ada perintah bernama `bootstrap:cache`.
 
 ## 5. Deployment manual melalui File Manager
@@ -224,12 +299,14 @@ cd "$APP_ROOT"
 2. Buat `/home/yogz7392/backups/TANGGAL-JAM`.
 3. Salin `.env`, `storage/app/public`, dan app lama ke backup.
 4. Upload release ZIP ke `/home/yogz7392/publik`, bukan `public_html`.
-5. Extract dan pastikan project langsung di `/home/yogz7392/publik/app`.
+5. Extract dan pastikan `artisan` langsung berada di
+   `/home/yogz7392/publik/artisan`.
 6. Salin `.env` production dan media backup ke app baru.
 7. Jika server tidak punya Composer, paket harus memuat folder `vendor` hasil
    `composer install --no-dev --optimize-autoloader`.
 8. Salin isi `public` ke `public_html`; gunakan template `index.php` cPanel dan
-   jangan menimpa `storage` tanpa backup.
+   jangan menimpa `storage` tanpa backup. Untuk build, upload semua asset hash
+   baru tanpa menghapus hash lama, lalu ganti `manifest.json` paling akhir.
 9. Dengan **Change Permissions**, buat `storage` dan `bootstrap/cache` writable
    (`775` jika didukung), termasuk subfolder. Jangan gunakan `777`.
 10. Import SQL lewat phpMyAdmin, lalu jalankan migration/cache lewat Terminal.
@@ -242,10 +319,11 @@ hosting. Folder media hasil copy bukan pengganti permanen: upload baru ditulis k
 File Manager juga tidak menggantikan Artisan. Jalankan:
 
 ```bash
-cd /home/yogz7392/publik/app
-/opt/cpanel/ea-php82/root/usr/bin/php artisan optimize:clear
-/opt/cpanel/ea-php82/root/usr/bin/php artisan migrate --force
-/opt/cpanel/ea-php82/root/usr/bin/php artisan optimize
+cd /home/yogz7392/publik
+APP_ROOT=/home/yogz7392/publik \
+PUBLIC_ROOT=/home/yogz7392/public_html \
+PHP_BIN=/opt/cpanel/ea-php82/root/usr/bin/php \
+RUN_MIGRATIONS=1 bash optimize-laravel.sh
 ```
 
 Jika Terminal tidak tersedia, minta hosting menjalankannya. Jangan membuat script
@@ -267,6 +345,8 @@ Lakukan smoke test:
 - Gambar lama tampil; upload baru dapat dibuka dari browser.
 - Form create/edit/delete penting bekerja.
 - Tidak ada asset 404/mixed content di Developer Tools.
+- Preflight memastikan cache config/route/view tidak stale dan seluruh entry Vite tersedia.
+- Cookie sesi hanya terkirim melalui HTTPS dan log memakai rotasi harian.
 - `storage/logs/laravel.log` tidak memiliki error baru.
 - `.env`, SQL, ZIP, dan backup tidak dapat diakses melalui URL.
 - `APP_DEBUG=false` dan halaman error tidak membocorkan konfigurasi.
@@ -274,7 +354,7 @@ Lakukan smoke test:
 ## 7. Cron queue (jika memakai database queue)
 
 ```cron
-* * * * * cd /home/yogz7392/publik/app && /opt/cpanel/ea-php82/root/usr/bin/php artisan queue:work --stop-when-empty --tries=3 --timeout=60 >> /dev/null 2>&1
+* * * * * cd /home/yogz7392/publik && /opt/cpanel/ea-php82/root/usr/bin/php artisan queue:work --stop-when-empty --tries=3 --timeout=60 >> /dev/null 2>&1
 ```
 
 Tanpa konfigurasi mail provider, reset password tidak dapat dikirim walaupun queue
@@ -283,7 +363,8 @@ aktif. Simpan kredensial SMTP/API hanya di `.env`, bukan Git atau `public_html`.
 ## 8. Rollback
 
 1. Jalankan `artisan down` pada release bermasalah.
-2. Kembalikan app dan build lama dari backup.
+2. Kembalikan app lama dan `build-manifest.json` dari backup; asset hash lama
+   tetap tersedia karena proses publish tidak menghapusnya.
 3. Kembalikan `.env` serta storage link ke target lama.
 4. Restore database hanya jika import/migration telah mengubahnya.
 5. Dari app lama jalankan `optimize:clear`, `optimize`, lalu `up`.

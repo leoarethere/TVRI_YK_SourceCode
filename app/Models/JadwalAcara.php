@@ -2,23 +2,22 @@
 
 namespace App\Models;
 
-use App\Models\JadwalCategory;
-use App\Models\BroadcastCategory;
+use App\Models\Concerns\InvalidatesHomepageScheduleCache;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class JadwalAcara extends Model
 {
-    use HasFactory;
+    use HasFactory, InvalidatesHomepageScheduleCache;
 
     protected $fillable = [
         'title',
         'slug',
         'start_time',
-        'end_time',              // ✅ TAMBAHAN: Agar jam selesai bisa disimpan
+        'end_time',
         'broadcast_category_id',
-        'jadwal_category_id',    // ✅ TAMBAHAN: Agar data Hari bisa disimpan
+        'jadwal_category_id',
         'is_active',
     ];
 
@@ -33,7 +32,7 @@ class JadwalAcara extends Model
         return $this->belongsTo(BroadcastCategory::class, 'broadcast_category_id');
     }
 
-    public function jadwalCategory()
+    public function jadwalCategory(): BelongsTo
     {
         return $this->belongsTo(JadwalCategory::class, 'jadwal_category_id');
     }

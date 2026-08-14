@@ -2,16 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\InfoMagangFaq;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use Illuminate\View\View;
 
 class DashboardInfoMagangFaqController extends Controller
 {
     /**
      * Menampilkan daftar FAQ (Backend).
      */
-    public function index()
+    public function index(): View
     {
         // Ambil data diurutkan berdasarkan 'order' (terkecil ke terbesar)
         $faqs = InfoMagangFaq::orderBy('order', 'asc')->paginate(10);
@@ -23,7 +25,7 @@ class DashboardInfoMagangFaqController extends Controller
     /**
      * Menampilkan form tambah FAQ baru.
      */
-    public function create()
+    public function create(): View
     {
         return view('backend.info-magang-faq.create');
     }
@@ -31,7 +33,7 @@ class DashboardInfoMagangFaqController extends Controller
     /**
      * Menyimpan data FAQ baru ke database.
      */
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
         $validated = $request->validate([
             'question'  => 'required|string|max:255',
@@ -52,16 +54,17 @@ class DashboardInfoMagangFaqController extends Controller
     /**
      * Menampilkan form edit FAQ.
      */
-    public function edit($id)
+    public function edit(InfoMagangFaq $infoMagangFaq): View
     {
-        $faq = InfoMagangFaq::findOrFail($id);
+        $faq = $infoMagangFaq;
+
         return view('backend.info-magang-faq.edit', compact('faq'));
     }
 
     /**
      * Memperbarui data FAQ.
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, InfoMagangFaq $infoMagangFaq): RedirectResponse
     {
         $validated = $request->validate([
             'question'  => 'required|string|max:255',
@@ -69,11 +72,9 @@ class DashboardInfoMagangFaqController extends Controller
             'order'     => 'required|integer|min:0',
         ]);
 
-        $faq = InfoMagangFaq::findOrFail($id);
-
         $validated['is_active'] = $request->has('is_active');
 
-        $faq->update($validated);
+        $infoMagangFaq->update($validated);
 
         return redirect()->route('dashboard.info-magang-faq.index')
             ->with('success', 'FAQ berhasil diperbarui!');
@@ -82,10 +83,9 @@ class DashboardInfoMagangFaqController extends Controller
     /**
      * Menghapus FAQ.
      */
-    public function destroy($id)
+    public function destroy(InfoMagangFaq $infoMagangFaq): RedirectResponse
     {
-        $faq = InfoMagangFaq::findOrFail($id);
-        $faq->delete();
+        $infoMagangFaq->delete();
 
         return redirect()->route('dashboard.info-magang-faq.index')
             ->with('success', 'FAQ berhasil dihapus!');

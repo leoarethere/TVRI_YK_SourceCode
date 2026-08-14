@@ -83,7 +83,7 @@
                         
                         <div class="mt-6 pt-6 border-t border-gray-100 dark:border-gray-700">
                              <p class="text-xs text-center text-gray-400 dark:text-gray-500">
-                                Mengalami gangguan? <a href="https://klik.tvri.go.id/" target="_blank" class="text-blue-600 hover:underline">Buka Player Alternatif</a>
+                                Mengalami gangguan? <a href="https://klik.tvri.go.id/" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline">Buka Pemutar Alternatif</a>
                             </p>
                         </div>
                     </div>

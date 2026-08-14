@@ -9,12 +9,17 @@
         activeSlide: 0,
         autoplay: null,
         startAutoplay() {
+            this.stopAutoplay();
             this.autoplay = setInterval(() => {
                 this.activeSlide = (this.activeSlide + 1) % this.slides.length;
-            }, 2000); 
+            }, 2000);
         },
         stopAutoplay() {
             clearInterval(this.autoplay);
+            this.autoplay = null;
+        },
+        destroy() {
+            this.stopAutoplay();
         }
     }"
     x-init="startAutoplay()"

@@ -19,16 +19,7 @@
     <div class="pb-6"
         x-data="{
             title: @js(old('title', $post->title)),
-            slug: @js(old('slug', $post->slug)),
-            
-            generateSlug() {
-                this.slug = this.title
-                    .toLowerCase()
-                    .replace(/[^a-z0-9\s-]/g, '')
-                    .replace(/\s+/g, '-')
-                    .replace(/-+/g, '-')
-                    .trim();
-            }
+            slug: @js(old('slug', $post->slug))
         }"
     >
         {{-- HEADER --}}
@@ -47,7 +38,7 @@
             <form action="{{ route('dashboard.postingan.update', $post) }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 @method('PUT')
-                
+
                 <div class="p-6 space-y-6">
 
                     {{-- Error Summary --}}
@@ -61,13 +52,13 @@
                             </ul>
                         </div>
                     @endif
-                    
+
                     {{-- Judul --}}
                     <div>
                         <label for="title" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                             Judul Postingan <span class="text-red-500">*</span>
                         </label>
-                        <input type="text" name="title" id="title" x-model="title" @input.debounce.500ms="generateSlug()"
+                        <input type="text" name="title" id="title" x-model="title"
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" required>
                         @error('title') <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p> @enderror
                     </div>
@@ -121,8 +112,8 @@
                     </div>
 
                     {{-- Featured Image --}}
-                    <div x-data="{ 
-                        preview: '{{ $post->featured_image ? Storage::url($post->featured_image) : null }}',
+                    <div x-data="{
+                        preview: @js($post->featured_image ? Storage::url($post->featured_image) : null),
                         handleFile(event) {
                             const file = event.target.files[0];
                             if (!file) return;
@@ -137,7 +128,7 @@
                         <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                             Gambar Unggulan (Opsional)
                         </label>
-                        
+
                         {{-- Preview --}}
                         <div class="mb-3" x-show="preview">
                             <div class="relative w-full max-w-md aspect-video rounded-lg overflow-hidden border border-gray-300 dark:border-gray-600">
@@ -159,8 +150,8 @@
                         <label for="excerpt" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                             Ringkasan (Opsional)
                         </label>
-                        <textarea name="excerpt" id="excerpt" rows="3" 
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" 
+                        <textarea name="excerpt" id="excerpt" rows="3"
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
                             placeholder="Ringkasan singkat...">{{ old('excerpt', $post->excerpt) }}</textarea>
                     </div>
 
@@ -175,7 +166,7 @@
                     </div>
 
                 </div>
-                
+
                 {{-- Action Buttons --}}
                 <div class="dashboard-form-actions flex items-center justify-between gap-3 p-6 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700/50 rounded-b-lg">
                     <a href="{{ route('dashboard.postingan.index') }}" class="px-5 py-2.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-600 transition-colors">

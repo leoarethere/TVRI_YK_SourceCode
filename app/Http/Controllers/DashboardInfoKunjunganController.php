@@ -3,16 +3,19 @@
 namespace App\Http\Controllers;
 
 use App\Models\InfoKunjungan;
+use App\Support\PublicStorageWriter;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Intervention\Image\Drivers\Gd\Driver;
 use Intervention\Image\ImageManager;
+use Illuminate\View\View;
 
 class DashboardInfoKunjunganController extends Controller
 {
-    public function index(Request $request)
+    public function index(Request $request): View
     {
         $query = InfoKunjungan::query();
 
@@ -33,12 +36,12 @@ class DashboardInfoKunjunganController extends Controller
         return view('backend.info-kunjungan.index', compact('items'));
     }
 
-    public function create()
+    public function create(): View
     {
         return view('backend.info-kunjungan.create');
     }
 
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
         $validated = $request->validate([
             'title' => 'required|string|max:255',
@@ -62,7 +65,7 @@ class DashboardInfoKunjunganController extends Controller
                 $image->scale(width: 800);
                 $encoded = $image->toJpeg(quality: 80);
 
-                Storage::disk('public')->put($filename, (string) $encoded);
+                PublicStorageWriter::put($filename, (string) $encoded);
                 $data['cover_image'] = $filename;
             } catch (\Exception $e) {
                 report($e);
@@ -77,12 +80,12 @@ class DashboardInfoKunjunganController extends Controller
             ->with('success', 'Informasi Kunjungan berhasil ditambahkan!');
     }
 
-    public function edit(InfoKunjungan $infoKunjungan)
+    public function edit(InfoKunjungan $infoKunjungan): View
     {
         return view('backend.info-kunjungan.edit', compact('infoKunjungan'));
     }
 
-    public function update(Request $request, InfoKunjungan $infoKunjungan)
+    public function update(Request $request, InfoKunjungan $infoKunjungan): RedirectResponse
     {
         $validated = $request->validate([
             'title' => 'required|string|max:255',
@@ -111,7 +114,7 @@ class DashboardInfoKunjunganController extends Controller
                 $encoded = $image->toJpeg(quality: 80);
 
                 // 1. Simpan gambar baru
-                Storage::disk('public')->put($filename, (string) $encoded);
+                PublicStorageWriter::put($filename, (string) $encoded);
 
                 $data['cover_image'] = $filename;
             } catch (\Exception $e) {
@@ -131,7 +134,7 @@ class DashboardInfoKunjunganController extends Controller
             ->with('success', 'Informasi Kunjungan berhasil diperbarui!');
     }
 
-    public function destroy(InfoKunjungan $infoKunjungan)
+    public function destroy(InfoKunjungan $infoKunjungan): RedirectResponse
     {
         $coverPath = $infoKunjungan->cover_image;
         $infoKunjungan->delete();

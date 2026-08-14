@@ -4,6 +4,18 @@
          isMobileMenuOpen: false,
          openDropdown: null,
          timeoutId: null,
+         resizeHandler: null,
+         wasDesktop: window.innerWidth >= 1280,
+         init() {
+             this.resizeHandler = () => {
+                 const isDesktop = window.innerWidth >= 1280;
+                 if (isDesktop !== this.wasDesktop) {
+                     this.closeMenus();
+                     this.wasDesktop = isDesktop;
+                 }
+             };
+             window.addEventListener('resize', this.resizeHandler, { passive: true });
+         },
          openMenu(name) {
              clearTimeout(this.timeoutId);
              this.openDropdown = name;
@@ -12,8 +24,23 @@
              this.timeoutId = setTimeout(() => {
                  this.openDropdown = null;
              }, 300);
+         },
+         toggleMenu(name) {
+             clearTimeout(this.timeoutId);
+             this.openDropdown = this.openDropdown === name ? null : name;
+         },
+         closeMenus() {
+             clearTimeout(this.timeoutId);
+             this.openDropdown = null;
+             this.isMobileMenuOpen = false;
+         },
+         destroy() {
+             this.closeMenus();
+             window.removeEventListener('resize', this.resizeHandler);
          }
-     }">
+     }"
+     @keydown.escape.window="closeMenus()"
+     @click.outside="closeMenus()">
     
     <div class="px-4 sm:px-6 lg:px-8">
         <div class="relative flex h-16 sm:h-[72px] items-center justify-between">
@@ -25,6 +52,8 @@
                     @click="isSidebarOpen = !isSidebarOpen"
                     x-show="isMobile() || !isSidebarOpen"
                     x-cloak
+                    data-dashboard-critical
+                    data-dashboard-sidebar-toggle
                     type="button"
                     class="-ml-2 rounded-lg p-2 text-gray-600 transition-colors hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white dark:focus:ring-gray-700"
                     :aria-expanded="isSidebarOpen"
@@ -65,7 +94,10 @@
                 {{-- User Dropdown --}}
                 <div class="relative" @mouseenter="openMenu('user')" @mouseleave="closeMenu()">
                     <button 
-                        @click="openDropdown = openDropdown === 'user' ? null : 'user'" 
+                        type="button"
+                        @click="toggleMenu('user')"
+                        :aria-expanded="openDropdown === 'user'"
+                        aria-controls="dashboard-user-menu"
                         class="flex items-center gap-3 rounded-full bg-gray-50 dark:bg-gray-700/50 hover:bg-gray-100 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-600 pl-1 pr-4 py-1 transition-all duration-200 group">
                         
                         <img class="w-8 h-8 rounded-full ring-2 ring-white dark:ring-gray-600" 
@@ -86,7 +118,7 @@
                     </button>
                     
                     {{-- Dropdown Content --}}
-                    <div x-show="openDropdown === 'user'"
+                    <div id="dashboard-user-menu" x-show="openDropdown === 'user'"
                          x-transition:enter="transition ease-out duration-200"
                          x-transition:enter-start="opacity-0 translate-y-2"
                          x-transition:enter-end="opacity-100 translate-y-0"
@@ -126,6 +158,8 @@
                 {{-- Mobile Menu Button --}}
                 <button @click="isMobileMenuOpen = !isMobileMenuOpen" 
                         type="button" 
+                        :aria-expanded="isMobileMenuOpen"
+                        aria-controls="dashboard-mobile-user-menu"
                         class="inline-flex items-center justify-center p-2 rounded-lg text-gray-500 hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500 transition-colors">
                     <span class="sr-only">Buka menu akun</span>
                     
@@ -146,7 +180,7 @@
     </div>
 
     {{-- MOBILE MENU DROPDOWN --}}
-    <div x-show="isMobileMenuOpen" 
+    <div id="dashboard-mobile-user-menu" x-show="isMobileMenuOpen"
          x-transition:enter="transition ease-out duration-200"
          x-transition:enter-start="opacity-0 -translate-y-2"
          x-transition:enter-end="opacity-100 translate-y-0"

@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Broadcast;
 use App\Models\BroadcastCategory;
+use App\Support\LikeSearch;
+use App\Support\PublicStorageWriter;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
@@ -20,14 +22,18 @@ class DashboardBroadcastController extends Controller
 {
     public function index(Request $request): View
     {
+        $request->validate([
+            'search' => ['nullable', 'string', 'max:100'],
+        ]);
+
         $query = Broadcast::with(['user', 'broadcastCategory']);
 
         // Filter Pencarian
         $query->when($request->filled('search'), function ($q) use ($request) {
-            $search = str_replace(['%', '_'], ['\%', '\_'], $request->search);
+            $search = $request->string('search')->toString();
             $q->where(function ($subQuery) use ($search) {
-                $subQuery->where('title', 'like', '%'.$search.'%')
-                    ->orWhere('synopsis', 'like', '%'.$search.'%');
+                LikeSearch::contains($subQuery, 'title', $search);
+                LikeSearch::contains($subQuery, 'synopsis', $search, 'or');
             });
         });
 
@@ -94,7 +100,7 @@ class DashboardBroadcastController extends Controller
                 $image->scale(width: 800);
                 $encodedImage = $image->toJpeg(quality: 75);
 
-                Storage::disk('public')->put($path, (string) $encodedImage);
+                PublicStorageWriter::put($path, (string) $encodedImage);
                 $validated['poster'] = $path;
 
             } catch (\Exception $e) {
@@ -124,11 +130,6 @@ class DashboardBroadcastController extends Controller
 
         return redirect()->route('dashboard.penyiaran.index')
             ->with('success', $message);
-    }
-
-    public function show(Broadcast $broadcast): RedirectResponse
-    {
-        return redirect()->route('dashboard.penyiaran.edit', $broadcast);
     }
 
     public function edit(Broadcast $broadcast): View
@@ -170,7 +171,7 @@ class DashboardBroadcastController extends Controller
                 $encodedImage = $image->toJpeg(quality: 75);
 
                 // 2. Simpan
-                Storage::disk('public')->put($path, (string) $encodedImage);
+                PublicStorageWriter::put($path, (string) $encodedImage);
 
                 $validated['poster'] = $path;
 

@@ -2,18 +2,17 @@
 
 namespace App\Models;
 
-use App\Models\User;
-use App\Models\BroadcastCategory;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Builder;
+use App\Models\Concerns\HasPublicPublicationStatus;
+use App\Models\Concerns\InvalidatesHomepageDataCache;
 use Illuminate\Database\Eloquent\Casts\Attribute;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 class Broadcast extends Model
 {
-    use HasFactory;
+    use HasFactory, HasPublicPublicationStatus, InvalidatesHomepageDataCache;
 
     /**
      * Boot model: Hapus komentar terkait saat program siaran dihapus.
@@ -65,12 +64,12 @@ class Broadcast extends Model
                 // Ambil value langsung dari kolom 'youtube_link' di database
                 $url = $attributes['youtube_link'] ?? null;
 
-                if (!$url) {
+                if (! $url) {
                     return null;
                 }
 
                 // REGEX: Pola untuk mengambil Video ID (11 karakter) dari berbagai jenis link YouTube
-                // Support: 
+                // Support:
                 // - https://www.youtube.com/watch?v=dQw4w9WgXcQ
                 // - https://youtu.be/dQw4w9WgXcQ
                 // - https://www.youtube.com/embed/dQw4w9WgXcQ
@@ -78,11 +77,11 @@ class Broadcast extends Model
 
                 if (preg_match($pattern, $url, $matches)) {
                     // $matches[1] berisi Video ID (contoh: dQw4w9WgXcQ)
-                    return 'https://www.youtube.com/embed/' . $matches[1];
+                    return 'https://www.youtube.com/embed/'.$matches[1];
                 }
 
                 // Jika format tidak dikenali, kembalikan null agar tampilan fallback ke Poster
-                return null; 
+                return null;
             },
         );
     }

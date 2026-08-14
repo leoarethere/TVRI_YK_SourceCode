@@ -3,11 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\AksesInformasi;
-use Illuminate\View\View;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Http\RedirectResponse;
+use Illuminate\View\View;
 
 class PegawaiLoginController extends Controller
 {
@@ -15,7 +15,7 @@ class PegawaiLoginController extends Controller
     {
         return view('auth.pegawai-login', [
             'title' => 'Portal Pegawai',
-            'active' => 'login'
+            'active' => 'login',
         ]);
     }
 
@@ -36,6 +36,9 @@ class PegawaiLoginController extends Controller
             // Proteksi: Hanya user dengan role 'pegawai' yang boleh login di sini
             if (! $user->isPegawai()) {
                 Auth::logout();
+                $request->session()->invalidate();
+                $request->session()->regenerateToken();
+
                 return back()->withErrors([
                     'email' => 'Akun ini bukan akun pegawai. Silakan gunakan halaman login yang sesuai.',
                 ])->onlyInput('email');
@@ -49,7 +52,7 @@ class PegawaiLoginController extends Controller
                 : url('/');
 
             return redirect($redirectUrl)
-                ->with('success', 'Selamat datang, ' . $user->name . '!');
+                ->with('success', 'Selamat datang, '.$user->name.'!');
         }
 
         return back()->withErrors([
@@ -63,7 +66,8 @@ class PegawaiLoginController extends Controller
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
+
         return redirect()->route('pegawai.login')
-            ->with('success', 'Anda telah berhasil logout. Sampai jumpa, ' . $userName . '!');
+            ->with('success', 'Anda telah berhasil logout. Sampai jumpa, '.$userName.'!');
     }
 }

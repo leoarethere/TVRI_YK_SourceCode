@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\TugasFungsi;
+use App\Support\PublicStorageWriter;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
@@ -50,7 +51,7 @@ class DashboardTugasFungsiController extends Controller
                 $image->scale(width: 800);
                 $encoded = $image->toJpeg(quality: 80);
 
-                Storage::disk('public')->put($path, (string) $encoded);
+                PublicStorageWriter::put($path, (string) $encoded);
                 $validated['image'] = $path;
             } catch (\Exception $e) {
                 report($e);
@@ -97,7 +98,7 @@ class DashboardTugasFungsiController extends Controller
                 $encoded = $image->toJpeg(quality: 80);
 
                 // 2. Simpan
-                Storage::disk('public')->put($path, (string) $encoded);
+                PublicStorageWriter::put($path, (string) $encoded);
 
                 $validated['image'] = $path;
             } catch (\Exception $e) {

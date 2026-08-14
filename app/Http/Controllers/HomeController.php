@@ -8,15 +8,18 @@ use App\Models\Broadcast;
 use App\Models\Category;
 use App\Models\ContactInfo;
 use App\Models\JadwalAcara;
+use App\Models\JadwalCategory;
 use App\Models\Post;
 use App\Models\User;
+use App\Support\HomepageCache;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\View\View;
 
 class HomeController extends Controller
 {
-    public function index()
+    public function index(): View
     {
         // 1. Banner Slider (Cache 1 Jam)
         $heroSlides = Cache::remember('homepage.slides', 3600, function () {
@@ -34,11 +37,11 @@ class HomeController extends Controller
         });
 
         // 2. Data Dinamis (Postingan, Jadwal, Program) - Cache lebih singkat (misal 5-10 menit)
-        $data = Cache::remember('homepage.data.v2', 600, function () {
+        $data = Cache::remember(HomepageCache::DATA_KEY, 600, function () {
 
             // A. Postingan untuk Slider (Hero Posts)
             $heroPosts = Post::with(['user', 'category'])
-                ->where('status', 'published')
+                ->publiclyVisible()
                 ->whereNotNull('featured_image') // Wajib punya gambar
                 ->latest('published_at')
                 ->take(5)
@@ -46,14 +49,14 @@ class HomeController extends Controller
 
             // B. Postingan Terbaru (List/Grid)
             $latestPosts = Post::with(['user', 'category'])
-                ->where('status', 'published')
+                ->publiclyVisible()
                 ->latest('published_at')
                 ->take(6) // Ambil 6 agar grid rapi (2 baris x 3 kolom)
                 ->get();
 
             // C. Program Unggulan (Random/Latest Broadcasts)
             $featuredBroadcasts = Broadcast::with('broadcastCategory')
-                ->where('status', 'published')
+                ->publiclyVisible()
                 ->where('is_active', true)
                 ->inRandomOrder() // Acak agar variatif setiap refresh cache
                 ->take(8)
@@ -62,20 +65,20 @@ class HomeController extends Controller
             // E. Statistik & Kategori
             $categories = Category::whereHas(
                 'posts',
-                fn ($query) => $query->where('status', 'published')
+                fn ($query) => $query->publiclyVisible()
             )
                 ->withCount([
-                    'posts' => fn ($query) => $query->where('status', 'published'),
+                    'posts' => fn ($query) => $query->publiclyVisible(),
                 ])
                 ->orderByDesc('posts_count')
                 ->take(8)
                 ->get();
 
             $stats = [
-                'posts' => Post::where('status', 'published')->count(),
+                'posts' => Post::publiclyVisible()->count(),
                 'categories' => Category::count(),
                 'users' => User::count(),
-                'programs' => Broadcast::where('status', 'published')->count(),
+                'programs' => Broadcast::publiclyVisible()->count(),
             ];
 
             $contactInfo = ContactInfo::where('is_active', true)->first();
@@ -93,23 +96,42 @@ class HomeController extends Controller
         $now = now();
         $todaySlug = strtolower($now->copy()->locale('id')->isoFormat('dddd'));
         $todaySchedules = Cache::remember(
-            'homepage.schedules.'.$now->toDateString(),
+            HomepageCache::scheduleKey(),
             600,
-            fn () => JadwalAcara::with('broadcastCategory')
-                ->whereHas('jadwalCategory', fn ($query) => $query->where('slug', $todaySlug))
-                ->where('is_active', true)
-                ->orderBy('start_time')
-                ->get()
+            function () use ($todaySlug) {
+                $categoryIds = JadwalCategory::query()
+                    ->get(['id', 'slug'])
+                    ->filter(fn (JadwalCategory $category) => $category->appliesToDay($todaySlug))
+                    ->pluck('id');
+
+                return JadwalAcara::with('broadcastCategory')
+                    ->whereIn('jadwal_category_id', $categoryIds)
+                    ->where('is_active', true)
+                    ->orderBy('start_time')
+                    ->get();
+            }
         );
 
-        $currentTime = $now->format('H:i');
-        $currentProgram = $todaySchedules->first(function ($item) use ($currentTime) {
-            $end = $item->end_time?->format('H:i') ?? '23:59';
+        $currentProgram = $todaySchedules->first(function (JadwalAcara $item) use ($now) {
+            $start = $now->copy()->setTime(
+                $item->start_time->hour,
+                $item->start_time->minute,
+            );
+            $end = $item->end_time === null
+                ? $start->copy()->addHour()
+                : $now->copy()->setTime($item->end_time->hour, $item->end_time->minute);
 
-            return $item->start_time->format('H:i') <= $currentTime && $end > $currentTime;
+            if ($end->lessThanOrEqualTo($start)) {
+                $end->addDay();
+            }
+
+            return $now->greaterThanOrEqualTo($start) && $now->lessThan($end);
         });
         $nextProgram = $todaySchedules->first(
-            fn ($item) => $item->start_time->format('H:i') > $currentTime
+            fn (JadwalAcara $item) => $now->copy()->setTime(
+                $item->start_time->hour,
+                $item->start_time->minute,
+            )->greaterThan($now)
         );
 
         // Menggabungkan semua data untuk dikirim ke View
