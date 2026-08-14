@@ -44,4 +44,26 @@ class Category extends Model
             }
         );
     }
+
+    protected function colorSolidClasses(): Attribute
+    {
+        return Attribute::make(
+            get: function () {
+                $colorName = $this->color ?? 'blue';
+
+                $colorMap = [
+                    'blue'   => 'bg-blue-600',
+                    'pink'   => 'bg-pink-600',
+                    'green'  => 'bg-green-600',
+                    'yellow' => 'bg-yellow-500',
+                    'indigo' => 'bg-indigo-600',
+                    'purple' => 'bg-purple-600',
+                    'red'    => 'bg-red-600',
+                    'gray'   => 'bg-gray-500',
+                ];
+
+                return $colorMap[$colorName] ?? $colorMap['blue'];
+            }
+        );
+    }
 }

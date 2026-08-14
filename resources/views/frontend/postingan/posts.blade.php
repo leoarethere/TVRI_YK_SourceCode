@@ -112,7 +112,7 @@
                                 {{-- Category Badge --}}
                                 @if($post->category)
                                     <div class="absolute top-3 left-3 z-10">
-                                        <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold uppercase tracking-wide {{ $post->category->color_classes ?? 'bg-blue-600 text-white' }} shadow-sm backdrop-blur-sm bg-opacity-90">
+                                        <span class="inline-flex items-center px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider text-white shadow-md backdrop-blur-md bg-opacity-95 {{ $post->category->colorSolidClasses }}">
                                             {{ $post->category->name }}
                                         </span>
                                     </div>

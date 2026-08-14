@@ -358,9 +358,11 @@
                         @endif
                         
                         @if($post->category)
-                            <span class="absolute top-3 left-3 px-2.5 py-1 text-xs font-bold bg-white/95 dark:bg-black/80 backdrop-blur-sm text-gray-900 dark:text-white rounded-md shadow-sm">
-                                {{ $post->category->name }}
-                            </span>
+                            <div class="absolute top-3 left-3 z-10">
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider text-white shadow-md backdrop-blur-md bg-opacity-95 {{ $post->category->colorSolidClasses }}">
+                                    {{ $post->category->name }}
+                                </span>
+                            </div>
                         @endif
                     </a>
                     
