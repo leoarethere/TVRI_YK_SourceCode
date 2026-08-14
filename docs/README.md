@@ -11,6 +11,7 @@
 | 1 | **Manual Book** | Panduan penggunaan lengkap untuk admin dan pengguna | [manual-book.md](./manual-book.md) |
 | 2 | **Dokumentasi Database** | ERD, LRS, dan Kamus Data | [database-diagram.md](./database-diagram.md) |
 | 3 | **Class Diagram** | Diagram kelas Model, Controller, dan alur sistem | [class-diagram.md](./class-diagram.md) |
+| 4 | **Deployment cPanel** | Upload, database, storage link, cache production, verifikasi, dan rollback | [deployment-cpanel.md](./deployment-cpanel.md) |
 
 ---
 

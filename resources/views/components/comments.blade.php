@@ -6,6 +6,9 @@
     @php
         $totalComments = $model->comments()->approved()->count();
         $ratingStats = $model->comments()->approved()->whereNotNull('rating')
+            // comments() diurutkan dengan latest(). Aggregate MySQL strict tidak
+            // boleh membawa ORDER BY created_at tanpa GROUP BY.
+            ->reorder()
             ->selectRaw('AVG(rating) as avg_rating, COUNT(*) as total_ratings')
             ->first();
         $averageRating = $ratingStats->avg_rating;

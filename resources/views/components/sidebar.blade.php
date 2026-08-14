@@ -1,5 +1,7 @@
 <aside id="dashboard-sidebar"
-    class="fixed top-0 left-0 z-40 h-screen bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 transition-all duration-300 ease-in-out lg:translate-x-0 will-change-transform"
+    x-cloak
+    class="fixed left-0 top-0 z-40 h-screen w-64 max-w-[calc(100vw-2rem)] border-r border-gray-200 bg-white transition-all duration-300 ease-in-out will-change-transform dark:border-gray-700 dark:bg-gray-800 xl:translate-x-0"
+    aria-label="Navigasi dashboard"
     x-data="{ 
         isHovering: false,
         dropdowns: {
@@ -58,8 +60,9 @@
         });
     "
     :class="isSidebarOpen 
-        ? 'translate-x-0 w-64' 
-        : '-translate-x-full lg:translate-x-0 lg:w-20'"
+        ? 'translate-x-0'
+        : '-translate-x-full xl:w-20 xl:translate-x-0'"
+    :aria-hidden="!isSidebarOpen && isMobile()"
     style="padding-top: 4.5rem;">
 
     {{-- Sidebar Content --}}
@@ -545,7 +548,7 @@
         <div class="p-3 border-t border-gray-200 dark:border-gray-700 flex-shrink-0">
             <button 
                 @click="isSidebarOpen = !isSidebarOpen; closeAllDropdowns()"
-                class="hidden lg:flex w-full items-center p-3 text-sm font-medium text-gray-500 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors duration-200 group"
+                class="hidden w-full items-center rounded-lg p-3 text-sm font-medium text-gray-500 transition-colors duration-200 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white xl:flex"
                 :class="{ 'justify-center': !isSidebarOpen }">
                 
                 <svg class="w-5 h-5 flex-shrink-0 transition-transform duration-300 group-hover:scale-110" 

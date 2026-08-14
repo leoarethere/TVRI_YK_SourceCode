@@ -24,7 +24,7 @@
                 <button 
                     @click="isSidebarOpen = !isSidebarOpen"
                     type="button"
-                    class="lg:hidden -ml-2 p-2 text-gray-600 dark:text-gray-400 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white focus:outline-none focus:ring-2 focus:ring-gray-200 dark:focus:ring-gray-700 transition-colors"
+                    class="-ml-2 rounded-lg p-2 text-gray-600 transition-colors hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white dark:focus:ring-gray-700 xl:hidden"
                     :aria-expanded="isSidebarOpen"
                     aria-controls="dashboard-sidebar">
                     <span class="sr-only">Buka navigasi dashboard</span>
@@ -53,7 +53,7 @@
             </div>
 
             {{-- BAGIAN KANAN (DESKTOP): Menu & User Dropdown --}}
-            <div class="hidden lg:flex items-center gap-4">
+            <div class="hidden items-center gap-4 xl:flex">
                 {{-- Theme Toggle --}}
                 <div class="flex items-center">
                     <x-theme-toggle />
@@ -116,7 +116,7 @@
             </div>
 
             {{-- BAGIAN KANAN (MOBILE): Theme & User Toggle --}}
-            <div class="flex items-center gap-2 lg:hidden">
+            <div class="flex items-center gap-2 xl:hidden">
                 {{-- Theme Toggle Mobile --}}
                 <x-theme-toggle />
 
@@ -150,7 +150,7 @@
          x-transition:leave="transition ease-in duration-150"
          x-transition:leave-start="opacity-100 translate-y-0"
          x-transition:leave-end="opacity-0 translate-y-2"
-         class="lg:hidden border-t border-gray-200 dark:border-gray-700 bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm shadow-xl"
+         class="border-t border-gray-200 bg-white/95 shadow-xl backdrop-blur-sm dark:border-gray-700 dark:bg-gray-800/95 xl:hidden"
          style="display: none;">
         
         <div class="px-4 pt-4 pb-6 space-y-4">

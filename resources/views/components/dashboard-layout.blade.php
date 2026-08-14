@@ -31,7 +31,7 @@
     {{-- TAMBAHKAN @show-notification.window DI SINI --}}
     {{-- Ini menjamin listener aktif tepat saat komponen dibuat --}}
     <div x-data="dashboardState()" 
-         x-init="init()"
+         @keydown.escape.window="closeSidebar()"
          @show-notification.window="showNotification($event.detail.message, $event.detail.type)"
          @show-modal.window="showModal($event.detail.title, $event.detail.message, $event.detail.type)"
          class="antialiased">
@@ -51,7 +51,7 @@
             x-transition:leave-start="opacity-100"
             x-transition:leave-end="opacity-0"
             @click="closeSidebar()"
-            class="fixed inset-0 z-30 bg-gray-900/50 lg:hidden"
+            class="fixed inset-0 z-30 bg-gray-900/50 xl:hidden"
             style="display: none;">
         </div>
         
@@ -102,8 +102,8 @@
 
         <main class="dashboard-main min-h-screen p-4 transition-all duration-300 ease-out sm:p-5 lg:p-6"
             :class="{
-                'lg:ml-64': isSidebarOpen && !isMobile(),
-                'lg:ml-20': !isSidebarOpen && !isMobile()
+                'xl:ml-64': isSidebarOpen && !isMobile(),
+                'xl:ml-20': !isSidebarOpen && !isMobile()
             }" 
             style="padding-top: 5.5rem;">
             <div class="mx-auto w-full max-w-screen-2xl">
@@ -113,8 +113,8 @@
 
         <footer class="bg-gray-900 dark:bg-gray-950 border-t border-white/10 transition-all duration-300 ease-out"
                 :class="{ 
-                    'lg:ml-64': isSidebarOpen && !isMobile(),
-                    'lg:ml-20': !isSidebarOpen && !isMobile()
+                    'xl:ml-64': isSidebarOpen && !isMobile(),
+                    'xl:ml-20': !isSidebarOpen && !isMobile()
                 }">
             <x-dashboard-footer />
         </footer>
@@ -153,7 +153,9 @@
 
         function dashboardState() {
             return {
-                isSidebarOpen: window.innerWidth >= 1024,
+                viewportWidth: window.innerWidth,
+                isSidebarOpen: window.innerWidth >= 1280,
+                wasDesktopViewport: window.innerWidth >= 1280,
                 notificationOpen: false,
                 notificationMessage: '',
                 notificationType: 'success',
@@ -165,6 +167,8 @@
                 init() {
                     console.log('🏠 Dashboard Alpine initialized');
                     this.setupResizeHandler();
+                    this.$watch('isSidebarOpen', () => this.syncBodyScroll());
+                    this.syncBodyScroll();
 
                     // Cek pesan Flash (dari PHP Session)
                     // Gunakan $nextTick untuk memastikan DOM sudah siap sepenuhnya
@@ -244,15 +248,28 @@
                     this.modalOpen = true;
                 },
 
-                // ... (sisa fungsi helper isMobile, closeSidebar, dll tetap sama) ...
-                isMobile() { return window.innerWidth < 1024; },
+                // Sidebar menjadi drawer sampai lebar 1280px agar konten tetap lega.
+                isMobile() { return this.viewportWidth < 1280; },
                 closeSidebar() { if (this.isMobile()) { this.isSidebarOpen = false; } },
+                syncBodyScroll() {
+                    document.body.classList.toggle('overflow-hidden', this.isSidebarOpen && this.isMobile());
+                },
                 setupResizeHandler() {
                     let resizeTimeout;
                     window.addEventListener('resize', () => {
                         clearTimeout(resizeTimeout);
                         resizeTimeout = setTimeout(() => {
-                            this.isSidebarOpen = window.innerWidth >= 1024;
+                            this.viewportWidth = window.innerWidth;
+                            const isDesktopViewport = this.viewportWidth >= 1280;
+
+                            // Pertahankan pilihan pengguna saat resize kecil; ubah status
+                            // hanya ketika viewport benar-benar melewati breakpoint sidebar.
+                            if (isDesktopViewport !== this.wasDesktopViewport) {
+                                this.isSidebarOpen = isDesktopViewport;
+                                this.wasDesktopViewport = isDesktopViewport;
+                            }
+
+                            this.syncBodyScroll();
                         }, 100);
                     });
                 }

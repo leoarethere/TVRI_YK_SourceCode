@@ -1,0 +1,23 @@
+<?php
+
+use Illuminate\Http\Request;
+
+define('LARAVEL_START', microtime(true));
+
+// Sesuaikan hanya jalur ini dengan APP_ROOT yang sebenarnya.
+$appRoot = dirname(__DIR__).'/publik/app';
+
+if (! is_file($appRoot.'/vendor/autoload.php') || ! is_file($appRoot.'/bootstrap/app.php')) {
+    http_response_code(503);
+    exit('Aplikasi sementara tidak tersedia.');
+}
+
+if (is_file($maintenance = $appRoot.'/storage/framework/maintenance.php')) {
+    require $maintenance;
+}
+
+require $appRoot.'/vendor/autoload.php';
+
+(require_once $appRoot.'/bootstrap/app.php')
+    ->handleRequest(Request::capture());
+

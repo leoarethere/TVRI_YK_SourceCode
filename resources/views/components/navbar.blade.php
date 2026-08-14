@@ -21,7 +21,7 @@
     {{-- BAGIAN 1: TOP BAR (Warna Biru Gelap - Hilang saat scroll)              --}}
     {{-- ====================================================================== --}}
     <div class="relative z-50 hidden h-10 border-b border-blue-800 bg-blue-900 text-xs font-medium text-white sm:block">
-        <div class="container mx-auto px-4 sm:px-6 lg:px-8 h-full flex justify-between items-center">
+        <div class="mx-auto flex h-full w-full max-w-[1600px] items-center justify-between px-4 sm:px-6 lg:px-8">
             
             {{-- Kiri: Tanggal / Info --}}
             <div class="hidden sm:flex items-center gap-4">
@@ -32,8 +32,8 @@
                     </svg>
                     {{ \Carbon\Carbon::now()->locale('id')->isoFormat('dddd, D MMMM Y') }}
                 </span>
-                <span class="opacity-50">|</span>
-                <a href="{{ route('streaming') }}" class="flex items-center gap-2 hover:text-blue-200 transition-colors">
+                <span class="hidden opacity-50 lg:inline">|</span>
+                <a href="{{ route('streaming') }}" class="hidden items-center gap-2 transition-colors hover:text-blue-200 lg:flex">
                     <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                     </svg>
@@ -45,7 +45,7 @@
             @if($hasSocialLinks)
             <div class="flex items-center gap-3 ml-auto">
                 <div class="flex gap-3 items-center">
-                    <span class="hidden sm:inline">Ikuti kami di</span>
+                    <span class="hidden lg:inline">Ikuti kami di</span>
                     
                     {{-- ✅ IKON SOSIAL MEDIA DINAMIS (Heroicons) --}}
                     <div class="flex gap-3">
@@ -111,23 +111,23 @@
              }
          }">
         
-        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="mx-auto w-full max-w-[1600px] px-4 sm:px-6 lg:px-8">
             <div class="relative flex h-[72px] items-center justify-between">
                 
                 {{-- Bagian Kiri: Logo --}}
-                <div class="flex-shrink-0">
+                <div class="min-w-0 flex-shrink-0">
                     <a href="/" class="flex items-center gap-1">
                         {{-- 1. Logo Gelap (Tampil di Light Mode, Hilang di Dark Mode) --}}
                         <img src="{{ asset('img/logolight.png') }}" 
-                            class="h-9 md:h-12 w-auto block dark:hidden" 
+                            class="block h-9 w-auto dark:hidden sm:h-10 md:h-12 xl:h-10 2xl:h-12"
                             alt="Logo TVRI Yogyakarta" />
 
                         {{-- 2. Logo Terang (Hilang di Light Mode, Tampil di Dark Mode) --}}
                         <img src="{{ asset('img/logodark.png') }}" 
-                            class="h-9 md:h-12 w-auto hidden dark:block" 
+                            class="hidden h-9 w-auto dark:block sm:h-10 md:h-12 xl:h-10 2xl:h-12"
                             alt="Logo TVRI Yogyakarta" />
 
-                        <span class="text-gray-900 dark:text-white font-bold text-xl sm:text-2xl whitespace-nowrap">
+                        <span class="hidden whitespace-nowrap text-xl font-bold text-gray-900 dark:text-white min-[360px]:inline sm:text-2xl xl:text-xl 2xl:text-2xl">
                             Yogyakarta
                         </span>
                     </a>
@@ -136,9 +136,9 @@
                 {{-- Bagian Kanan: Navigasi Desktop & Theme Toggle --}}
                 {{-- Breakpoint 'xl' digunakan agar menu tidak berantakan di layar tablet landscape --}}
                 <div class="hidden xl:flex items-center">
-                    <div class="flex items-center space-x-1">
+                    <div class="flex items-center gap-0.5 2xl:gap-1">
                         {{-- Nav Links Desktop --}}
-                        <a href="/" class="group flex items-center gap-2 rounded-lg px-4 py-3 text-base font-medium transition-all duration-200 {{ request()->is('/') ? 'bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white shadow-lg' : 'text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white' }}">
+                        <a href="/" class="group flex items-center gap-1.5 rounded-lg px-2.5 py-2 text-sm font-medium transition-all duration-200 2xl:gap-2 2xl:px-4 2xl:py-3 2xl:text-base {{ request()->is('/') ? 'bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white shadow-lg' : 'text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white' }}">
                             <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
                                 <polyline points="9 22 9 12 15 12 15 22"></polyline>
@@ -151,7 +151,7 @@
                         <div class="relative" @mouseenter="openMenu('publikasi')" @mouseleave="closeMenu()">
                             <button 
                                 @click="openDropdown = openDropdown === 'publikasi' ? null : 'publikasi'" 
-                                class="group flex items-center gap-2 rounded-lg px-4 py-3 text-base font-medium transition-all duration-200 {{ $isPublikasiActive ? 'bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white shadow-lg' : 'text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white' }}">
+                                class="group flex items-center gap-1.5 rounded-lg px-2.5 py-2 text-sm font-medium transition-all duration-200 2xl:gap-2 2xl:px-4 2xl:py-3 2xl:text-base {{ $isPublikasiActive ? 'bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white shadow-lg' : 'text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white' }}">
                                 <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z" />
                                 </svg>
@@ -189,7 +189,7 @@
                         <div class="relative" @mouseenter="openMenu('layanan')" @mouseleave="closeMenu()">
                             <button 
                                 @click="openDropdown = openDropdown === 'layanan' ? null : 'layanan'" 
-                                class="group flex items-center gap-2 rounded-lg px-4 py-3 text-base font-medium transition-all duration-200 {{ $isLayananActive ? 'bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white shadow-lg' : 'text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white' }}">
+                                class="group flex items-center gap-1.5 rounded-lg px-2.5 py-2 text-sm font-medium transition-all duration-200 2xl:gap-2 2xl:px-4 2xl:py-3 2xl:text-base {{ $isLayananActive ? 'bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white shadow-lg' : 'text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white' }}">
                                 <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M7 11.5V14m0-2.5v-6a1.5 1.5 0 113 0m-3 6a1.5 1.5 0 00-3 0v2a7.5 7.5 0 0015 0v-5a1.5 1.5 0 00-3 0m-6-3V11m0-5.5v-1a1.5 1.5 0 013 0v1m0 0V11m0-5.5a1.5 1.5 0 013 0v3m0 0V11" />
                                 </svg>
@@ -235,14 +235,14 @@
                             </div>
                         </div>
 
-                        <a href="{{ route('berita.index') }}" class="group flex items-center gap-2 rounded-lg px-4 py-3 text-base font-medium transition-all duration-200 {{ request()->is('berita*') ? 'bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white shadow-lg' : 'text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white' }}">
+                        <a href="{{ route('berita.index') }}" class="group flex items-center gap-1.5 rounded-lg px-2.5 py-2 text-sm font-medium transition-all duration-200 2xl:gap-2 2xl:px-4 2xl:py-3 2xl:text-base {{ request()->is('berita*') ? 'bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white shadow-lg' : 'text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white' }}">
                             <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
                             </svg>
                             <span>Berita</span>
                         </a>
 
-                        <a href="{{ route('postingan.index') }}" class="group flex items-center gap-2 rounded-lg px-4 py-3 text-base font-medium transition-all duration-200 {{ request()->is('postingan*') ? 'bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white shadow-lg' : 'text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white' }}">
+                        <a href="{{ route('postingan.index') }}" class="group flex items-center gap-1.5 rounded-lg px-2.5 py-2 text-sm font-medium transition-all duration-200 2xl:gap-2 2xl:px-4 2xl:py-3 2xl:text-base {{ request()->is('postingan*') ? 'bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white shadow-lg' : 'text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white' }}">
                             <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                             </svg>
@@ -254,7 +254,7 @@
                         <div class="relative" @mouseenter="openMenu('tentang')" @mouseleave="closeMenu()">
                             <button 
                                 @click="openDropdown = openDropdown === 'tentang' ? null : 'tentang'" 
-                                class="group flex items-center gap-2 rounded-lg px-4 py-3 text-base font-medium transition-all duration-200 {{ $isTentangActive ? 'bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white shadow-lg' : 'text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white' }}">
+                                class="group flex items-center gap-1.5 rounded-lg px-2.5 py-2 text-sm font-medium transition-all duration-200 2xl:gap-2 2xl:px-4 2xl:py-3 2xl:text-base {{ $isTentangActive ? 'bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white shadow-lg' : 'text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white' }}">
                                 <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                                 </svg>
@@ -309,12 +309,12 @@
                     </div>
 
                     {{-- Theme Toggle untuk Desktop --}}
-                    <div class="ml-2 border-l border-gray-200 dark:border-gray-700 pl-2 flex items-center gap-2">
+                    <div class="ml-1 flex items-center gap-1 border-l border-gray-200 pl-1 dark:border-gray-700 2xl:ml-2 2xl:gap-2 2xl:pl-2">
                         @auth
                             @if(auth()->user()->isDashboardUser())
                                 {{-- Admin/Secondary: Tombol ke Dashboard --}}
                                 <a href="{{ route('dashboard') }}" data-turbo="false"
-                                   class="group flex items-center gap-2 rounded-lg px-4 py-3 text-base font-medium transition-all duration-200 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white">
+                                   class="group flex items-center gap-1.5 rounded-lg px-2.5 py-2 text-sm font-medium text-gray-600 transition-all duration-200 hover:bg-gray-200 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white 2xl:gap-2 2xl:px-4 2xl:py-3 2xl:text-base">
                                     <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
                                     </svg>
@@ -322,28 +322,28 @@
                                 </a>
                                 <form action="{{ route('logout') }}" method="POST" data-turbo="false" class="inline">
                                     @csrf
-                                    <button type="submit" class="group flex items-center gap-2 rounded-lg px-4 py-3 text-base font-medium transition-all duration-200 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white">
+                                    <button type="submit" title="Keluar" aria-label="Keluar" class="group flex items-center gap-1.5 rounded-lg px-2.5 py-2 text-sm font-medium text-gray-600 transition-all duration-200 hover:bg-gray-200 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white 2xl:gap-2 2xl:px-4 2xl:py-3 2xl:text-base">
                                         <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                             <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                                         </svg>
-                                    <span>Keluar</span>
-                                </button>
-                            </form>
-                        @else
-                            {{-- Pegawai: Tombol Logout ke portal pegawai --}}
-                            <form action="{{ route('pegawai.logout') }}" method="POST" data-turbo="false" class="inline">
-                                @csrf
-                                <button type="submit" class="group flex items-center gap-2 rounded-lg px-4 py-3 text-base font-medium transition-all duration-200 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white">
-                                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                                    </svg>
-                                    <span>Keluar</span>
-                                </button>
-                            </form>
+                                        <span class="hidden 2xl:inline">Keluar</span>
+                                    </button>
+                                </form>
+                            @else
+                                {{-- Pegawai: Tombol Logout ke portal pegawai --}}
+                                <form action="{{ route('pegawai.logout') }}" method="POST" data-turbo="false" class="inline">
+                                    @csrf
+                                    <button type="submit" title="Keluar" aria-label="Keluar" class="group flex items-center gap-1.5 rounded-lg px-2.5 py-2 text-sm font-medium text-gray-600 transition-all duration-200 hover:bg-gray-200 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white 2xl:gap-2 2xl:px-4 2xl:py-3 2xl:text-base">
+                                        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                                        </svg>
+                                        <span class="hidden 2xl:inline">Keluar</span>
+                                    </button>
+                                </form>
                             @endif
                         @else
                             <a href="{{ route('login') }}" data-turbo="false"
-                               class="group flex items-center gap-2 rounded-lg px-4 py-3 text-base font-medium transition-all duration-200 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white">
+                               class="group flex items-center gap-1.5 rounded-lg px-2.5 py-2 text-sm font-medium text-gray-600 transition-all duration-200 hover:bg-gray-200 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white 2xl:gap-2 2xl:px-4 2xl:py-3 2xl:text-base">
                                 <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />

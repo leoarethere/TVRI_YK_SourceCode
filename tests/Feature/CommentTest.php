@@ -8,6 +8,7 @@ use App\Models\NewsCategory;
 use App\Models\Post;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\DB;
 use Tests\TestCase;
 
 class CommentTest extends TestCase
@@ -70,6 +71,36 @@ class CommentTest extends TestCase
             'name' => 'Jane Doe',
             'commentable_type' => \App\Models\Post::class,
         ]);
+    }
+
+    public function test_rating_aggregate_does_not_inherit_comment_ordering(): void
+    {
+        $this->post->update([
+            'status' => 'published',
+            'published_at' => now(),
+        ]);
+
+        $this->post->comments()->create([
+            'name' => 'Reviewer',
+            'email' => 'reviewer@example.com',
+            'body' => 'Bagus.',
+            'rating' => 5,
+            'status' => 'approved',
+        ]);
+
+        $queries = [];
+        DB::listen(function ($query) use (&$queries): void {
+            $queries[] = $query->sql;
+        });
+
+        $this->get(route('postingan.show', $this->post))->assertOk();
+
+        $aggregateQuery = collect($queries)->first(
+            fn (string $sql): bool => str_contains(strtolower($sql), 'avg(rating)')
+        );
+
+        $this->assertNotNull($aggregateQuery);
+        $this->assertStringNotContainsString('order by', strtolower($aggregateQuery));
     }
 
     public function test_comment_rejects_invalid_commentable_type(): void
