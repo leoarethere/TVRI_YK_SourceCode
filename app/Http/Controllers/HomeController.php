@@ -12,6 +12,7 @@ use App\Models\JadwalCategory;
 use App\Models\Post;
 use App\Models\User;
 use App\Support\HomepageCache;
+use Illuminate\Http\Response;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
@@ -19,7 +20,7 @@ use Illuminate\View\View;
 
 class HomeController extends Controller
 {
-    public function index(): View
+    public function index(): Response
     {
         // 1. Banner Slider (Cache 1 Jam)
         $heroSlides = Cache::remember('homepage.slides', 3600, function () {
@@ -139,14 +140,18 @@ class HomeController extends Controller
         $aksesInternal = AksesInformasi::internal();
         $aksesPublik = AksesInformasi::publik();
 
-        return view('frontend.beranda.index', array_merge([
-            'title' => 'Beranda - TVRI D.I. Yogyakarta',
-            'heroSlides' => $heroSlides,
-            'aksesInternal' => $aksesInternal,
-            'aksesPublik' => $aksesPublik,
-            'todaySchedules' => $todaySchedules,
-            'currentProgram' => $currentProgram,
-            'nextProgram' => $nextProgram,
-        ], $data));
+        return response()
+            ->view('frontend.beranda.index', array_merge([
+                'title' => 'Beranda - TVRI D.I. Yogyakarta',
+                'heroSlides' => $heroSlides,
+                'aksesInternal' => $aksesInternal,
+                'aksesPublik' => $aksesPublik,
+                'todaySchedules' => $todaySchedules,
+                'currentProgram' => $currentProgram,
+                'nextProgram' => $nextProgram,
+            ], $data))
+            ->header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0')
+            ->header('Pragma', 'no-cache')
+            ->header('Expires', 'Sat, 01 Jan 2000 00:00:00 GMT');
     }
 }

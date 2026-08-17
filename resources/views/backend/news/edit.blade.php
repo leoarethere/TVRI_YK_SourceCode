@@ -72,7 +72,7 @@
                         <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Gambar Unggulan</label>
                         @if($news->featured_image)
                             <div class="mb-2">
-                                <img src="{{ Storage::url($news->featured_image) }}" class="h-32 rounded-lg border border-gray-300">
+                                <img src="{{ Storage::url($news->featured_image) }}" alt="{{ $news->title }}" class="h-32 rounded-lg border border-gray-300">
                             </div>
                         @endif
                         <input type="file" name="featured_image" accept="image/*" class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 dark:bg-gray-700">

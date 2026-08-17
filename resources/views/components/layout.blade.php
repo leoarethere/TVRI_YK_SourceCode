@@ -157,6 +157,6 @@
     </div>
     @stack('scripts')
     {{-- Sienna Accessibility Widget --}}
-    <script src="https://cdn.jsdelivr.net/npm/sienna-accessibility/dist/sienna-accessibility.umd.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/sienna-accessibility/dist/sienna-accessibility.umd.js" data-position="left"></script>
 </body>
 </html>

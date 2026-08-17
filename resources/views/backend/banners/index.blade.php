@@ -65,7 +65,7 @@
                     {{-- Gambar --}}
                     <div class="relative aspect-video bg-gray-100 dark:bg-gray-700 overflow-hidden">
                         @if($banner->image_path)
-                            <img src="{{ Storage::url($banner->image_path) }}"
+                            <img src="{{ Storage::url($banner->image_path) }}" alt="Banner"
                                  alt="{{ $banner->title }}"
                                  class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
                         @else

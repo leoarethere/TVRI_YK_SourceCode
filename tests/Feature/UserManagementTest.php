@@ -176,12 +176,13 @@ class UserManagementTest extends TestCase
         $this->assertDatabaseHas('sessions', ['id' => 'other-session']);
     }
 
-    public function test_changing_own_password_logs_the_admin_out(): void
+    public function test_changing_own_password_logs_out_other_devices(): void
     {
         config(['session.driver' => 'database']);
 
         $this->admin->forceFill(['remember_token' => 'remember-token-lama'])->save();
         $this->insertSession('current-admin-session', $this->admin);
+        $this->insertSession('other-admin-session', $this->admin);
 
         $response = $this->actingAs($this->admin)->put(route('dashboard.users.update', $this->admin), [
             'name' => $this->admin->name,
@@ -192,9 +193,10 @@ class UserManagementTest extends TestCase
             'password_confirmation' => 'Password-Baru-123!',
         ]);
 
-        $response->assertRedirect(route('login'));
-        $this->assertGuest();
-        $this->assertDatabaseMissing('sessions', ['id' => 'current-admin-session']);
+        $response->assertRedirect(route('dashboard.users.index'));
+        $this->assertAuthenticatedAs($this->admin);
+        // Sesi lain tidak terhapus seketika dari DB, melainkan invalid saat request berikutnya
+        // karena ketidaksesuaian password_hash_web oleh middleware AuthenticateSession.
         $this->assertNotSame('remember-token-lama', $this->admin->fresh()->remember_token);
     }
 

@@ -129,13 +129,13 @@
                 <div class="w-full px-5 sm:px-8 lg:px-10 pb-6 sm:pb-8">
                     <figure class="relative w-full aspect-[2/1] lg:max-h-[400px] xl:max-h-[450px] overflow-hidden rounded-xl shadow-lg bg-gray-900 dark:bg-black">
                         {{-- Blurred Background Layer --}}
-                        <img src="{{ Storage::url($news->featured_image) }}" 
+                        <img src="{{ Storage::url($news->featured_image) }}" alt="{{ $news->title }}" 
                              alt="" 
                              class="absolute inset-0 w-full h-full object-cover blur-2xl opacity-60 scale-110"
                              aria-hidden="true">
                         
                         {{-- Main Image Layer (Fit without stretching) --}}
-                        <img src="{{ Storage::url($news->featured_image) }}" 
+                        <img src="{{ Storage::url($news->featured_image) }}" alt="{{ $news->title }}" 
                              alt="{{ $news->title }}" 
                              class="absolute inset-0 w-full h-full object-contain transition-transform duration-700 hover:scale-[1.02] z-10"
                              loading="lazy">

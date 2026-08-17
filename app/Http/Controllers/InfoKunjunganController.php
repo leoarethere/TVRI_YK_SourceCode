@@ -20,7 +20,7 @@ class InfoKunjunganController extends Controller
 
         // 1. Filter Pencarian
         if ($request->filled('search')) {
-            $query->where('title', 'like', '%' . $request->search . '%');
+            $query->where('title', 'like', '%'.$request->search.'%');
         }
 
         // 2. Logika Sorting (Perbaikan disini)
@@ -44,8 +44,8 @@ class InfoKunjunganController extends Controller
 
         // [BARU] Ambil Data FAQ
         $faqs = InfoKunjunganFaq::where('is_active', true)
-                                ->orderBy('order', 'asc')
-                                ->get();
+            ->orderBy('order', 'asc')
+            ->get();
 
         // [UPDATE] Kirim $faqs ke view
         return view('frontend.info-kunjungan.index', compact('items', 'faqs'));

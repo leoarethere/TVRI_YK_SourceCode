@@ -38,7 +38,7 @@
 
         {{-- Tombol OK --}}
         <button x-ref="modalDismiss"
-                x-effect="if (modalOpen) $nextTick(() => $refs.modalDismiss.focus())"
+                x-effect="if (modalOpen) $nextTick(function() { $refs.modalDismiss.focus() })"
                 @click="closeModal()"
                 type="button"
                 class="w-full inline-flex justify-center items-center px-4 py-2.5 text-sm font-medium text-white rounded-lg focus:outline-none focus:ring-4 transition-colors shadow-sm"

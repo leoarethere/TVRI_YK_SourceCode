@@ -249,7 +249,7 @@
                                 {{-- Gambar --}}
                                 <td class="px-4 py-4 align-top text-center">
                                     @if ($post->featured_image)
-                                        <img src="{{ Storage::url($post->featured_image) }}" alt="Gambar" class="w-16 h-12 object-cover rounded-lg ring-1 ring-gray-200 dark:ring-gray-700 inline-block">
+                                        <img src="{{ Storage::url($post->featured_image) }}" alt="{{ $post->title }}" alt="Gambar" class="w-16 h-12 object-cover rounded-lg ring-1 ring-gray-200 dark:ring-gray-700 inline-block">
                                     @else
                                         <div class="w-16 h-12 inline-flex items-center justify-center bg-gray-100 dark:bg-gray-700 rounded-lg ring-1 ring-gray-200 dark:ring-gray-700">
                                             <svg class="w-6 h-6 text-gray-400 dark:text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">

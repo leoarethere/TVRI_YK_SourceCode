@@ -20,6 +20,7 @@ class DashboardJadwalCategoryController extends Controller
         ]);
 
         JadwalCategory::create($validated);
+
         return back()->with('success', 'Hari/Kategori baru berhasil ditambahkan!');
     }
 
@@ -33,6 +34,7 @@ class DashboardJadwalCategoryController extends Controller
         ]);
 
         $jadwalCategory->update($validated);
+
         return back()->with('success', 'Hari/Kategori berhasil diperbarui!');
     }
 
@@ -46,6 +48,7 @@ class DashboardJadwalCategoryController extends Controller
         }
 
         $jadwalCategory->delete();
+
         return back()->with('success', 'Hari/Kategori berhasil dihapus!');
     }
 }

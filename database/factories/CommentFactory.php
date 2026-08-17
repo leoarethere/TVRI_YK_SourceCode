@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\Comment;
+use App\Models\News;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class CommentFactory extends Factory
@@ -17,7 +18,7 @@ class CommentFactory extends Factory
             'body' => fake()->paragraph(),
             'status' => 'pending',
             'commentable_id' => 1,
-            'commentable_type' => \App\Models\News::class,
+            'commentable_type' => News::class,
         ];
     }
 

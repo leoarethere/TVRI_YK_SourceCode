@@ -122,7 +122,7 @@
                                 {{-- Foto --}}
                                 <td class="px-4 py-4 text-center">
                                     @if ($item->image)
-                                        <img src="{{ Storage::url($item->image) }}"
+                                        <img src="{{ Storage::url($item->image) }}" alt="Gambar"
                                              alt="Foto Prestasi"
                                              class="w-16 h-12 object-cover rounded-lg ring-1 ring-gray-200 dark:ring-gray-700 inline-block">
                                     @else

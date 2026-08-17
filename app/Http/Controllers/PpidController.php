@@ -16,7 +16,7 @@ class PpidController extends Controller
 
         // 1. Filter Pencarian
         if ($request->filled('search')) {
-            $query->where('title', 'like', '%' . $request->search . '%');
+            $query->where('title', 'like', '%'.$request->search.'%');
         }
 
         // 2. Logika Sorting (Perbaikan disini)

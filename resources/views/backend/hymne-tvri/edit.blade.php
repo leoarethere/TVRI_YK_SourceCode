@@ -111,7 +111,7 @@
                         {{-- Preview Box --}}
                         <div class="mb-3" x-show="preview">
                             <div class="relative w-32 h-40 rounded-lg overflow-hidden border border-gray-300 dark:border-gray-600">
-                                <img :src="preview" class="w-full h-full object-cover">
+                                <img :src="preview" alt="Preview Gambar" class="w-full h-full object-cover">
                                 <button type="button" @click="preview = null; document.getElementById('poster').value = ''" class="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition-colors">
                                     <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                                 </button>

@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
@@ -15,7 +15,7 @@ return new class extends Migration
             $table->integer('order')->default(0);       // Urutan
             $table->string('image')->nullable();        // Gambar/Ikon
             $table->text('content');                    // Isi Konten
-            $table->boolean('is_active')->default(true);// Status Aktif
+            $table->boolean('is_active')->default(true); // Status Aktif
             $table->timestamps();
         });
     }

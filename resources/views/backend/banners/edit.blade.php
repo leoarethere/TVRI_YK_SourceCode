@@ -105,7 +105,7 @@
                             <div class="relative w-full max-w-lg aspect-video bg-gray-100 dark:bg-gray-700 rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-600 flex items-center justify-center overflow-hidden">
                                 <template x-if="imagePreview">
                                     <div class="relative w-full h-full group">
-                                        <img :src="imagePreview" class="w-full h-full object-cover">
+                                        <img :src="imagePreview" alt="Preview Gambar" class="w-full h-full object-cover">
                                         {{-- Tombol Hapus Preview (Reset) --}}
                                         <button type="button" @click="imagePreview = @js($banner->image_path ? Storage::url($banner->image_path) : ''); $refs.fileInput.value = ''"
                                             x-show="imagePreview !== @js($banner->image_path ? Storage::url($banner->image_path) : '')"

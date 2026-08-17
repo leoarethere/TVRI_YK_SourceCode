@@ -2,15 +2,15 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
-use App\Models\Post;
-use App\Models\News;
 use App\Models\Broadcast;
-use App\Models\Category;
-use App\Models\NewsCategory;
 use App\Models\BroadcastCategory;
-use Illuminate\Database\Seeder;
+use App\Models\Category;
+use App\Models\News;
+use App\Models\NewsCategory;
+use App\Models\Post;
+use App\Models\User;
 use Faker\Factory as Faker;
+use Illuminate\Database\Seeder;
 
 class DummyDataSeeder extends Seeder
 {
@@ -20,7 +20,7 @@ class DummyDataSeeder extends Seeder
     public function run(): void
     {
         $faker = Faker::create('id_ID');
-        
+
         // Pastikan ada user admin
         $user = User::first() ?? User::factory()->create();
 
@@ -47,9 +47,9 @@ class DummyDataSeeder extends Seeder
             $post = Post::create([
                 'user_id' => $user->id,
                 'category_id' => $postCategory->id,
-                'title' => 'Postingan Dummy ' . $i,
-                'slug' => 'postingan-dummy-' . $i,
-                'body' => '<p>' . implode('</p><p>', $faker->paragraphs(3)) . '</p>',
+                'title' => 'Postingan Dummy '.$i,
+                'slug' => 'postingan-dummy-'.$i,
+                'body' => '<p>'.implode('</p><p>', $faker->paragraphs(3)).'</p>',
                 'excerpt' => $faker->sentence(),
                 'status' => 'published',
                 'published_at' => now()->subDays(rand(1, 10)),
@@ -62,9 +62,9 @@ class DummyDataSeeder extends Seeder
             $news = News::create([
                 'user_id' => $user->id,
                 'news_category_id' => $newsCategory->id,
-                'title' => 'Berita Dummy ' . $i,
-                'slug' => 'berita-dummy-' . $i,
-                'body' => '<p>' . implode('</p><p>', $faker->paragraphs(3)) . '</p>',
+                'title' => 'Berita Dummy '.$i,
+                'slug' => 'berita-dummy-'.$i,
+                'body' => '<p>'.implode('</p><p>', $faker->paragraphs(3)).'</p>',
                 'excerpt' => $faker->sentence(),
                 'status' => 'published',
                 'published_at' => now()->subDays(rand(1, 10)),
@@ -77,8 +77,8 @@ class DummyDataSeeder extends Seeder
             $broadcast = Broadcast::create([
                 'user_id' => $user->id,
                 'broadcast_category_id' => $broadcastCategory->id,
-                'title' => 'Program Siaran Dummy ' . $i,
-                'slug' => 'siaran-dummy-' . $i,
+                'title' => 'Program Siaran Dummy '.$i,
+                'slug' => 'siaran-dummy-'.$i,
                 'synopsis' => $faker->paragraph(),
                 'youtube_link' => 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
                 'status' => 'published',

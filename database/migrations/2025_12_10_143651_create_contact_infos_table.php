@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
@@ -14,23 +14,23 @@ return new class extends Migration
         Schema::create('contact_infos', function (Blueprint $table) {
             $table->id();
             // Menyimpan nomor telepon admin
-            $table->string('admin_phone'); 
-            
+            $table->string('admin_phone');
+
             // Menyimpan nomor telepon kerjasama
-            $table->string('partnership_phone'); 
-            
+            $table->string('partnership_phone');
+
             // Menyimpan hotline penyiaran
-            $table->string('hotline_phone'); 
-            
+            $table->string('hotline_phone');
+
             // Menyimpan alamat lengkap (menggunakan text karena bisa panjang)
-            $table->text('address'); 
-            
+            $table->text('address');
+
             // Opsional: Email instansi (saya tambahkan sebagai pelengkap standar)
             $table->string('email')->nullable();
 
             // Status aktif/tidak (jika ingin menyembunyikan sementara)
             $table->boolean('is_active')->default(true);
-            
+
             $table->timestamps();
         });
     }

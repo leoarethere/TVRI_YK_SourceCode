@@ -20,7 +20,7 @@ class InfoMagangController extends Controller
 
         // 1. Filter Pencarian
         if ($request->filled('search')) {
-            $query->where('title', 'like', '%' . $request->search . '%');
+            $query->where('title', 'like', '%'.$request->search.'%');
         }
 
         // 2. Logika Sorting (Perbaikan disini)
@@ -44,8 +44,8 @@ class InfoMagangController extends Controller
 
         // [BARU] Ambil Data FAQ (Urutkan sesuai order)
         $faqs = InfoMagangFaq::where('is_active', true)
-                             ->orderBy('order', 'asc')
-                             ->get();
+            ->orderBy('order', 'asc')
+            ->get();
 
         return view('frontend.info-magang.index', compact('items', 'faqs'));
     }

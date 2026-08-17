@@ -53,7 +53,7 @@ class CommentTest extends TestCase
             'body' => 'Great article! Very informative.',
             'status' => 'pending',
             'commentable_id' => $this->news->id,
-            'commentable_type' => \App\Models\News::class,
+            'commentable_type' => News::class,
         ]);
     }
 
@@ -70,7 +70,7 @@ class CommentTest extends TestCase
         $response->assertSessionHas('success');
         $this->assertDatabaseHas('comments', [
             'name' => 'Jane Doe',
-            'commentable_type' => \App\Models\Post::class,
+            'commentable_type' => Post::class,
         ]);
     }
 
@@ -162,7 +162,7 @@ class CommentTest extends TestCase
             'commentable_id' => $this->news->id,
         ]);
 
-        $comment = \App\Models\Comment::first();
+        $comment = Comment::first();
 
         $response = $this->actingAs($this->admin)->put(route('dashboard.komentar.setujui', $comment));
         $response->assertRedirect();
@@ -183,7 +183,7 @@ class CommentTest extends TestCase
             'commentable_id' => $this->news->id,
         ]);
 
-        $comment = \App\Models\Comment::first();
+        $comment = Comment::first();
 
         $response = $this->actingAs($this->admin)->put(route('dashboard.komentar.tolak', $comment));
         $response->assertRedirect();
@@ -204,7 +204,7 @@ class CommentTest extends TestCase
             'commentable_id' => $this->news->id,
         ]);
 
-        $comment = \App\Models\Comment::first();
+        $comment = Comment::first();
 
         $response = $this->actingAs($this->admin)->delete(route('dashboard.komentar.destroy', $comment));
         $response->assertRedirect();

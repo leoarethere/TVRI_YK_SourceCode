@@ -41,17 +41,17 @@ class DashboardContactInfoController extends Controller
     public function update(Request $request, ContactInfo $contactInfo): RedirectResponse
     {
         $request->validate([
-            'admin_phone'       => 'required|string|max:40',
+            'admin_phone' => 'required|string|max:40',
             'partnership_phone' => 'required|string|max:40',
-            'hotline_phone'     => 'required|string|max:40',
-            'address'           => 'required|string',
-            'email'             => 'nullable|email',
+            'hotline_phone' => 'required|string|max:40',
+            'address' => 'required|string',
+            'email' => 'nullable|email',
             'google_maps_embed' => 'nullable|string|max:2000',
         ]);
 
         // Ekstrak URL src jika pengguna menempelkan tag iframe lengkap.
         $googleMapsEmbed = $request->google_maps_embed;
-        
+
         if ($googleMapsEmbed) {
             // Cek apakah input berupa full iframe tag
             if (str_contains($googleMapsEmbed, '<iframe')) {
@@ -61,7 +61,7 @@ class DashboardContactInfoController extends Controller
                     $googleMapsEmbed = $matches[1]; // Ambil hanya URL-nya
                 }
             }
-            
+
             // Validasi bahwa hasilnya adalah URL Google Maps Embed yang valid
             if (! preg_match('#^https://www\.google\.com/maps/embed#', $googleMapsEmbed)) {
                 return back()->withErrors([
@@ -73,9 +73,9 @@ class DashboardContactInfoController extends Controller
         $contactInfo->update([
             'admin_phone' => $request->admin_phone,
             'partnership_phone' => $request->partnership_phone,
-            'hotline_phone'     => $request->hotline_phone,
-            'address'           => $request->address,
-            'email'             => $request->email,
+            'hotline_phone' => $request->hotline_phone,
+            'address' => $request->address,
+            'email' => $request->email,
             'google_maps_embed' => $googleMapsEmbed,
             'is_active' => $request->has('is_active'),
         ]);

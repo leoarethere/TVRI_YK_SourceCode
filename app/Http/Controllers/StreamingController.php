@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\View\View;
 use Illuminate\Routing\Controller;
+use Illuminate\View\View;
 
 class StreamingController extends Controller
 {
@@ -16,14 +16,14 @@ class StreamingController extends Controller
             'title' => 'Live Streaming TVRI D.I. Yogyakarta',
             'description' => 'Saksikan siaran langsung berita, budaya, dan hiburan khas Jogja dengan kualitas HD.',
             'stream_url' => config('services.tvri.stream_url'),
-            'poster' => asset('img/loginbanner.jpeg'), 
-            
+            'poster' => asset('img/loginbanner.jpeg'),
+
             'is_live' => true,
         ];
 
         return view('frontend.streaming.streaming', [
             'title' => 'Live Streaming',
-            'stream' => $stream
+            'stream' => $stream,
         ]);
     }
 }

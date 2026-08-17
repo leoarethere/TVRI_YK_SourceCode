@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
@@ -26,9 +26,9 @@ return new class extends Migration
 
             // Kolom untuk "nama siaran"
             $table->string('title');
-            
+
             // Kolom untuk URL (konsisten dengan Post)
-            $table->string('slug')->unique(); 
+            $table->string('slug')->unique();
 
             // Kolom untuk "sinopsis"
             $table->text('synopsis')->nullable();
@@ -42,7 +42,7 @@ return new class extends Migration
             // Kolom status (konsisten dengan Post)
             $table->enum('status', ['published', 'draft'])->default('draft');
             $table->timestamp('published_at')->nullable();
-            
+
             $table->timestamps();
         });
     }

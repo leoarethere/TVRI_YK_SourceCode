@@ -35,9 +35,9 @@ class DashboardInfoKunjunganFaqController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $validated = $request->validate([
-            'question'  => 'required|string|max:255',
-            'answer'    => 'required|string',
-            'order'     => 'required|integer|min:0',
+            'question' => 'required|string|max:255',
+            'answer' => 'required|string',
+            'order' => 'required|integer|min:0',
         ]);
 
         // Checkbox handling
@@ -65,9 +65,9 @@ class DashboardInfoKunjunganFaqController extends Controller
     public function update(Request $request, InfoKunjunganFaq $infoKunjunganFaq): RedirectResponse
     {
         $validated = $request->validate([
-            'question'  => 'required|string|max:255',
-            'answer'    => 'required|string',
-            'order'     => 'required|integer|min:0',
+            'question' => 'required|string|max:255',
+            'answer' => 'required|string',
+            'order' => 'required|integer|min:0',
         ]);
 
         $validated['is_active'] = $request->has('is_active');

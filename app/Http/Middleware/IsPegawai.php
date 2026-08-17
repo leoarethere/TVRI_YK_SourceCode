@@ -13,6 +13,7 @@ class IsPegawai
         if (! auth()->user() || ! auth()->user()->isPegawai()) {
             abort(403, 'Unauthorized access.');
         }
+
         return $next($request);
     }
 }

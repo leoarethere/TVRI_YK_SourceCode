@@ -14,6 +14,7 @@ use App\Models\User;
 use App\Support\HomepageCache;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Cache;
 use Tests\TestCase;
 
@@ -114,13 +115,15 @@ class HomepageConsistencyTest extends TestCase
         ]);
 
         $view = app(HomeController::class)->index();
+        $viewData = $view instanceof Response ? $view->original->getData() : $view->getData();
 
-        $this->assertCount(2, $view->getData()['todaySchedules']);
-        $this->assertTrue($current->is($view->getData()['currentProgram']));
+        $this->assertCount(2, $viewData['todaySchedules']);
+        $this->assertTrue($current->is($viewData['currentProgram']));
 
         Carbon::setTestNow('2026-08-10 15:31:00');
         $view = app(HomeController::class)->index();
+        $viewData = $view instanceof Response ? $view->original->getData() : $view->getData();
 
-        $this->assertNull($view->getData()['currentProgram']);
+        $this->assertNull($viewData['currentProgram']);
     }
 }

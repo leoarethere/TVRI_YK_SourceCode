@@ -13,18 +13,18 @@ return new class extends Migration
     {
         Schema::create('comments', function (Blueprint $table) {
             $table->id();
-            
+
             // Polymorphic relation columns (commentable_id, commentable_type)
             $table->morphs('commentable');
-            
+
             // Identitas pengunjung
             $table->string('name');
             $table->string('email');
-            
+
             // Isi Komentar dan Rating
             $table->text('body');
             $table->unsignedTinyInteger('rating')->nullable();
-            
+
             $table->timestamps();
         });
     }

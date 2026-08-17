@@ -101,7 +101,7 @@
                             {{-- Poster Container dengan Aspect Ratio 3:4 --}}
                             <div class="relative aspect-[3/4] overflow-hidden bg-gray-100 dark:bg-gray-900">
                                 @if($program->poster)
-                                    <img src="{{ Storage::url($program->poster) }}" 
+                                    <img src="{{ Storage::url($program->poster) }}" alt="{{ $program->title }}" 
                                          alt="{{ $program->title }}" 
                                          class="w-full h-full object-cover transition-transform duration-700 ease-out group-hover/card:scale-105" 
                                          loading="lazy">
@@ -349,8 +349,8 @@
                 <article class="flex flex-col h-full group bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 border border-gray-100 dark:border-gray-700 hover:-translate-y-1">
                     <a href="{{ route('postingan.show', $post->slug) }}" class="block overflow-hidden relative aspect-video bg-gray-100 dark:bg-gray-900">
                         @if($post->featured_image)
-                            <img src="{{ Storage::url($post->featured_image) }}" class="absolute inset-0 w-full h-full object-cover blur-xl opacity-60 scale-110" aria-hidden="true">
-                            <img src="{{ Storage::url($post->featured_image) }}" alt="{{ $post->title }}" class="relative w-full h-full object-contain transition-transform duration-500 group-hover:scale-105" loading="lazy">
+                            <img src="{{ Storage::url($post->featured_image) }}" alt="{{ $post->title }}" class="absolute inset-0 w-full h-full object-cover blur-xl opacity-60 scale-110" aria-hidden="true">
+                            <img src="{{ Storage::url($post->featured_image) }}" alt="{{ $post->title }}" alt="{{ $post->title }}" class="relative w-full h-full object-contain transition-transform duration-500 group-hover:scale-105" loading="lazy">
                         @else
                             <div class="w-full h-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
                                 <svg class="w-10 h-10 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" /></svg>

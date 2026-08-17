@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Support\Facades\Storage;
 
 class Broadcast extends Model
 {
@@ -21,6 +22,10 @@ class Broadcast extends Model
     {
         static::deleting(function (Broadcast $broadcast) {
             $broadcast->comments()->delete();
+
+            if ($broadcast->poster) {
+                Storage::disk('public')->delete($broadcast->poster);
+            }
         });
     }
 

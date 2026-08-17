@@ -78,7 +78,7 @@
                                 {{-- Poster --}}
                                 <td class="px-4 py-4 text-center">
                                     @if ($item->poster)
-                                        <img src="{{ Storage::url($item->poster) }}"
+                                        <img src="{{ Storage::url($item->poster) }}" alt="Poster"
                                              alt="Poster"
                                              class="w-16 h-12 object-cover rounded-lg ring-1 ring-gray-200 dark:ring-gray-700 inline-block">
                                     @else

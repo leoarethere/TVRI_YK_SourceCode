@@ -46,23 +46,23 @@ class DashboardSocialMediaController extends Controller
     {
         $validated = $request->validate([
             'instagram' => 'nullable|url',
-            'twitter'   => 'nullable|url',
-            'facebook'  => 'nullable|url',
-            'tiktok'    => 'nullable|url',
-            'youtube'   => 'nullable|url',
+            'twitter' => 'nullable|url',
+            'facebook' => 'nullable|url',
+            'tiktok' => 'nullable|url',
+            'youtube' => 'nullable|url',
         ], [
             // Opsional: Custom error message jika URL tidak valid
             'instagram.url' => 'Link Instagram harus berupa URL valid (awalan http:// atau https://)',
-            'twitter.url'   => 'Link X (Twitter) harus berupa URL valid',
-            'facebook.url'  => 'Link Facebook harus berupa URL valid',
-            'tiktok.url'    => 'Link TikTok harus berupa URL valid',
-            'youtube.url'   => 'Link YouTube harus berupa URL valid',
+            'twitter.url' => 'Link X (Twitter) harus berupa URL valid',
+            'facebook.url' => 'Link Facebook harus berupa URL valid',
+            'tiktok.url' => 'Link TikTok harus berupa URL valid',
+            'youtube.url' => 'Link YouTube harus berupa URL valid',
         ]);
 
         $socialMedia->update($validated);
-        
+
         // Hapus cache agar frontend segera mendapat perubahan
-        Cache::forget('global_social_media'); 
+        Cache::forget('global_social_media');
 
         return redirect()->route('dashboard.social-media.index')
             ->with('success', 'Link sosial media berhasil diperbarui!');

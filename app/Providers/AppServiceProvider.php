@@ -3,10 +3,9 @@
 namespace App\Providers;
 
 use App\Models\SocialMedia;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\View;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
-
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -25,11 +24,11 @@ class AppServiceProvider extends ServiceProvider
     {
         // Mengirim data social media hanya ke komponen yang membutuhkannya (Navbar & Footer)
         View::composer(['components.navbar', 'components.footer'], function ($view) {
-            if (!array_key_exists('socialMedia', $view->getData())) {
-                $socialMedia = \Illuminate\Support\Facades\Cache::remember('global_social_media', 3600, function () {
-                    return \App\Models\SocialMedia::first();
+            if (! array_key_exists('socialMedia', $view->getData())) {
+                $socialMedia = Cache::remember('global_social_media', 3600, function () {
+                    return SocialMedia::first();
                 });
-                
+
                 $view->with('socialMedia', $socialMedia);
             }
         });

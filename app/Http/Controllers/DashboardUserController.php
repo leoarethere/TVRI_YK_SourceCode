@@ -166,16 +166,12 @@ class DashboardUserController extends Controller
         $user->refresh();
 
         if ($passwordChanged) {
-            $this->sessions->revokeAll($user);
-        }
-
-        if ($passwordChanged && Auth::id() === $user->id) {
-            Auth::logout();
-            $request->session()->invalidate();
-            $request->session()->regenerateToken();
-
-            return redirect()->route('login')
-                ->with('success', 'Kata sandi berhasil diperbarui. Silakan masuk kembali.');
+            if (Auth::id() === $user->id) {
+                Auth::user()->password = $user->password;
+                Auth::logoutOtherDevices($request->password);
+            } else {
+                $this->sessions->revokeAll($user);
+            }
         }
 
         return redirect()->route('dashboard.users.index')

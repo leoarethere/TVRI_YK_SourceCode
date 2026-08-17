@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
 // Ganti nama class
 class TugasFungsi extends Model
@@ -12,7 +12,7 @@ class TugasFungsi extends Model
 
     // Jika nama tabel di migrasi adalah 'tugas_fungsis', baris ini opsional.
     // Tapi jika Anda ingin nama tabel custom (misal: 'tugas_fungsi'), tambahkan:
-    // protected $table = 'tugas_fungsi'; 
+    // protected $table = 'tugas_fungsi';
 
     protected $fillable = [
         'type', 'order', 'image', 'content', 'is_active',

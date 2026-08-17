@@ -27,8 +27,8 @@ class DashboardAksesInformasiController extends Controller
     public function update(Request $request, AksesInformasi $aksesInformasi): RedirectResponse
     {
         $validated = $request->validate([
-            'url'       => 'nullable|url|max:2048',
-            'label'     => 'nullable|string|max:100',
+            'url' => 'nullable|url|max:2048',
+            'label' => 'nullable|string|max:100',
             'is_active' => 'boolean',
         ]);
 
