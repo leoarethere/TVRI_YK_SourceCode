@@ -30,7 +30,20 @@ class PegawaiLoginController extends Controller
             'password.required' => 'Password wajib diisi.',
         ]);
 
-        if (Auth::attempt($credentials)) {
+        try {
+            $authenticated = Auth::attempt($credentials);
+        } catch (\RuntimeException $e) {
+            \Illuminate\Support\Facades\Log::warning('Pegawai login authentication hash failure: ' . $e->getMessage(), [
+                'email' => $request->input('email'),
+                'ip' => $request->ip(),
+            ]);
+
+            return back()->withErrors([
+                'email' => 'Format kredensial tidak valid atau akun memerlukan pembaruan kata sandi.',
+            ])->onlyInput('email');
+        }
+
+        if ($authenticated) {
             $user = Auth::user();
 
             // Proteksi: Hanya user dengan role 'pegawai' yang boleh login di sini

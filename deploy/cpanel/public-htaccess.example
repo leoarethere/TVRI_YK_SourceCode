@@ -17,6 +17,20 @@
     RewriteRule ^ index.php [L]
 </IfModule>
 
+# Blokir akses ke berkas sensitif, arsip backup, dan dotfiles
+<FilesMatch "(?i)\.(env|env\..*|git.*|sql|sqlite|zip|rar|tar|gz|bak|config|log|md)$">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order Deny,Allow
+        Deny from all
+    </IfModule>
+</FilesMatch>
+
+# Blokir akses ke direktori tersembunyi (dimulai dengan .)
+RewriteRule (^\.|/\.) - [F]
+
 # Asset Vite memakai nama ber-hash sehingga aman dicache secara immutable.
 <IfModule mod_setenvif.c>
     SetEnvIf Request_URI "^/build/assets/" vite_immutable_asset
@@ -25,6 +39,8 @@
 <IfModule mod_headers.c>
     Header set Cache-Control "public, max-age=31536000, immutable" env=vite_immutable_asset
     Header always set X-Content-Type-Options "nosniff"
+    Header always set X-Frame-Options "SAMEORIGIN"
+    Header always set X-XSS-Protection "1; mode=block"
 </IfModule>
 
 <IfModule mod_deflate.c>
@@ -33,3 +49,4 @@
 
 # Pilih PHP 8.2 melalui cPanel MultiPHP Manager. Jika cPanel menambahkan handler
 # otomatis di bawah file ini, jangan menggantinya dengan handler ea-php74.
+

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ $title ?? 'Masuk' }} - TVRI D.I. Yogyakarta</title>
+    <title>{{ $title ?? 'Login' }} - TVRI D.I. Yogyakarta</title>
     
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     
@@ -12,9 +12,170 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:opsz,wght@6..144,1..1000&display=swap" rel="stylesheet">
     
-    <x-favicon />
+    {{-- Favicon --}}
+    <link rel="icon" href="{{ asset('img/favicon.png') }}" type="image/png">
     
-    @include('components.auth-styles')
+    <style>
+        body {
+            font-family: "Google Sans Flex", sans-serif;
+        }
+        
+        /* Fix CSS Conflicts */
+        .login-container {
+            min-height: 100vh;
+            display: grid;
+            grid-template-columns: 1fr;
+        }
+        
+        @media (min-width: 1024px) {
+            .login-container {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+        
+        .login-banner {
+            display: none;
+        }
+        
+        @media (min-width: 1024px) {
+            .login-banner {
+                display: block;
+            }
+        }
+        
+        .login-form-section {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+        
+        @media (min-width: 640px) {
+            .login-form-section {
+                padding: 3rem;
+            }
+        }
+        
+        @media (min-width: 1024px) {
+            .login-form-section {
+                padding: 4rem;
+            }
+        }
+        
+        .login-form-container {
+            width: 100%;
+            max-width: 28rem;
+            margin: 0 auto;
+        }
+        
+        .login-logo {
+            height: 2.25rem;
+            width: auto;
+        }
+        
+        @media (min-width: 768px) {
+            .login-logo {
+                height: 3rem;
+            }
+        }
+        
+        .login-input {
+            background-color: rgb(249 250 251);
+            border: 1px solid rgb(209 213 219);
+            color: rgb(17 24 39);
+            font-size: 0.875rem;
+            border-radius: 0.5rem;
+            padding: 0.625rem;
+            width: 100%;
+        }
+        
+        .login-input:focus {
+            ring-width: 2px;
+            ring-color: rgb(37 99 235);
+            border-color: rgb(37 99 235);
+        }
+        
+        .dark .login-input {
+            background-color: rgb(55 65 81);
+            border-color: rgb(75 85 99);
+            color: rgb(255 255 255);
+        }
+        
+        .dark .login-input:focus {
+            ring-color: rgb(59 130 246);
+            border-color: rgb(59 130 246);
+        }
+        
+        .login-input-error {
+            border-color: rgb(239 68 68);
+        }
+        
+        .login-button {
+            width: 100%;
+            color: rgb(255 255 255);
+            background-color: rgb(37 99 235);
+            font-weight: 500;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            padding: 0.625rem 1.25rem;
+            text-align: center;
+        }
+        
+        .login-button:hover {
+            background-color: rgb(29 78 216);
+        }
+        
+        .dark .login-button {
+            background-color: rgb(37 99 235);
+        }
+        
+        .dark .login-button:hover {
+            background-color: rgb(29 78 216);
+        }
+        
+        .alert-container {
+            padding: 1rem;
+            font-size: 0.875rem;
+            border-radius: 0.5rem;
+            border: 1px solid;
+        }
+        
+        .alert-error {
+            color: rgb(153 27 27);
+            background-color: rgb(254 242 242);
+            border-color: rgb(254 202 202);
+        }
+        
+        .dark .alert-error {
+            color: rgb(254 202 202);
+            background-color: rgb(127 29 29);
+            border-color: rgb(153 27 27);
+        }
+        
+        .alert-success {
+            color: rgb(21 128 61);
+            background-color: rgb(240 253 244);
+            border-color: rgb(187 247 208);
+        }
+        
+        .dark .alert-success {
+            color: rgb(187 247 208);
+            background-color: rgb(22 101 52);
+            border-color: rgb(21 128 61);
+        }
+        
+        .alert-info {
+            color: rgb(30 64 175);
+            background-color: rgb(239 246 255);
+            border-color: rgb(191 219 254);
+        }
+        
+        .dark .alert-info {
+            color: rgb(191 219 254);
+            background-color: rgb(30 58 138);
+            border-color: rgb(30 64 175);
+        }
+    </style>
 </head>
 <body class="h-full font-google-sans antialiased text-gray-900 dark:text-white">
 
@@ -23,9 +184,8 @@
         {{-- BAGIAN 1: Banner Image (Tampil Full di Desktop, Sembunyi di Mobile) --}}
         <div class="login-banner relative h-full w-full bg-gray-100 dark:bg-gray-800">
             <img src="{{ asset('img/loginbanner.jpeg') }}" 
-                 alt="Banner Login TVRI D.I. Yogyakarta" 
-                 class="absolute inset-0 h-full w-full object-cover"
-                 loading="lazy" />
+                 alt="TVRI D.I. Yogyakarta Login Banner" 
+                 class="absolute inset-0 h-full w-full object-cover" />
             
             {{-- Overlay Gradient --}}
             <div class="absolute inset-0 bg-gradient-to-br from-blue-900/40 via-indigo-900/30 to-transparent"></div>
@@ -65,7 +225,7 @@
 
                 {{-- Notifikasi Error --}}
                 @if ($errors->any())
-                    <div class="alert-container alert-error" role="alert">
+                    <div class="alert-container alert-error">
                         <div class="flex items-start">
                             <svg class="flex-shrink-0 w-5 h-5 mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
@@ -84,7 +244,7 @@
 
                 {{-- Notifikasi Sukses --}}
                 @if (session('success'))
-                    <div class="alert-container alert-success" role="alert">
+                    <div class="alert-container alert-success">
                         <div class="flex items-start">
                             <svg class="flex-shrink-0 w-5 h-5 mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
@@ -96,7 +256,7 @@
 
                 {{-- Notifikasi Info --}}
                 @if (session('status'))
-                    <div class="alert-container alert-info" role="alert">
+                    <div class="alert-container alert-info">
                         <div class="flex items-start">
                             <svg class="flex-shrink-0 w-5 h-5 mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
@@ -152,53 +312,15 @@
                                 Ingat saya
                             </label>
                         </div>
-                        <a href="{{ route('password.request') }}" class="text-sm font-medium text-blue-600 hover:underline dark:text-blue-500">
-                            Lupa kata sandi?
-                        </a>
                     </div>
 
                     {{-- Submit Button --}}
                     <div class="flex justify-center mb-4">
-                        <button type="submit" data-loading-text="Memproses..."
-                            class="min-h-11 w-full max-w-md px-8 py-2.5 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-500 dark:hover:bg-blue-600 dark:focus:ring-blue-800 transition-colors duration-300">
+                        <button type="submit" 
+                            class="w-full max-w-md px-8 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-500 dark:hover:bg-blue-600 dark:focus:ring-blue-800 transition-colors duration-300">
                             Masuk
                         </button>
                     </div>
-
-                    {{-- Divider & Tombol Portal Pegawai --}}
-                    {{-- Selalu tampil sebagai link kecil, lebih menonjol jika ada flag show_pegawai_link --}}
-                    <div class="relative my-2">
-                        <div class="absolute inset-0 flex items-center">
-                            <div class="w-full border-t border-gray-200 dark:border-gray-700"></div>
-                        </div>
-                        <div class="relative flex justify-center text-xs">
-                            <span class="bg-white dark:bg-gray-900 px-3 text-gray-400 dark:text-gray-500">atau</span>
-                        </div>
-                    </div>
-
-                    @if(session('show_pegawai_link'))
-                    {{-- Versi menonjol: muncul saat pegawai salah portal --}}
-                    <div class="flex justify-center mb-2">
-                        <a href="{{ route('pegawai.login') }}"
-                           class="w-full max-w-md flex items-center justify-center gap-2 px-8 py-2 text-sm font-medium text-blue-700 bg-blue-50 border border-blue-200 rounded-lg hover:bg-blue-100 dark:bg-blue-900/20 dark:text-blue-400 dark:border-blue-800 dark:hover:bg-blue-900/40 transition-colors duration-300">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/>
-                            </svg>
-                            Masuk sebagai Pegawai
-                        </a>
-                    </div>
-                    @else
-                    {{-- Versi button: selalu tampil sebagai tombol sekunder --}}
-                    <div class="flex justify-center mb-2">
-                        <a href="{{ route('pegawai.login') }}"
-                           class="w-full max-w-md flex items-center justify-center gap-2 px-8 py-2 text-sm font-medium text-gray-700 bg-gray-100 border border-gray-200 rounded-lg hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-600 transition-colors duration-300">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/>
-                            </svg>
-                            Masuk ke Portal Pegawai
-                        </a>
-                    </div>
-                    @endif
 
                     {{-- Link Kembali ke Homepage --}}
                     <div class="flex justify-start">
@@ -211,8 +333,8 @@
 
                 {{-- Footer --}}
                 <div class="mt-6 text-center text-xs text-gray-400 dark:text-gray-500">
-                    <p>&copy; {{ date('Y') }} Lembaga Penyiaran Publik TVRI D.I. Yogyakarta</p>
-                    <p class="mt-1">Hak cipta dilindungi undang-undang.</p>
+                    <p>Copyright {{ date('Y') }} Lembaga Penyiaran Publik TVRI D.I. Yogyakarta</p>
+                    <p class="mt-1">All rights reserved.</p>
                 </div>
             </div>
         </div>

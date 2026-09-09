@@ -40,7 +40,20 @@ class LoginController extends Controller
         // 2. Coba untuk mengautentikasi pengguna dengan remember me
         $remember = $request->has('remember');
 
-        if (Auth::attempt($credentials, $remember)) {
+        try {
+            $authenticated = Auth::attempt($credentials, $remember);
+        } catch (\RuntimeException $e) {
+            \Illuminate\Support\Facades\Log::warning('Login authentication hash failure: ' . $e->getMessage(), [
+                'email' => $request->input('email'),
+                'ip' => $request->ip(),
+            ]);
+
+            return back()->withErrors([
+                'email' => 'Format kredensial tidak valid atau akun memerlukan pembaruan kata sandi.',
+            ])->onlyInput('email');
+        }
+
+        if ($authenticated) {
             $user = Auth::user();
 
             // Deteksi akun pegawai yang salah portal — kembalikan ke sini + tampilkan link portal pegawai
