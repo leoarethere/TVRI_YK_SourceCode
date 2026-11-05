@@ -12,8 +12,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:opsz,wght@6..144,1..1000&display=swap" rel="stylesheet">
     
-    {{-- Favicon --}}
-    <link rel="icon" href="{{ asset('img/favicon.png') }}" type="image/png">
+    <x-favicon />
     
     <style>
         body {
