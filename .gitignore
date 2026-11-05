@@ -5,6 +5,14 @@
 /public/*.zip
 /resources/views/*.zip
 /storage/*.key
+
+# Archives & backups
+*.zip
+*.rar
+*.7z
+*.tar
+*.tar.gz
+*.tgz
 /.env
 /.env.backup
 /.env.local
