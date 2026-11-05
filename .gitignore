@@ -13,6 +13,11 @@
 *.tar
 *.tar.gz
 *.tgz
+
+# Database dumps
+*.sql
+*.sql.gz
+*.dump
 /.env
 /.env.backup
 /.env.local
