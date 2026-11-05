@@ -17,7 +17,7 @@
             '@type' => 'NewsArticle',
             'headline' => $news->title,
             'description' => Str::limit(strip_tags($news->body), 160),
-            'datePublished' => ($news->published_at ?? $news->created_at)->toIso8601String(),
+            'datePublished' => \App\Support\Time::toWib($news->published_at ?? $news->created_at)?->toIso8601String(),
             'author' => [
                 '@type' => 'Person',
                 'name' => $news->user->name ?? 'Admin',
@@ -101,8 +101,11 @@
                     {{-- Tanggal --}}
                     <div class="flex items-center gap-2 text-xs sm:text-sm text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-700/50 px-3 py-1.5 rounded-full">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                        <time datetime="{{ $news->created_at->toIso8601String() }}">
-                            {{ $news->created_at->translatedFormat('d F Y, H:i') }} WIB
+                        @php
+                            $newsTimeWib = \App\Support\Time::toWib($news->created_at);
+                        @endphp
+                        <time datetime="{{ $newsTimeWib?->toIso8601String() }}">
+                            {{ $newsTimeWib?->translatedFormat('d F Y, H:i') ?? '-' }} WIB
                         </time>
                     </div>
                 </div>

@@ -17,7 +17,7 @@
             '@type' => 'BlogPosting',
             'headline' => $post->title,
             'description' => Str::limit(strip_tags($post->body), 160),
-            'datePublished' => ($post->published_at ?? $post->created_at)->toIso8601String(),
+            'datePublished' => \App\Support\Time::toWib($post->published_at ?? $post->created_at)?->toIso8601String(),
             'author' => [
                 '@type' => 'Person',
                 'name' => $post->user->name ?? 'Admin',
@@ -101,8 +101,11 @@
                     {{-- Tanggal --}}
                     <div class="flex items-center gap-2 text-xs sm:text-sm text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-700/50 px-3 py-1.5 rounded-full">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                        <time datetime="{{ $post->created_at->toIso8601String() }}">
-                            {{ $post->created_at->translatedFormat('d F Y, H:i') }} WIB
+                        @php
+                            $postTimeWib = \App\Support\Time::toWib($post->created_at);
+                        @endphp
+                        <time datetime="{{ $postTimeWib?->toIso8601String() }}">
+                            {{ $postTimeWib?->translatedFormat('d F Y, H:i') ?? '-' }} WIB
                         </time>
                     </div>
                 </div>

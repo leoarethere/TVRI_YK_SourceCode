@@ -258,9 +258,12 @@
 
                                         {{-- Status Publikasi --}}
                                         @if ($broadcast->status === 'published')
-                                            <span class="inline-flex items-center gap-1 text-xs text-gray-600 dark:text-gray-400" title="Dipublikasikan pada {{ $broadcast->published_at->format('d M Y H:i') }}">
+                                            @php
+                                                $broadcastPublishedWib = \App\Support\Time::toWib($broadcast->published_at);
+                                            @endphp
+                                            <span class="inline-flex items-center gap-1 text-xs text-gray-600 dark:text-gray-400" title="Dipublikasikan pada {{ $broadcastPublishedWib?->format('d M Y H:i') }}">
                                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                                                {{ $broadcast->published_at->format('d M Y') }}
+                                                {{ $broadcastPublishedWib?->format('d M Y') ?? '-' }}
                                             </span>
                                         @else
                                             <span class="inline-flex items-center gap-1 text-xs text-orange-600 dark:text-orange-400 font-medium">

@@ -65,7 +65,22 @@ return [
     |
     */
 
-    'timezone' => env('APP_TIMEZONE', 'UTC'),
+    'timezone' => env('APP_TIMEZONE', 'Asia/Jakarta'),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Legacy Timestamp Cutoffs
+    |--------------------------------------------------------------------------
+    |
+    | Data imported from the old database on 2026-08-11 is already stored in
+    | WIB. Records created after that import but before the timezone fix were
+    | written as UTC wall-clock values. Records after the second cutoff are
+    | already in WIB.
+    |
+    */
+
+    'legacy_wib_until' => env('APP_LEGACY_WIB_UNTIL', '2026-08-11 09:00:00'),
+    'legacy_utc_until' => env('APP_LEGACY_UTC_UNTIL', '2026-08-18 00:00:00'),
 
     /*
     |--------------------------------------------------------------------------

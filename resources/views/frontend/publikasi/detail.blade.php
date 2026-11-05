@@ -117,8 +117,8 @@
                     {{-- Tanggal --}}
                     <div class="flex items-center gap-2 text-xs sm:text-sm text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-700/50 px-3 py-1.5 rounded-full">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                        <time datetime="{{ $broadcast->published_at?->toIso8601String() ?? $broadcast->created_at->toIso8601String() }}">
-                            {{ $broadcast->published_at ? $broadcast->published_at->translatedFormat('d F Y') : $broadcast->created_at->translatedFormat('d F Y') }}
+                        <time datetime="{{ \App\Support\Time::toWib($broadcast->published_at ?? $broadcast->created_at)?->toIso8601String() }}">
+                            {{ \App\Support\Time::toWib($broadcast->published_at ?? $broadcast->created_at)?->translatedFormat('d F Y') ?? '-' }}
                         </time>
                     </div>
                 </div>

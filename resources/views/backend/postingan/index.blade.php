@@ -269,8 +269,11 @@
 
                                 {{-- Tanggal --}}
                                 <td class="px-4 py-4 align-top text-center">
-                                    <div class="text-sm font-medium text-gray-900 dark:text-white">{{ $post->created_at->format('d M Y') }}</div>
-                                    <div class="text-xs text-gray-500 dark:text-gray-400 mt-1">{{ $post->created_at->format('H:i') }} WIB</div>
+                                    @php
+                                        $postTimeWib = \App\Support\Time::toWib($post->created_at);
+                                    @endphp
+                                    <div class="text-sm font-medium text-gray-900 dark:text-white">{{ $postTimeWib?->format('d M Y') ?? '-' }}</div>
+                                    <div class="text-xs text-gray-500 dark:text-gray-400 mt-1">{{ $postTimeWib?->format('H:i') ?? '-' }} WIB</div>
                                 </td>
 
                                 {{-- Aksi --}}

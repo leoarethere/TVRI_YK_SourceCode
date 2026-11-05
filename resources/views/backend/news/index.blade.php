@@ -259,8 +259,11 @@
                                 </td>
 
                                 <td class="px-4 py-4 align-top text-center">
-                                    <div class="text-sm font-medium text-gray-900 dark:text-white">{{ $item->created_at->format('d M Y') }}</div>
-                                    <div class="text-xs text-gray-500 dark:text-gray-400 mt-1">{{ $item->created_at->format('H:i') }} WIB</div>
+                                    @php
+                                        $itemTimeWib = \App\Support\Time::toWib($item->created_at);
+                                    @endphp
+                                    <div class="text-sm font-medium text-gray-900 dark:text-white">{{ $itemTimeWib?->format('d M Y') ?? '-' }}</div>
+                                    <div class="text-xs text-gray-500 dark:text-gray-400 mt-1">{{ $itemTimeWib?->format('H:i') ?? '-' }} WIB</div>
                                 </td>
 
                                 <td class="px-4 py-4 align-top text-center">

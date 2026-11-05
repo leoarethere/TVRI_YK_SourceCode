@@ -209,10 +209,13 @@
 
                                 {{-- Tanggal --}}
                                 <td class="px-4 py-4 align-middle text-center">
+                                    @php
+                                        $commentTimeWib = \App\Support\Time::toWib($comment->created_at);
+                                    @endphp
                                     <span class="text-xs text-gray-500 dark:text-gray-400">
-                                        {{ $comment->created_at ? $comment->created_at->format('d M Y') : '-' }}
+                                        {{ $commentTimeWib?->format('d M Y') ?? '-' }}
                                         <br>
-                                        {{ $comment->created_at ? $comment->created_at->format('H:i') : '' }}
+                                        {{ $commentTimeWib?->format('H:i') ?? '' }}
                                     </span>
                                 </td>
 
