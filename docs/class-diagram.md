@@ -422,7 +422,7 @@ sequenceDiagram
     participant DB as MySQL Database
     participant V as Blade View
 
-    B->>R: HTTP Request GET /posts
+    B->>R: HTTP Request GET /postingan
     R->>M: Periksa middleware (auth, throttle)
     M-->>R: Lanjut (lolos)
     R->>C: PostController::index(Request)
@@ -446,7 +446,7 @@ sequenceDiagram
     participant CC as CommentController
     participant DB as Database
 
-    B->>R: POST /comments {commentable_type, commentable_id, name, email, body, rating}
+    B->>R: POST /komentar {commentable_type, commentable_id, name, email, body, rating}
     R->>TH: Cek rate limit (max 10/menit)
     TH-->>R: OK
     R->>CC: store(Request)

@@ -82,18 +82,18 @@ Aplikasi menggunakan pola **MVC (Model-View-Controller)** bawaan Laravel:
 ```
 Yogyakarta/
 ├── app/
-│   ├── Http/Controllers/     # 48 Controller (Frontend + Dashboard)
+│   ├── Http/Controllers/     # 46 Controller (Frontend + Dashboard)
 │   ├── Models/               # 26 Model Eloquent
 │   └── Providers/            # Service Provider
 ├── database/
-│   ├── migrations/           # 45 File Migrasi
+│   ├── migrations/           # 47 File Migrasi
 │   └── seeders/              # Seeder (termasuk DummyDataSeeder)
 ├── resources/views/
 │   ├── frontend/             # 10 Modul Halaman Publik
-│   ├── backend/              # 21 Modul Dashboard Admin
+│   ├── backend/              # 22 Modul Dashboard Admin
 │   └── components/           # Komponen Blade (Layout, Komentar, dll)
 ├── routes/
-│   └── web.php               # 182 Route Terdaftar
+│   └── web.php               # 165 Route Terdaftar
 └── public/
     ├── img/                  # Asset gambar statis
     └── storage/              # Symlink ke storage/app/public
@@ -107,7 +107,7 @@ Yogyakarta/
 
 - PHP ≥ 8.2 dengan ekstensi: `gd`, `mbstring`, `openssl`, `pdo_mysql`, `fileinfo`
 - Composer ≥ 2.x
-- Node.js ≥ 18.x & NPM
+- Node.js ≥ 20.19.x atau ≥ 22.12.x & NPM ≥ 10
 - MySQL ≥ 8.0
 - Web Server (Apache/Nginx/Laragon)
 
@@ -175,22 +175,24 @@ Halaman utama menampilkan 7 seksi:
 6. **Visi & Misi** — Ringkasan visi-misi dalam card interaktif
 7. **Hubungi Kami** — Informasi kontak + embed Google Maps
 
-### 4.2 Berita (`/news`)
+### 4.2 Berita (`/berita`)
 
 - Daftar berita dengan filter: **Pencarian**, **Kategori**, **Sorting** (Terbaru/Terlama/Populer/A-Z/Z-A)
-- Setiap berita memiliki halaman detail (`/news/{slug}`) dengan view counter dan komponen komentar
-- Pagination 12 item per halaman
+- Setiap berita memiliki halaman detail (`/berita/{slug}`) dengan view counter dan komponen komentar
+- Pagination 9 item per halaman
 
-### 4.3 Postingan (`/posts`)
+### 4.3 Postingan (`/postingan`)
 
 - Serupa dengan Berita, memiliki filter Kategori, Sorting, dan Pencarian
-- Halaman detail (`/posts/{slug}`) dengan fitur komentar & rating
+- Halaman detail (`/postingan/{slug}`) dengan fitur komentar & rating
+- Pagination 9 item per halaman
 
-### 4.4 Program Penyiaran (`/programs`)
+### 4.4 Program Penyiaran (`/penyiaran`)
 
 - Katalog program TV dalam layout grid poster (aspect ratio 3:4)
 - Filter berdasarkan **Kategori Siaran** (pills navigasi) dan **Pencarian**
-- Halaman detail (`/programs/{slug}`) menampilkan sinopsis, trailer YouTube, dan komentar
+- Halaman detail (`/penyiaran/{slug}`) menampilkan sinopsis, trailer YouTube, dan komentar
+- Pagination 12 item per halaman
 
 ### 4.5 Jadwal Acara (`/jadwal-acara`)
 
@@ -318,7 +320,7 @@ Sistem komentar menggunakan **Polymorphic Relationship** sehingga satu tabel `co
 
 - **Whitelist Model:** Hanya 3 model yang diizinkan (`Broadcast`, `News`, `Post`)
 - **XSS Protection:** Output menggunakan `{{ }}` (escaped) di Blade
-- **Throttle:** `throttle:10,1` pada route `POST /comments`
+- **Throttle:** `throttle:10,1` pada route `POST /komentar`
 - **Cascade Delete:** Menghapus konten induk otomatis menghapus komentar terkait
 
 ---
@@ -337,6 +339,7 @@ Sistem komentar menggunakan **Polymorphic Relationship** sehingga satu tabel `co
 
 - Admin **tidak bisa menghapus akun sendiri**
 - Admin **tidak bisa menghapus akun administrator terakhir**
+- Password baru minimal **12 karakter**
 - Password di-hash menggunakan **Bcrypt** dengan **12 rounds**
 - Fitur **Lupa Password** tersedia melalui email (SMTP)
 

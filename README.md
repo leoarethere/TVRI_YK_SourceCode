@@ -8,10 +8,10 @@
 
 | # | Dokumen | Deskripsi | File |
 |---|---------|-----------|------|
-| 1 | **Manual Book** | Panduan penggunaan lengkap untuk admin dan pengguna | [manual-book.md](./manual-book.md) |
-| 2 | **Dokumentasi Database** | ERD, LRS, dan Kamus Data | [database-diagram.md](./database-diagram.md) |
-| 3 | **Class Diagram** | Diagram kelas Model, Controller, dan alur sistem | [class-diagram.md](./class-diagram.md) |
-| 4 | **Deployment cPanel** | Upload, database, storage link, cache production, verifikasi, dan rollback | [deployment-cpanel.md](./deployment-cpanel.md) |
+| 1 | **Manual Book** | Panduan penggunaan lengkap untuk admin dan pengguna | [manual-book.md](./docs/manual-book.md) |
+| 2 | **Dokumentasi Database** | ERD, LRS, dan Kamus Data | [database-diagram.md](./docs/database-diagram.md) |
+| 3 | **Class Diagram** | Diagram kelas Model, Controller, dan alur sistem | [class-diagram.md](./docs/class-diagram.md) |
+| 4 | **Deployment cPanel** | Upload, database, storage link, cache production, verifikasi, dan rollback | [deployment-cpanel.md](./docs/deployment-cpanel.md) |
 
 ---
 
@@ -25,10 +25,10 @@
 
 ### Statistik Proyek
 - 📊 **26 Tabel** database
-- 🎮 **48 Controller** (Frontend + Dashboard)
+- 🎮 **46 Controller** aplikasi (Frontend + Dashboard)
 - 🧩 **26 Model** Eloquent
-- 🛤️ **182 Route** terdaftar
-- 📄 **31 Modul** view (10 frontend + 21 backend)
+- 🛤️ **165 Route** terdaftar
+- 📄 **32 Modul** view (10 frontend + 22 backend)
 
 ### Akses Sistem
 - **URL Publik:** `/`
@@ -56,7 +56,7 @@ Browser
   │                                 JadwalController, StreamingController
   │                                 (+ 10 halaman statis instansi)
   │
-  └── [Auth]  Dashboard Routes ──► DashboardController (+ 20 sub-controller)
+  └── [Auth]  Dashboard Routes ──► DashboardController (+ 24 sub-controller)
                                     └── Middleware: auth + dashboardUser (+ isAdmin)
 ```
 
