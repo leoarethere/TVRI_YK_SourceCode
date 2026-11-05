@@ -38,8 +38,8 @@ class UserManagementTest extends TestCase
             'name' => 'New User',
             'username' => 'newuser',
             'email' => 'newuser@example.com',
-            'password' => 'password123',
-            'password_confirmation' => 'password123',
+            'password' => 'password12345',
+            'password_confirmation' => 'password12345',
             'role' => 'secondary',
         ]);
 
@@ -51,6 +51,21 @@ class UserManagementTest extends TestCase
         ]);
     }
 
+    public function test_create_user_rejects_password_shorter_than_12_characters(): void
+    {
+        $response = $this->actingAs($this->admin)->post(route('dashboard.users.store'), [
+            'name' => 'Weak Password',
+            'username' => 'weakpassword',
+            'email' => 'weak@example.com',
+            'password' => 'short1234',
+            'password_confirmation' => 'short1234',
+            'role' => 'secondary',
+        ]);
+
+        $response->assertSessionHasErrors('password');
+        $this->assertDatabaseMissing('users', ['email' => 'weak@example.com']);
+    }
+
     public function test_create_user_validates_unique_fields(): void
     {
         User::factory()->create(['email' => 'existing@example.com', 'username' => 'existing']);
@@ -59,8 +74,8 @@ class UserManagementTest extends TestCase
             'name' => 'Duplicate',
             'username' => 'existing',
             'email' => 'existing@example.com',
-            'password' => 'password123',
-            'password_confirmation' => 'password123',
+            'password' => 'password12345',
+            'password_confirmation' => 'password12345',
         ]);
 
         $response->assertSessionHasErrors(['username', 'email']);
