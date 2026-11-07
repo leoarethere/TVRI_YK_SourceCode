@@ -1,0 +1,41 @@
+---
+title: "Activity Diagram 2/4 — Pengiriman & Moderasi Komentar"
+---
+flowchart TD
+%% ============================================================
+%% ACTIVITY DIAGRAM 2/4 — Pengiriman & Moderasi Komentar
+%% Sistem Informasi TVRI Stasiun D.I. Yogyakarta
+%% ----
+%% Aktor: ● Pengunjung (biru) dan ◆ Admin Pengelola (oranye)
+%% Jalur moderasi berupa fork antara dashboard dan pengunjung.
+%% ============================================================
+
+    %% ---------- Jalur pengunjung ----------
+    M1(["●"]) --> BUKA["Pengunjung membuka halaman detail konten<br/>(berita / postingan / program siaran)"]
+    BUKA --> KOMPONEN["Komponen komentar mengambil daftar<br/>komentar dan rekap rating<br/>(hanya status approved, 10 per halaman)"]
+    KOMPONEN --> ISI["Pengunjung mengisi form komentar<br/>(name, email, body, rating 1-5 opsional,<br/>commentable_type + commentable_id)"]
+    ISI --> POSTK["POST /komentar<br/>(throttle maksimal 10 permintaan/menit)"]
+    POSTK --> HONEYPOT{"Field honeypot<br/>website terisi?"}
+    HONEYPOT -- ya --> BLOK["Permintaan ditolak diam-diam<br/>(dideteksi sebagai bot / spam)"]
+    BLOK --> AKHIR_SPAM(["◉"])
+    HONEYPOT -- tidak --> WINPUT{"Validasi input:<br/>name, email, body maks 1000<br/>karakter, rating 1-5?"}
+    WINPUT -- tidak valid --> AKHIR_VALID(["◉"])
+    WINPUT -- valid --> CEK_KONTEN{"Konten target ada<br/>dan published?"}
+    CEK_KONTEN -- tidak --> ERR404["Error: Konten tidak ditemukan"]
+    ERR404 --> AKHIR_404(["◉"])
+    CEK_KONTEN -- ya --> SIMPAN["Simpan komentar ke tabel comments<br/>dengan status = pending"]
+    SIMPAN --> PESAN["Pengunjung melihat pesan<br/>komentar menunggu moderasi"]
+    PESAN --> AKHIR_PENDING(["◉ menunggu moderasi"])
+
+    %% ---------- Jalur moderasi (dashboard pengelola) ----------
+    M2(["●"]) --> DASH["Admin pengelola membuka Dashboard<br/>- Komentar<br/>(tab: semua / pending / disetujui / ditolak)"]
+    DASH --> LIHAT["Melihat daftar komentar dengan pencarian<br/>(nama, email, isi) dan jumlah per status"]
+    LIHAT --> AKSI{"Aksi moderasi?"}
+    AKSI -- setujui --> SATUJUI["PUT /dashboard/komentar/id/setujui<br/>status = approved"]
+    AKSI -- tolak --> TOLAK["PUT /dashboard/komentar/id/tolak<br/>status = rejected"]
+    AKSI -- hapus --> HAPUS["DELETE komentar<br/>baris komentar dihapus dari database"]
+    HAPUS --> AKHIR_HAPUS(["◉"])
+    SATUJUI --> TAMPIL["Pengunjung lain yang membuka kembali<br/>halaman detail konten kini melihat<br/>komentar dan rata-rata rating yang tampil"]
+    TOLAK --> TAMPIL2["Komentar tidak pernah tampil<br/>di halaman publik"]
+    TAMPIL --> AKHIR_TAMPIL(["●"])
+    TAMPIL2 --> AKHIR_TAMPIL

@@ -1,0 +1,59 @@
+---
+title: "Activity Diagram 4/4 — Manajemen Pengguna & Peran"
+---
+flowchart TD
+%% ============================================================
+%% ACTIVITY DIAGRAM 4/4 — Manajemen Pengguna & Peran
+%% Sistem Informasi TVRI Stasiun D.I. Yogyakarta
+%% ----
+%% Khusus Super Admin — modul dashboard/users
+%% ============================================================
+
+    M(["●"]) --> BUKA["Pengelola membuka dashboard/users<br/>(middleware auth + dashboardUser + isAdmin)"]
+    BUKA --> CEK_ROLE{"Role =<br/>super admin?"}
+    CEK_ROLE -- tidak --> DILARANG["Respons HTTP 403"]
+    DILARANG --> AKHIR403(["◉"])
+    CEK_ROLE -- ya --> DAFTAR["Daftar pengguna ditampilkan<br/>(hijau: pegawai, biru: secondary,<br/>merah: admin)"]
+    DAFTAR --> AKSI{"Aksi yang dipilih?"}
+
+    %% ---------- Buat user baru ----------
+    AKSI -- "buat user baru" --> FORMCREATE["Form create pengguna"]
+    FORMCREATE --> ISI["Pengelola mengisi name, username, email,<br/>password min 12 karakter, dan role"]
+    ISI --> VAL{"Validasi<br/>data?"}
+    VAL -- gagal --> ERR["Redirect kembali ke form<br/>dengan error dan old(input)"]
+    ERR --> AKHIRERR(["◉"])
+    VAL -- valid --> CEK_ROLE_BARU{"Role yang dipilih<br/>= admin?"}
+    CEK_ROLE_BARU -- ya --> SIMPAN_A[("Akun admin dibuat")] --> OUT
+    CEK_ROLE_BARU -- tidak --> PAksa["Role dipaksa secondary<br/>(admin secondary tidak boleh membuat<br/>akun admin atau pegawai)"] --> OUT["Simpan, kembali ke daftar<br/>dengan pesan sukses"]
+
+    %% ---------- Edit pengguna ----------
+    AKSI -- "edit pengguna" --> FORMEDIT["Form edit pengguna"]
+    FORMEDIT --> CEK_TARGET{"Target = akun admin<br/>dan pengelola = secondary?"}
+    CEK_TARGET -- ya --> FOREDIT["Respons HTTP 403<br/>(secondary tidak boleh mengolah akun admin)"]
+    FOREDIT --> AKHIREDIT(["◉"])
+    CEK_TARGET -- tidak --> TX["Transaction diawali dengan<br/>lockForUpdate pada tabel users"]
+    TX --> CEK_LAST{"Menurunkan satu-satunya<br/>akun admin?"}
+    CEK_LAST -- ya --> LASTERR["Ditolak: satu-satunya admin<br/>tidak boleh dikurangi perannya<br/>transaction rollback"]
+    LASTERR --> AKHIRLAST(["◉"])
+    CEK_LAST -- tidak --> SAVE["Data disimpan"]
+    SAVE --> SELF_PWD{"Self-edit dan<br/>password berubah?"}
+    SELF_PWD -- ya --> LOGOUTDEV["Auth::logoutOtherDevices<br/>(password lama distrip)"] --> ORANG_LAIN{"Mengedit<br/>akun orang lain?"}
+    SELF_PWD -- tidak --> ORANG_LAIN{"Mengedit<br/>akun orang lain?"}
+    ORANG_LAIN -- ya --> REVOKE["UserSessionService menghapus<br/>semua sesi user yang diedit"] --> OUT2["Commit transaction, kembali ke daftar<br/>dengan pesan sukses<br/>user yang diedit wajib login ulang"]
+    ORANG_LAIN -- tidak --> OUT2
+
+    %% ---------- Ubah role ----------
+    AKSI -- "ubah role" --> TX2["Transaction lockForUpdate"]
+    TX2 --> CEK_DEMOTE{"Menurunkan<br/>admin terakhir?"}
+    CEK_DEMOTE -- ya --> DEMOTEERR["Ditolak, transaction rollback"]
+    DEMOTEERR --> AKHIRDM(["◉"])
+    CEK_DEMOTE -- tidak --> UPDROLE["Role diperbarui"] --> OUT
+
+    %% ---------- Hapus ----------
+    AKSI -- "hapus pengguna" --> TX3["Transaction lockForUpdate"]
+    TX3 --> CEK_HAPUS{"Target = satu-satunya admin<br/>atau akun sendiri?"}
+    CEK_HAPUS -- ya --> HAPUSERR["Ditolak: satu-satunya admin tidak<br/>dapat dihapus, atau akun sendiri<br/>transaction rollback"]
+    HAPUSERR --> AKHIRH(["◉"])
+    CEK_HAPUS -- tidak --> REVOKES["UserSessionService menghapus<br/>semua sesi user terkait"]
+    REVOKES --> DELU["User dihapus<br/>(posts / news ikut terhapus<br/>on delete cascade)"]
+    DELU --> OUT

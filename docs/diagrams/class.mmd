@@ -1,0 +1,339 @@
+%% ============================================================
+%% CLASS DIAGRAM — Sistem Informasi TVRI Stasiun D.I. Yogyakarta
+%% Menggambarkan model domain (Eloquent) + kelas pendukung
+%% (service, rule, middleware, controller utama).
+%% ----
+%% Arah panah asosiasi: dari pemilik relasi ke target relasi
+%%   User "1" --> "0..*" Post  (Data tidak menyertakan FK terbalik)
+%% ============================================================
+classDiagram
+    direction LR
+
+    %% ================== TRAIT (Concerns) ==================
+    class HasPublicPublicationStatus {
+        <<trait>>
+        +scopePubliclyVisible()
+        +isPubliclyVisible() bool
+    }
+    class InvalidatesHomepageDataCache {
+        <<trait>>
+    }
+    class InvalidatesHomepageScheduleCache {
+        <<trait>>
+    }
+
+    %% ================== AKUN & PERAN ==================
+    class User {
+        +int id
+        +string name
+        +string username
+        +string email
+        +string password
+        +string role = "secondary"
+        +DateTime email_verified_at
+        +isAdmin() bool
+        +isPegawai() bool
+        +isSecondary() bool
+        +isDashboardUser() bool
+        +sendPasswordResetNotification()
+    }
+    User ..|> InvalidatesHomepageDataCache
+
+    %% ================== KONTEN PUBLIKASI ==================
+    class Post {
+        +int user_id
+        +int category_id
+        +string title
+        +string slug
+        +text body
+        +string featured_image
+        +string link_postingan
+        +string status "draft|published, default draft"
+        +DateTime published_at
+        +string meta_title
+        +string meta_description
+        +uint views
+        +incrementViews()
+        +scopeFilter()
+    }
+    class News {
+        +int user_id
+        +int news_category_id
+        +string title
+        +string slug
+        +text body
+        +string featured_image
+        +string link_berita
+        +string status "draft|published, default draft"
+        +DateTime published_at
+        +uint views
+        +incrementViews()
+        +scopeFilter()
+    }
+    class Category {
+        +string name
+        +string slug
+        +string color
+    }
+    class NewsCategory {
+        +string name
+        +string slug
+        +string color
+    }
+    class Broadcast {
+        +int user_id
+        +int broadcast_category_id
+        +string title
+        +string slug
+        +text synopsis
+        +string poster
+        +string youtube_link
+        +string status "draft|published, default draft"
+        +bool is_active
+        +DateTime published_at
+        +youtube_embed_url() string
+    }
+    class BroadcastCategory {
+        +string name
+        +string slug
+        +string color
+    }
+    class History {
+        +string title
+        +text content
+        +string image
+        +string status "draft|published, default draft"
+        +DateTime published_at
+    }
+    Post ..|> HasPublicPublicationStatus
+    Post ..|> InvalidatesHomepageDataCache
+    News ..|> HasPublicPublicationStatus
+    Broadcast ..|> HasPublicPublicationStatus
+    Broadcast ..|> InvalidatesHomepageDataCache
+    History ..|> HasPublicPublicationStatus
+
+    User "1" --> "0..*" Post : posts()
+    User "1" --> "0..*" News : news()
+    User "1" --> "0..*" Broadcast : broadcasts()
+    Category "1" --> "0..*" Post
+    NewsCategory "1" --> "0..*" News
+
+    %% ================== JADWAL & SIARAN ==================
+    class JadwalAcara {
+        +string title
+        +string slug
+        +time start_time
+        +time end_time
+        +bool is_active
+    }
+    class JadwalCategory {
+        +string name
+        +string slug
+        +string color
+        +int order
+        +appliesToDay() bool
+    }
+    BroadcastCategory "1" --> "0..*" JadwalAcara : jadwalAcaras()
+    JadwalCategory "1" --> "0..*" JadwalAcara
+    JadwalAcara ..|> InvalidatesHomepageScheduleCache
+    JadwalCategory ..|> InvalidatesHomepageScheduleCache
+
+    %% ================== KOMENTAR (polymorphic) ==================
+    class Comment {
+        +string commentable_type
+        +uint commentable_id
+        +string name
+        +string email
+        +text body
+        +tinyint rating
+        +string status "pending|approved|rejected, default pending"
+        +scopeApproved()
+        +scopePending()
+        +scopeRejected()
+    }
+    Post "1" --> "0..*" Comment : commentable
+    News "1" --> "0..*" Comment : commentable
+    Broadcast "1" --> "0..*" Comment : commentable
+    note for Comment "MorphTo: target konten harus berstatus published"
+
+    %% ================== PROFIL & INFORMASI STATIS ==================
+    class VisiMisi {
+        +string type "visi|misi"
+        +text content
+        +int order
+        +string image
+        +bool is_active
+    }
+    class TugasFungsi {
+        +string type "tugas|fungsi"
+        +text content
+        +int order
+        +string image
+        +bool is_active
+    }
+    class Prestasi {
+        +string title
+        +string award_name
+        +string type
+        +string category
+        +year year
+        +string image
+        +bool is_active
+    }
+    class HymneTvri {
+        +string title
+        +string info
+        +string poster
+        +text synopsis
+        +string link
+        +bool is_active
+    }
+    class Ppid {
+        +string title
+        +text description
+        +string source_link
+        +string cover_image
+        +bool is_active
+    }
+    class ReformasiRb {
+        +string title
+        +string slug
+        +string file_link
+        +bool is_active
+    }
+    class InfoMagang {
+        +string title
+        +string slug
+        +string source_link
+        +bool is_active
+    }
+    class InfoMagangFaq {
+        +string question
+        +text answer
+        +int order
+        +bool is_active
+    }
+    class InfoKunjungan {
+        +string title
+        +string slug
+        +string source_link
+        +bool is_active
+    }
+    class InfoKunjunganFaq {
+        +string question
+        +text answer
+        +int order
+        +bool is_active
+    }
+    class Banner {
+        +string title
+        +text subtitle
+        +string image_path
+        +string link
+        +int order
+        +bool is_active
+    }
+
+    %% ================== KONTAK & KONFIGURASI ==================
+    class ContactInfo {
+        +string admin_phone
+        +string partnership_phone
+        +string hotline_phone
+        +string address
+        +string email
+        +bool is_active
+        +text google_maps_embed
+    }
+    ContactInfo ..|> InvalidatesHomepageDataCache
+    class SocialMedia {
+        +string email
+        +string phone
+        +string instagram
+        +string twitter
+        +string facebook
+        +string tiktok
+        +string youtube
+    }
+    class AksesInformasi {
+        +string type "internal|publik, unique"
+        +string label
+        +string url
+        +bool is_active
+        +internal() static AksesInformasi
+        +publik() static AksesInformasi
+    }
+
+    %% ================== ANALITIK PENGUNJUNG ==================
+    class Visitor {
+        +string ip_address
+        +date date
+        +uint hits
+    }
+
+    %% ================== KELAS PENDUKUNG ==================
+    class TrackVisitor {
+        <<middleware>>
+        +handle(request next)
+        -isTrackablePath() bool
+        -anonymizeIp() string
+    }
+    TrackVisitor --> Visitor : upsert hits
+    class IsAdmin {
+        <<middleware>>
+        +handle(request next)
+    }
+    class IsDashboardUser {
+        <<middleware>>
+        +handle(request next)
+    }
+    class Captcha {
+        <<rule>>
+        +SESSION_KEY const
+        +validate(attribute value fail)
+    }
+    class CaptchaController {
+        +image() Response
+    }
+    CaptchaController --> Captcha : simpan jawaban
+    class ImageService {
+        <<service>>
+    }
+    class UserSessionService {
+        <<service>>
+        +revokeAll(user)
+    }
+    class HomepageCache {
+        +DATA_KEY const
+        +scheduleKey() string
+    }
+    class ResetPasswordNotification {
+        <<notification>>
+    }
+    User --> ResetPasswordNotification : kirim tautan reset
+
+    %% ================== CONTROLLER UTAMA ==================
+    class LoginController {
+        +index() View
+        +store(Request) RedirectResponse
+        +logout(Request) RedirectResponse
+    }
+    LoginController --> Captcha
+    class PegawaiLoginController {
+        +index() View
+        +store(Request) RedirectResponse
+        +logout(Request) RedirectResponse
+    }
+    PegawaiLoginController --> Captcha
+    PegawaiLoginController --> AksesInformasi : redirect portal
+    class CommentController {
+        +store(Request)
+    }
+    CommentController --> Comment
+    CommentController --> News : target konten
+    CommentController --> Post : target konten
+    CommentController --> Broadcast : target konten
+    class HomeController {
+        +index() View
+    }
+    HomeController --> HomepageCache
+    HomeController --> JadwalCategory : jadwal hari ini

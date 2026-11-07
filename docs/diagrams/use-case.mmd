@@ -1,0 +1,110 @@
+flowchart LR
+%% ============================================================
+%% USE CASE DIAGRAM — Sistem Informasi TVRI Stasiun D.I. Yogyakarta
+%% Catatan: Mermaid tidak memiliki tipe diagram "Use Case" bawaan,
+%%     --> diagram ini disusun sebagai flowchart LR yang meniru UML:
+%%     • Aktor    : simpel bulat ((...))
+%%     • Use case : stadium ([...])
+%%     • «include»: basis --> use case yang disertakan
+%%     • «extend» : use case perluasan --> basis
+%%     • «generalisasi»: Admin mewarisi seluruh hak Admin Secondary
+%% ============================================================
+    %% ------------------------- AKTOR -------------------------
+    Guest((👤<br>Pengunjung))
+    Pegawai((👤<br>Pegawai))
+    SecAdmin((👔<br>Admin<br>Secondary))
+    SuperAdmin((🛡️<br>Super<br>Admin))
+    MailService((📧<br>Layanan<br>Email))
+
+    SuperAdmin -.->|"«generalisasi»<br>mewarisi seluruh hak"| SecAdmin
+
+    %% --------------------- SYSTEM BOUNDARY --------------------
+    subgraph SYS["Sistem Informasi TVRI Stasiun D.I. Yogyakarta"]
+
+        %% ===== Antarmuka Publik =====
+        subgraph PUB["Antarmuka Publik"]
+            UC_B(["Menelusuri beranda,<br>postingan, berita &amp; program siaran"])
+            UC_INFO(["Menelusuri profil &amp; informasi layanan<br>(sejarah, visi-misi, tugas-fungsi, prestasi,<br>hymne, PPID, info RB, magang, kunjungan)"])
+            UC_STREAM(["Menonton streaming siaran"])
+            UC_SCHEDULE(["Melihat jadwal acara hari ini"])
+            UC_COMMENT(["Mengirim komentar &amp; rating"])
+            UC_SPAM(["Filter honeypot spam"])
+            UC_VIEWCOMMENT(["Melihat komentar yang telah disetujui"])
+        end
+
+        %% ===== Keamanan =====
+        subgraph AUTH["Autentikasi"]
+            UC_LOGIN(["Login ke dashboard"])
+            UC_LOGINPEG(["Login ke portal pegawai"])
+            UC_CAPTCHA(["Verifikasi captcha"])
+            UC_LOGOUT(["Logout"])
+            UC_FORGOT(["Minta tautan reset password"])
+            UC_RESET(["Reset password dengan token"])
+            UC_SENDMAIL(["Kirim tautan reset via email"])
+        end
+
+        %% ===== Dashboard Admin =====
+        subgraph DASH["Dashboard Pengelolaan"]
+            UC_STATS(["Memantau statistik &amp;<br>grafik pengunjung"])
+            UC_POST(["Mengelola postingan &amp; kategorinya"])
+            UC_NEWS(["Mengelola berita &amp; kategorinya"])
+            UC_BROADCAST(["Mengelola program siaran &amp; kategorinya,<br>status tayang &amp; tautan YouTube"])
+            UC_JADWAL(["Mengelola jadwal acara &amp; kategorinya"])
+            UC_BANNER(["Mengelola banner beranda"])
+            UC_SERVICES(["Mengelola informasi layanan<br>(PPID, info RB, magang + FAQ,<br>kunjungan + FAQ)"])
+            UC_ABOUT(["Mengelola profil stasiun<br>(sejarah, visi-misi, tugas &amp; fungsi,<br>prestasi, hymne)"])
+            UC_MODERATE(["Memoderasi komentar<br>(setujui / tolak / hapus)"])
+            UC_UPLOAD(["Unggah &amp; proses gambar<br>(ImageService)"])
+            UC_USERS(["Mengelola pengguna &amp; peran<br>(proteksi admin terakhir,<br>cabut sesi lain)"])
+            UC_SOCIAL(["Mengelola media sosial"])
+            UC_CONTACT(["Mengelola informasi kontak<br>(aktif / nonaktif)"])
+            UC_LINK(["Mengatur akses informasi<br>(URL portal internal &amp; publik)"])
+        end
+    end
+
+    %% ------------------- RELASI AKTOR - UC -------------------
+    %% Pengunjung
+    Guest --- UC_B
+    Guest --- UC_INFO
+    Guest --- UC_STREAM
+    Guest --- UC_SCHEDULE
+    Guest --- UC_COMMENT
+    Guest --- UC_VIEWCOMMENT
+
+    %% Autentikasi umum (admin & admin secondary)
+    SecAdmin --- UC_LOGIN
+    SecAdmin --- UC_FORGOT
+    SecAdmin --- UC_RESET
+    SecAdmin --- UC_LOGOUT
+
+    %% Portal pegawai
+    Pegawai --- UC_LOGINPEG
+    Pegawai --- UC_LOGOUT
+
+    %% Dashboard — Admin Secondary
+    SecAdmin --- UC_STATS
+    SecAdmin --- UC_POST
+    SecAdmin --- UC_NEWS
+    SecAdmin --- UC_BROADCAST
+    SecAdmin --- UC_JADWAL
+    SecAdmin --- UC_BANNER
+    SecAdmin --- UC_SERVICES
+    SecAdmin --- UC_ABOUT
+    SecAdmin --- UC_MODERATE
+
+    %% Dashboard — khusus Super Admin
+    SuperAdmin --- UC_USERS
+    SuperAdmin --- UC_SOCIAL
+    SuperAdmin --- UC_CONTACT
+    SuperAdmin --- UC_LINK
+
+    %% Aktor eksternal
+    MailService --- UC_SENDMAIL
+
+    %% --------------------- «include» / «extend» ---------------------
+    UC_LOGIN -.->|"«include»"| UC_CAPTCHA
+    UC_LOGINPEG -.->|"«include»"| UC_CAPTCHA
+    UC_FORGOT -.->|"«include»"| UC_SENDMAIL
+    UC_SPAM -.->|"«extend»<br>ditolak jika honeypot terisi"| UC_COMMENT
+    UC_POST -.->|"«include»"| UC_UPLOAD
+    UC_NEWS -.->|"«include»"| UC_UPLOAD

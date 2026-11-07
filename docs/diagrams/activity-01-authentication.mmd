@@ -1,0 +1,49 @@
+---
+title: "Activity Diagram 1/4 — Autentikasi (Login Umum & Portal Pegawai)"
+---
+flowchart TD
+%% ============================================================
+%% ACTIVITY DIAGRAM 1/4 — Autentikasi (Login Umum, Portal Pegawai)
+%% Sistem Informasi TVRI Stasiun D.I. Yogyakarta
+%% ----
+%% Konvensi UML activity yang dipertahankan:
+%%   ●  bulat       = initial node / final node
+%%   ▭  rounded     = aktivitas
+%%   ◇  diamond     = decision / merge
+%% ============================================================
+
+    MULAI(["●"]) --> SHOW_GAMBAR["Form menampilkan gambar captcha<br/>(GET /captcha → controller menyimpan<br/>jawaban di session)"]
+
+    SHOW_GAMBAR --> CEK_REFRESH{"Captcha diklik /<br/>tombol Muat baru?"}
+    CEK_REFRESH -- ya --> REFRESH["Gambar SVG di-refresh<br/>dengan cache-buster timestamp,<br/>soal baru disimpan di session"] --> ISI_FORM
+    CEK_REFRESH -- tidak --> ISI_FORM["Aktor mengisi email, password,<br/>dan jawaban captcha<br/>(opsional: ceklis Ingat saya)"]
+
+    ISI_FORM --> POST["POST /login — throttle 5/menit<br/>(POST /pegawai/login — portal pegawai)"]
+    POST --> VALID{"Validasi input:<br/>email, password, captcha?"}
+    VALID -- "adalah kosong/salah" --> GAGAL_VALID["Redirect ke halaman login<br/>dengan error dan old(email)<br/>jawaban captcha dihapus, harus diulang"]
+    GAGAL_VALID --> AKHIR_VALID(["◉"])
+    VALID -- valid --> HAPUS["Hapus jawaban captcha dari session<br/>(dipakai sekali)<br/>Tentukan alur: halaman umum / portal pegawai"]
+
+    HAPUS --> ATTEMPT["Auth::attempt(email, password, remember)"]
+    ATTEMPT --> COCOK{"Kredensial cocok?"}
+    COCOK -- tidak --> GAGAL_KRED["Redirect ke halaman login<br/>error: Email atau password salah,<br/>old(email)"]
+    GAGAL_KRED --> AKHIR_KRED(["◉"])
+    COCOK -- ya --> HALAMAN{"Halaman mana yang<br/>sedang dibuka?"}
+
+    %% ---------- Alur login umum ----------
+    HALAMAN -- "login umum" --> CEK_ROLE_UMUM{"Role akun<br/>= pegawai?"}
+    CEK_ROLE_UMUM -- ya --> FORCE_UMUM["Force logout + invalidate session<br/>+ regenerate token<br/>error: Akun pegawai tidak dapat<br/>login dari halaman ini"]
+    FORCE_UMUM --> AKHIR_UMUM_GAGAL(["◉"])
+    CEK_ROLE_UMUM -- bukan pegawai --> REGEN_UMUM["Session regenerate"] --> INTENDED["Redirect ke target yang dituju<br/>(redirect intended → dashboard)"]
+    INTENDED --> SUKSES_UMUM(["● Terautentikasi"])
+
+    %% ---------- Alur portal pegawai ----------
+    HALAMAN -- "portal pegawai" --> CEK_ROLE_PEG{"Role akun<br/>bukan pegawai?"}
+    CEK_ROLE_PEG -- ya --> FORCE_PEG["Force logout + invalidate session<br/>+ regenerate token<br/>error: Akun ini bukan akun pegawai.<br/>Gunakan halaman login yang sesuai"]
+    FORCE_PEG --> AKHIR_PEG_GAGAL(["◉"])
+    CEK_ROLE_PEG -- pegawai --> REGEN_PEG["Session regenerate"] --> BACA_PORTAL["AksesInformasi::internal() dibaca"]
+    BACA_PORTAL --> CEK_URL{"URL portal internal<br/>terisi?"}
+    CEK_URL -- ya --> REDIRECT_INTERNAL["Redirect ke URL portal internal"]
+    CEK_URL -- tidak --> REDIRECT_HOME["Redirect ke beranda /"]
+    REDIRECT_INTERNAL --> SUKSES_PEG(["● Terlogin portal"])
+    REDIRECT_HOME --> SUKSES_PEG

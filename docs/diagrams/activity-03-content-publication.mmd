@@ -1,0 +1,52 @@
+---
+title: "Activity Diagram 3/4 — Publikasi & Pengelolaan Konten"
+---
+flowchart TD
+%% ============================================================
+%% ACTIVITY DIAGRAM 3/4 — Publikasi & Pengelolaan Konten
+%% Sistem Informasi TVRI Stasiun D.I. Yogyakarta
+%% ----
+%% (pola yang sama dipakai oleh semua modul dashboard:
+%%  Postingan, Berita, Program Siaran, Jadwal, Banner,
+%%  Profil Stasiun, Layanan, dsb.)
+%% ============================================================
+
+    M(["●"]) --> LOGIN["Pengelola login di dashboard<br/>(middleware auth + dashboardUser:<br/>role admin atau secondary)"]
+    LOGIN --> CEK_ROLE{"Modul membutuhkan<br/>role admin?"}
+    CEK_ROLE -- tidak --> AKSES_OK["Akses diizinkan<br/>(semua dashboard user)"]
+    CEK_ROLE -- ya --> CEK_SUPER{"Role=<br/>super admin?"}
+    CEK_SUPER -- tidak --> DILARANG["Respons HTTP 403"]
+    DILARANG --> AKHIR_FORBID(["◉"])
+    CEK_SUPER -- ya --> AKSES_OK
+
+    AKSES_OK --> SIDEBAR["Membuka modul pada sidebar<br/>(Publikasi, Layanan, Berita, Postingan,<br/>Tentang, Banner, dst)"]
+    SIDEBAR --> DAFTAR["Melihat daftar entri dengan pencarian<br/>dan paginasi 10-15 data per halaman"]
+    DAFTAR --> AKSI{"Aksi yang dipilih?"}
+
+    %% ---------- Tambah / Edit ----------
+    AKSI -- "tambah / edit" --> FORM["Form create / edit dibuka"]
+    FORM --> ISI["Pengelola mengisi data<br/>(judul, slug, isi, tanggal, status, dst)"]
+    ISI --> GAMBAR{"Ada berkas<br/>gambar diunggah?"}
+    GAMBAR -- ya --> IMAGESVC["ImageService memvalidasi dan<br/>menyimpan gambar di storage,<br/>path disimpan pada kolom<br/>(featured_image / cover_image /<br/>poster / image)"] --> SUBMIT
+    GAMBAR -- tidak --> SUBMIT["POST atau PUT ke endpoint modul"]
+    SUBMIT --> VALID{"Validasi<br/>data model?"}
+    VALID -- gagal --> KEMBALI["Redirect ke form<br/>dengan error dan old(input)"]
+    KEMBALI --> AKHIR(["◉"])
+    VALID -- valid --> SAVE["Data disimpan, cache terkait beranda<br/>/jadwal dihapus otomatis<br/>(trait InvalidatesHomepageDataCache<br/>/ScheduleCache)"]
+    SAVE --> LIST["Kembali ke halaman daftar<br/>dengan pesan sukses"]
+
+    %% ---------- Hapus ----------
+    AKSI -- hapus --> KONFIRM["Pengelola menekan tombol hapus<br/>lalu mengonfirmasi di dialog"]
+    KONFIRM --> DEL["Controller menghapus data"]
+    DEL --> ADA_KOM{"Konten punya<br/>komentar terkait?"}
+    ADA_KOM -- ya --> DELKOM["Hook deleting pada model menghapus<br/>seluruh komentar morphMany terlebih dahulu"] --> ADA_FILE
+    ADA_KOM -- tidak --> ADA_FILE{"Ada berkas<br/>poster / gambar?"}
+    ADA_FILE -- ya --> DELFILE["Berkas di storage juga dihapus"] --> LIST2
+    ADA_FILE -- tidak --> LIST2["Kembali ke daftar<br/>dengan pesan sukses"]
+
+    %% ---------- Konsekuensi publik ----------
+    LIST --> PUBLIK["View publik menampilkan hanya konten<br/>status published dengan published_at terisi<br/>dan tidak melewati waktu sekarang<br/>(scopePubliclyVisible)"]
+    LIST2 --> PUBLIK
+    PUBLIK --> DITEMUKAN["Pengunjung menemukan konten baru di<br/>beranda / halaman daftar / halaman detail"]
+    DITEMUKAN --> VIEWS["Setiap kunjungan halaman detail<br/>menaikkan kolom views<br/>(maksimal sekali per session)"]
+    VIEWS --> AKHIR2(["●"])

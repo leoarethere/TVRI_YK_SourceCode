@@ -1,0 +1,287 @@
+erDiagram
+%% ============================================================
+%% ERD — Sistem Informasi TVRI Stasiun D.I. Yogyakarta
+%% Diperiksa langsung dari database/migrations/*.php
+%% Notasi Mermaid erDiagram:
+%%   ||--o{  : one to zero-or-many
+%%   |o--o{  : zero-or-one to zero-or-many
+%%   ||--||  : one to one
+%% ----
+%% Gaya hapus: CASCADE = hapus turunannya; RESTRICT = tolak hapus;
+%% SET NULL = kolom FK dinolkan.
+%% ============================================================
+    %% ================== AKUN ==================
+    users {
+        bigint id PK
+        string name
+        string username UK
+        string email UK
+        timestamp email_verified_at "nullable"
+        string password
+        string role "default: secondary (admin|secondary|pegawai)"
+        string remember_token "nullable"
+        timestamps created_updated
+    }
+    password_reset_tokens {
+        string email PK
+        string token
+        timestamp created_at "nullable"
+    }
+    sessions {
+        string id PK
+        bigint user_id FK "nullable, index"
+        string ip_address "varchar(45), nullable"
+        text user_agent "nullable"
+        longtext payload
+        int last_activity "index"
+    }
+    users |o--o{ sessions : "user_id (relasi sesi login)"
+
+    %% ================== KONTEN ==================
+    posts {
+        bigint id PK
+        bigint user_id FK "ON DELETE CASCADE"
+        bigint category_id FK "ON DELETE RESTRICT"
+        string title
+        string slug UK
+        text body
+        string featured_image "nullable"
+        text excerpt "nullable"
+        string link_postingan "nullable"
+        enum status "draft|published, default draft"
+        timestamp published_at "nullable"
+        string meta_title "nullable"
+        string meta_description "nullable"
+        biginteger views "default 0"
+        index status_published_at
+    }
+    news {
+        bigint id PK
+        bigint user_id FK "ON DELETE CASCADE"
+        bigint news_category_id FK "ON DELETE RESTRICT"
+        string title
+        string slug UK
+        text body
+        string featured_image "nullable"
+        text excerpt "nullable"
+        string link_berita "nullable"
+        enum status "draft|published, default draft"
+        timestamp published_at "nullable"
+        string meta_title "nullable"
+        string meta_description "nullable"
+        biginteger views "default 0"
+    }
+    categories {
+        bigint id PK
+        string name
+        string slug UK
+        string color
+    }
+    news_categories {
+        bigint id PK
+        string name
+        string slug UK
+        string color "default blue"
+    }
+    broadcasts {
+        bigint id PK
+        bigint user_id FK "ON DELETE RESTRICT"
+        bigint broadcast_category_id FK "ON DELETE RESTRICT"
+        string title
+        string slug UK
+        text synopsis "nullable"
+        string poster "nullable"
+        string youtube_link "nullable"
+        enum status "draft|published, default draft"
+        bool is_active "default true, 1=Sedang Produksi 0=Selesai"
+        timestamp published_at "nullable"
+    }
+    broadcast_categories {
+        bigint id PK
+        string name
+        string slug UK
+        string color "default blue"
+    }
+    jadwal_acaras {
+        bigint id PK
+        string title
+        string slug UK
+        time start_time
+        time end_time "nullable"
+        bigint broadcast_category_id FK "ON DELETE RESTRICT"
+        bigint jadwal_category_id FK "nullable, ON DELETE SET NULL"
+        bool is_active "default true"
+    }
+    jadwal_categories {
+        bigint id PK
+        string name
+        string slug UK
+        int order "default 0"
+        string color "default blue"
+    }
+
+    users ||--o{ posts : "user_id CASCADE"
+    users ||--o{ news : "user_id CASCADE"
+    users ||--o{ broadcasts : "user_id RESTRICT"
+    categories ||--o{ posts : "category_id RESTRICT"
+    news_categories ||--o{ news : "news_category_id RESTRICT"
+    broadcast_categories ||--o{ broadcasts : "broadcast_category_id RESTRICT"
+    broadcast_categories ||--o{ jadwal_acaras : "broadcast_category_id RESTRICT"
+    jadwal_categories |o--o{ jadwal_acaras : "jadwal_category_id SET NULL"
+
+    %% ================== KOMENTAR (polymorphic) ==================
+    comments {
+        bigint id PK
+        string commentable_type "morphs index (News, Post, Broadcast)"
+        biginteger commentable_id "morphs index"
+        string name
+        string email
+        text body
+        tinyint rating "nullable, 1-5"
+        enum status "pending|approved|rejected, default pending"
+    }
+    posts ||--o{ comments : "commentable"
+    news ||--o{ comments : "commentable"
+    broadcasts ||--o{ comments : "commentable"
+
+    %% ================== PROFIL & INFORMASI ==================
+    visi_misis {
+        bigint id PK
+        enum type "visi|misi"
+        text content
+        int order "default 0"
+        string image "nullable"
+        bool is_active "default true"
+    }
+    tugas_fungsis {
+        bigint id PK
+        enum type "tugas|fungsi"
+        text content
+        int order "default 0"
+        string image "nullable"
+        bool is_active "default true"
+    }
+    histories {
+        bigint id PK
+        string title
+        text content
+        string image "nullable"
+        enum status "draft|published, default draft"
+        timestamp published_at "nullable"
+    }
+    prestasis {
+        bigint id PK
+        string title
+        string award_name
+        string type
+        string category
+        year year
+        text description "nullable"
+        string image "nullable"
+        bool is_active "default true"
+    }
+    hymne_tvris {
+        bigint id PK
+        string title
+        string info "nullable"
+        string poster "nullable"
+        text synopsis
+        string link "nullable"
+        bool is_active "default true"
+    }
+    ppids {
+        bigint id PK
+        string title
+        text description
+        string source_link
+        string cover_image "nullable"
+        bool is_active "default true"
+    }
+    reformasi_rbs {
+        bigint id PK
+        string title
+        string slug UK
+        text description
+        string file_link
+        string cover_image "nullable"
+        bool is_active "default true"
+    }
+    info_magangs {
+        bigint id PK
+        string title
+        string slug UK
+        text description
+        string source_link
+        string cover_image "nullable"
+        bool is_active "default true"
+    }
+    info_magang_faqs {
+        bigint id PK
+        string question
+        text answer
+        int order "default 0"
+        bool is_active "default true"
+    }
+    info_kunjungans {
+        bigint id PK
+        string title
+        string slug UK
+        text description
+        string source_link
+        string cover_image "nullable"
+        bool is_active "default true"
+    }
+    info_kunjungan_faqs {
+        bigint id PK
+        string question
+        text answer
+        int order "default 0"
+        bool is_active "default true"
+    }
+    banners {
+        bigint id PK
+        string title
+        text subtitle
+        string image_path
+        string link
+        string button_text "default Read more"
+        int order "default 0"
+        bool is_active "default true"
+    }
+
+    %% ================== KONTAK & KONFIGURASI ==================
+    contact_infos {
+        bigint id PK
+        string admin_phone
+        string partnership_phone
+        string hotline_phone
+        text address
+        string email "nullable"
+        bool is_active "default true"
+        text google_maps_embed "nullable"
+    }
+    social_medias {
+        bigint id PK
+        string email "nullable"
+        string phone "nullable"
+        string instagram "nullable"
+        string twitter "nullable"
+        string facebook "nullable"
+        string tiktok "nullable"
+        string youtube "nullable"
+    }
+    akses_informasi {
+        bigint id PK
+        enum type UK "internal|publik"
+        string label "default empty"
+        string url "nullable"
+        bool is_active "default true"
+    }
+
+    %% ================== ANALITIK ==================
+    visitors {
+        bigint id PK
+        string ip_address "hash SHA256 (ip + app key), unik per tanggal"
+        date date "index; komposit unik ip_address+date"
+        unsignedint hits "default 1"
+    }
