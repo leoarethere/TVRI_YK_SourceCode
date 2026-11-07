@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Rules\Captcha;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
@@ -30,12 +31,18 @@ class LoginController extends Controller
         $credentials = $request->validate([
             'email' => ['required', 'email'],
             'password' => ['required', 'min:6'],
+            'captcha' => ['required', new Captcha],
         ], [
             'email.required' => 'Email wajib diisi.',
             'email.email' => 'Format email tidak valid.',
             'password.required' => 'Password wajib diisi.',
             'password.min' => 'Password minimal 6 karakter.',
+            'captcha.required' => 'Jawaban captcha wajib diisi.',
+            'captcha.numeric' => 'Jawaban captcha harus berupa angka.',
         ]);
+
+        // Captcha sudah tervalidasi — jangan disertakan di Auth::attempt.
+        unset($credentials['captcha']);
 
         // 2. Coba untuk mengautentikasi pengguna dengan remember me
         $remember = $request->has('remember');
@@ -48,7 +55,7 @@ class LoginController extends Controller
                 'ip' => $request->ip(),
             ]);
 
-            return back()->withErrors([
+            return redirect()->route('login')->withErrors([
                 'email' => 'Format kredensial tidak valid atau akun memerlukan pembaruan kata sandi.',
             ])->onlyInput('email');
         }
@@ -62,9 +69,8 @@ class LoginController extends Controller
                 $request->session()->invalidate();
                 $request->session()->regenerateToken();
 
-                return back()
+                return redirect()->route('login')
                     ->withErrors(['email' => 'Akun pegawai tidak dapat login dari halaman ini.'])
-                    ->with('show_pegawai_link', true)
                     ->onlyInput('email');
             }
 
@@ -75,7 +81,7 @@ class LoginController extends Controller
         }
 
         // 3. Jika autentikasi gagal
-        return back()->withErrors([
+        return redirect()->route('login')->withErrors([
             'email' => 'Email atau password yang Anda masukkan salah.',
         ])->onlyInput('email');
     }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\AksesInformasi;
+use App\Rules\Captcha;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
@@ -24,11 +25,17 @@ class PegawaiLoginController extends Controller
         $credentials = $request->validate([
             'email' => ['required', 'email'],
             'password' => ['required'],
+            'captcha' => ['required', new Captcha],
         ], [
             'email.required' => 'Email wajib diisi.',
             'email.email' => 'Format email tidak valid.',
             'password.required' => 'Password wajib diisi.',
+            'captcha.required' => 'Jawaban captcha wajib diisi.',
+            'captcha.numeric' => 'Jawaban captcha harus berupa angka.',
         ]);
+
+        // Captcha sudah tervalidasi — jangan disertakan di Auth::attempt.
+        unset($credentials['captcha']);
 
         try {
             $authenticated = Auth::attempt($credentials);
@@ -38,7 +45,7 @@ class PegawaiLoginController extends Controller
                 'ip' => $request->ip(),
             ]);
 
-            return back()->withErrors([
+            return redirect()->route('pegawai.login')->withErrors([
                 'email' => 'Format kredensial tidak valid atau akun memerlukan pembaruan kata sandi.',
             ])->onlyInput('email');
         }
@@ -52,7 +59,7 @@ class PegawaiLoginController extends Controller
                 $request->session()->invalidate();
                 $request->session()->regenerateToken();
 
-                return back()->withErrors([
+                return redirect()->route('pegawai.login')->withErrors([
                     'email' => 'Akun ini bukan akun pegawai. Silakan gunakan halaman login yang sesuai.',
                 ])->onlyInput('email');
             }
@@ -68,7 +75,7 @@ class PegawaiLoginController extends Controller
                 ->with('success', 'Selamat datang, '.$user->name.'!');
         }
 
-        return back()->withErrors([
+        return redirect()->route('pegawai.login')->withErrors([
             'email' => 'Email atau password yang Anda masukkan salah.',
         ])->onlyInput('email');
     }

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\BannerController;
 use App\Http\Controllers\BroadcastController;
+use App\Http\Controllers\CaptchaController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\DashboardAksesInformasiController;
 use App\Http\Controllers\DashboardBroadcastCategoryController;
@@ -98,6 +99,10 @@ Route::get('/berita/{news:slug}', [NewsController::class, 'show'])->name('berita
 Route::get('/berita/kategori/{category:slug}', [NewsController::class, 'category'])->name('berita.kategori.show');
 Route::get('/berita/penulis/{user:username}', [NewsController::class, 'author'])->name('berita.penulis.show');
 
+
+// ================= CAPTCHA =================
+// Gambar captcha dipakai oleh halaman login umum dan portal pegawai.
+Route::get('/captcha', [CaptchaController::class, 'image'])->name('captcha.image');
 
 // ================= AUTENTIKASI =================
 Route::middleware('guest')->group(function () {

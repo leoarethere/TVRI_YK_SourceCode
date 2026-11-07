@@ -10,11 +10,100 @@ class LoginTest extends TestCase
 {
     use RefreshDatabase;
 
+    /**
+     * Muat gambar captcha untuk mengisi session jawaban dan kembalikan
+     * jawabannya untuk dikirim bersama request berikutnya.
+     */
+    private function freshCaptcha(): string
+    {
+        $this->get('/captcha');
+
+        return (string) $this->app['session']->get('captcha.answer');
+    }
+
     public function test_login_page_displays(): void
     {
         $response = $this->get(route('login'));
         $response->assertStatus(200);
         $response->assertSee('Login');
+    }
+
+    public function test_login_page_displays_captcha_field(): void
+    {
+        $response = $this->get(route('login'));
+
+        $response->assertStatus(200);
+        $response->assertSee('Verifikasi captcha', false);
+        $response->assertSee('name="captcha"', false);
+    }
+
+    public function test_captcha_image_endpoint_renders_svg_and_stores_answer(): void
+    {
+        $response = $this->get('/captcha');
+
+        $response->assertStatus(200);
+        $response->assertHeader('Content-Type', 'image/svg+xml');
+
+        $answer = $this->app['session']->get('captcha.answer');
+        $this->assertIsInt($answer);
+        $this->assertGreaterThanOrEqual(2, $answer);
+        $this->assertLessThanOrEqual(18, $answer);
+    }
+
+    public function test_login_without_captcha_is_rejected(): void
+    {
+        $response = $this->post(route('login'), [
+            'email' => 'test@example.com',
+            'password' => 'password123',
+        ]);
+
+        $response->assertSessionHasErrors('captcha');
+        $this->assertGuest();
+    }
+
+    public function test_login_with_wrong_captcha_is_rejected(): void
+    {
+        User::factory()->create([
+            'email' => 'test@example.com',
+            'password' => bcrypt('password123'),
+        ]);
+
+        $response = $this->post(route('login'), [
+            'email' => 'test@example.com',
+            'password' => 'password123',
+            'captcha' => random_int(2, 18),
+        ]);
+
+        $response->assertSessionHasErrors('captcha');
+        $this->assertGuest();
+    }
+
+    public function test_login_with_stale_captcha_cannot_be_replayed(): void
+    {
+        $answer = $this->freshCaptcha();
+        User::factory()->create([
+            'email' => 'test@example.com',
+            'password' => bcrypt('password123'),
+        ]);
+
+        // Percobaan pertama sudah memakai jawaban ini (gagal karena password salah).
+        $this->post(route('login'), [
+            'email' => 'test@example.com',
+            'password' => 'wrongpassword',
+            'captcha' => $answer,
+        ]);
+
+        $this->assertGuest();
+
+        // Jawaban yang sama tidak dapat dipakai dua kali.
+        $response = $this->post(route('login'), [
+            'email' => 'test@example.com',
+            'password' => 'password123',
+            'captcha' => $answer,
+        ]);
+
+        $response->assertSessionHasErrors('captcha');
+        $this->assertGuest();
     }
 
     public function test_authenticated_user_cannot_access_login_page(): void
@@ -34,6 +123,7 @@ class LoginTest extends TestCase
         $response = $this->post(route('login'), [
             'email' => 'test@example.com',
             'password' => 'password123',
+            'captcha' => $this->freshCaptcha(),
         ]);
 
         $response->assertRedirect(route('dashboard'));
@@ -50,6 +140,7 @@ class LoginTest extends TestCase
         $response = $this->post(route('login'), [
             'email' => 'test@example.com',
             'password' => 'wrongpassword',
+            'captcha' => $this->freshCaptcha(),
         ]);
 
         $response->assertSessionHasErrors('email');
@@ -75,12 +166,14 @@ class LoginTest extends TestCase
             $this->post(route('login'), [
                 'email' => 'test@example.com',
                 'password' => 'wrongpassword',
+                'captcha' => $this->freshCaptcha(),
             ]);
         }
 
         $response = $this->post(route('login'), [
             'email' => 'test@example.com',
             'password' => 'wrongpassword',
+            'captcha' => $this->freshCaptcha(),
         ]);
 
         $response->assertStatus(429);
@@ -106,6 +199,7 @@ class LoginTest extends TestCase
         ])->post(route('login'), [
             'email' => $employee->email,
             'password' => 'password123',
+            'captcha' => $this->freshCaptcha(),
         ])->assertSessionHasErrors('email')
             ->assertSessionMissing('url.intended')
             ->assertSessionMissing('sensitive-residual');
@@ -126,6 +220,7 @@ class LoginTest extends TestCase
         ])->post('/pegawai/login', [
             'email' => $admin->email,
             'password' => 'password123',
+            'captcha' => $this->freshCaptcha(),
         ])->assertSessionHasErrors('email')
             ->assertSessionMissing('url.intended')
             ->assertSessionMissing('sensitive-residual');
